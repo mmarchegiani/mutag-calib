@@ -1,0 +1,12 @@
+scaleout: 200
+chunksize: 400000
+mem-per-worker: "8GB"
+disk-per-worker: "8GB"
+cores-per-worker: 1
+adaptive: false
+queue: "workday"
+walltime: "08:00:00"
+performance-report: false
+custom-setup-commands: null
+conda-env: false
+local-virtualenv: false
