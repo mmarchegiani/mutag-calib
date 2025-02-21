@@ -100,29 +100,19 @@ def pt_reweighting(accumulator, year, histname, output, test=False, overwrite=Fa
         ratio_dict[cat] = {}
         for var_shape in variations:
             slicing_mc = {'cat': cat, 'variation': var_shape}
-            #dict_qcd = {d: h[d][slicing_mc] for d in samples_qcd}
-            #dict_vjets_top = {d: h[d][slicing_mc] for d in samples_vjets_top}
-            #stack_qcd = hist.Stack.from_dict(dict_qcd)
-            #stack_vjets_top = hist.Stack.from_dict(dict_vjets_top)
 
             if 'era' in h_data.axes.name:
                 slicing_data = {'cat': cat, 'era': sum}
             else:
                 slicing_data = {'cat': cat}
-            #dict_data = {d: h[d][slicing_data] for d in samples_data}
-            #stack_data = hist.Stack.from_dict(dict_data)
-            #if len(stack_data) > 1:
-            #    raise NotImplementedError
             ratio, unc, unc_no_diff = get_data_mc_ratio(
                 h_data[slicing_data],
                 h_qcd[slicing_mc],
                 h_vjets_top[slicing_mc]
             )
-            mod_ratio  = np.nan_to_num(ratio)
-            mod_unc = np.nan_to_num(unc)
-            mod_unc_no_diff = np.nan_to_num(unc_no_diff)
-            #if histname in self.pt_eta_2d_maps:
-            #    mod_ratio[mod_ratio == 0.0] = 1
+            mod_ratio  = np.nan_to_num(ratio, nan=1.0)
+            mod_unc = np.nan_to_num(unc, nan=0.0)
+            mod_unc_no_diff = np.nan_to_num(unc_no_diff, nan=0.0)
 
             ratio_dict[cat][var_shape] = {}
             ratio_dict[cat][var_shape].update({ "nominal" : mod_ratio })
