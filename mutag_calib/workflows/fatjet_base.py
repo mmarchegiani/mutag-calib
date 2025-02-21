@@ -4,12 +4,12 @@ from collections import defaultdict
 from pocket_coffea.workflows.base import BaseProcessorABC
 from pocket_coffea.utils.configurator import Configurator
 from pocket_coffea.lib.leptons import lepton_selection
-
-from lib.leptons import lepton_selection_noniso
-from lib.jets import jet_selection
-from lib.sv import get_corrmass, sv_matched_to_fatjet, get_sumcorrmass, get_sv1mass
-from lib.muon_matching import muons_matched_to_fatjet, muon_matched_to_subjet
+from pocket_coffea.lib.jets import jet_selection
 from pocket_coffea.lib.hist_manager import Axis
+
+from mutag_calib.lib.leptons import lepton_selection_noniso
+from mutag_calib.lib.sv import get_corrmass, sv_matched_to_fatjet, get_sumcorrmass, get_sv1mass
+from mutag_calib.lib.muon_matching import muons_matched_to_fatjet, muon_matched_to_subjet
 
 class fatjetBaseProcessor(BaseProcessorABC):
     def __init__(self, cfg: Configurator):
@@ -18,17 +18,17 @@ class fatjetBaseProcessor(BaseProcessorABC):
         self.output_format.update({"seed_fatjet_chunk": defaultdict(str)})
 
         # Additional axis for the year
-        self.custom_axes.append(
-            Axis(
-                coll="metadata",
-                field="year",
-                name="year",
-                bins=set(sorted(self.cfg.years)),
-                type="strcat",
-                growth=False,
-                label="Year",
-            )
-        )
+        #self.custom_axes.append(
+        #    Axis(
+        #        coll="metadata",
+        #        field="year",
+        #        name="year",
+        #        bins=set(sorted(self.cfg.years)),
+        #        type="strcat",
+        #        growth=False,
+        #        label="Year",
+        #    )
+        #)
 
     def apply_object_preselection(self, variation):
         '''
@@ -49,11 +49,11 @@ class fatjetBaseProcessor(BaseProcessorABC):
         ################################################
         # Dedicated Muon selection for mutag final state
         self.events["MuonGood"] = lepton_selection_noniso(
-            self.events, "Muon", self.cfg.finalstate
+            self.events, "Muon", self.params
         )
         ################################################
         self.events["ElectronGood"] = lepton_selection(
-            self.events, "Electron", self.cfg.finalstate
+            self.events, "Electron", self.params
         )
         leptons = ak.with_name(
             ak.concatenate((self.events.MuonGood, self.events.ElectronGood), axis=1),
@@ -64,11 +64,11 @@ class fatjetBaseProcessor(BaseProcessorABC):
         # Apply JEC + JER
         #self.apply_JERC()
         self.events["JetGood"], self.jetGoodMask = jet_selection(
-            self.events, "Jet", self.cfg.finalstate
+            self.events, "Jet", self.params, self._year, leptons_collection="LeptonGood"
         )
 
         self.events["FatJetGood"], self.fatjetGoodMask = jet_selection(
-            self.events, "FatJet", self.cfg.finalstate
+            self.events, "FatJet", self.params, self._year
         )
 
         # Select here events with at least one FatJetGood
@@ -111,7 +111,7 @@ class fatjetBaseProcessor(BaseProcessorABC):
         self.events["nSV"] = ak.num(self.events.SV)
 
     def define_common_variables_after_presel(self, variation):
-        
+
         # Correct SV mass for mis-aligment between the SV momentum and the PV-SV direction.
         # This takes into account particles that are not reconstructed in the SV reconstruction.
         # The corrected mass is assigned to the SV.mass branch
