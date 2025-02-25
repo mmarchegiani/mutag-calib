@@ -16,10 +16,6 @@ micromamba activate mutag-calib
 pip install -e .
 ```
 
-## Datasets definition
-The folder `datasets` contains the file `datasets_definitions_RunIISummer20UL.json` which contains the metadata of all the Run 2 datasets used for the calibration.
-In order to perform the calibration with Run 3 data, **a new file containing the datasets definition of Run 3 datasets needs to be defined.** For more detailed instructions on how to do it, please follow [this guide](https://pocketcoffea.readthedocs.io/en/latest/datasets.html#datasets-handling)
-
 ## Workflows
 The folder `workflows` contains different PocketCoffea workflows that are needed to perform the analysis.
 Here is their description:
@@ -30,6 +26,25 @@ Here is their description:
 - `mutag_oneMuAK8_processor.py`: defines the `mutagAnalysisOneMuonInAK8Processor` on top of `mutagAnalysisProcessor`. It applies the selection on AK8 jets based on the number of soft muons contained in the AK8 jet (>=1 soft muon within the AK8 jet).
 
 ## Analysis steps
+### Step 0: produce datasets definitions
+The folder `datasets` contains the file `datasets_definitions_RunIISummer20UL.json` which contains the metadata of all the Run 2 datasets used for the calibration.
+In order to perform the calibration with Run 3 data, **a new file containing the datasets definition of Run 3 datasets needs to be defined.**
+
+Datasets to be included:
+
+- MC
+    - QCD_MuEnriched
+    - V+jets
+    - Single top
+    - ttbar
+- Data
+    - BTagMu
+
+
+For more detailed instructions on how to create datasets in PocketCoffea, please follow [this guide](https://pocketcoffea.readthedocs.io/en/latest/datasets.html#datasets-handling).
+
+Once the json datasets are created, the configuration files have to be updated to run on the newly defined datasets.
+
 ### Step 1: compute 3D reweighting based on jet $p_T$, $\eta$, $\tau_{21}$
 Run jobs on DATA, QCD, V+jets and top datasets:
 ```bash
