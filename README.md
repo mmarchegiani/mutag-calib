@@ -3,18 +3,54 @@ Repository for the calibration of large-radius jets with the mu-tagged method ba
 
 ## Installation
 This package requires PocketCoffea >=0.9.8 as specified in the requirements.
-To install the `mutag_calib` package, run the following commands:
+The recommended running mode is to use the PocketCoffea singularity image available in `/cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general`.
+In order to run the mu-tagged method analysis written in PocketCoffea, we create a virtual environment and install both the `PocketCoffea` and `mutag-calib` packages,
+by running the following commands:
 
 ```bash
-# Clone repository
+
+# Clone locally the PocketCoffea and mutag-calib repositories
+git clone git@github.com:PocketCoffea/PocketCoffea.git
 git clone git@github.com:mmarchegiani/mutag-calib.git
+cd PocketCoffea
+
+#Enter the Singularity image
+apptainer shell --bind /afs -B /cvmfs/cms.cern.ch \
+         --bind /tmp  --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit \
+         -B ${XDG_RUNTIME_DIR}  --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc"  \
+         /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable
+
+# Create a local virtual environment using the packages defined in the apptainer image
+python -m venv --system-site-packages myenv
+
+# Activate the environment
+source myenv/bin/activate
+
+# Install PocketCoffea in EDITABLE mode
+pip install -e .[dev]
+
+# Install mutag-calib in EDITABLE mode
+cd -
 cd mutag-calib
-# Install micromamba
-"${SHELL}" <(curl -L micro.mamba.pm/install.sh)
-micromamba create -n mutag-calib python=3.11 -c conda-forge
-micromamba activate mutag-calib
 pip install -e .
 ```
+
+Now the environment is setup. In order to use this environment in the future, just run:
+```bash
+# Enter the Singularity image
+apptainer shell --bind /afs -B /cvmfs/cms.cern.ch \
+         --bind /tmp  --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit \
+         -B ${XDG_RUNTIME_DIR}  --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc"  \
+         /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable
+# Activate the environment
+source myenv/bin/activate
+```
+
+> **Tip:** You can create an alias for the `apptainer shell` command to enter the Singularity image and save it in your `~/.bashrc` file to avoid typing it every time. Add the following line to your `~/.bashrc`:
+> ```bash
+> alias sing='apptainer shell --bind /afs -B /cvmfs/cms.cern.ch --bind /tmp --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit -B ${XDG_RUNTIME_DIR} --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc" /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable'
+> ```
+> Then, you can simply type `sing` to enter the Singularity image.
 
 ## Workflows
 The folder `workflows` contains different PocketCoffea workflows that are needed to perform the analysis.
