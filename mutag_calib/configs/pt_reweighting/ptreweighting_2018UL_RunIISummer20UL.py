@@ -75,10 +75,10 @@ for coll in collections:
 cfg = Configurator(
     parameters = parameters,
     datasets = {
-        "jsons": ["datasets/MC_QCD_MuEnriched_RunIISummer20UL_local.json",
+        "jsons": ["datasets/MC_QCD_MuEnriched_RunIISummer20UL.json",
                   "datasets/MC_VJets_RunIISummer20UL.json",
-                  "datasets/MC_top_RunIISummer20UL_local.json",
-                  "datasets/DATA_BTagMu_RunIISummer20UL_local.json"],
+                  "datasets/MC_top_RunIISummer20UL.json",
+                  "datasets/DATA_BTagMu_RunIISummer20UL.json"],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
