@@ -40,6 +40,15 @@ Datasets to be included:
 - Data
     - BTagMu
 
+To create json datasets:
+```bash
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_RunIISummer20UL.json -o
+```
+
+Restricting the dataset source in Europe (recommended for working from lxplus):
+```bash
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_RunIISummer20UL.json -o -rs 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'
+```
 
 For more detailed instructions on how to create datasets in PocketCoffea, please follow [this guide](https://pocketcoffea.readthedocs.io/en/latest/datasets.html#datasets-handling).
 
