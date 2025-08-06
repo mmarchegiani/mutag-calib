@@ -11,7 +11,7 @@
           "year": "2022_postEE",
           "isMC": true,
           "xsec": 1.323,
-          "part": "Pt-1000",
+          "part": "Pt-1000"
         }
       },
       {
@@ -22,7 +22,7 @@
           "year": "2022_preEE",
           "isMC": true,
           "xsec": 1.323,
-          "part": "Pt-1000",
+          "part": "Pt-1000"
         }
       },
       {
@@ -195,56 +195,6 @@
           "isMC": true,
           "xsec": 7763.0,
           "part": "Pt-170to300"
-        }
-      }
-    ]
-  },
-  "QCD_PT-20to30_MuEnrichedPt5": {
-    "sample": "QCD_MuEnriched",
-    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
-    "files": [
-      {
-        "das_names": [
-          "/QCD_PT-20to30_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM"
-        ],
-        "metadata": {
-          "year": "2022_postEE",
-          "isMC": true,
-          "xsec": 2679000.0,
-          "part": "Pt-20to30"
-        }
-      },
-      {
-        "das_names": [
-          "/QCD_PT-20to30_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v2/NANOAODSIM"
-        ],
-        "metadata": {
-          "year": "2022_preEE",
-          "isMC": true,
-          "xsec": 2679000.0,
-          "part": "Pt-20to30"
-        }
-      },
-      {
-        "das_names": [
-          "/QCD_PT-20to30_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v2/NANOAODSIM"
-        ],
-        "metadata": {
-          "year": "2023_postBPix",
-          "isMC": true,
-          "xsec": 2679000.0,
-          "part": "Pt-20to30"
-        }
-      },
-      {
-        "das_names": [
-          "/QCD_PT-20to30_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
-        ],
-        "metadata": {
-          "year": "2023_preBPix",
-          "isMC": true,
-          "xsec": 2679000.0,
-          "part": "Pt-20to30"
         }
       }
     ]
