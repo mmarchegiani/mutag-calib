@@ -1,0 +1,129 @@
+{
+  "BTagMu": {
+    "sample": "BTagMu",
+    "json_output": "datasets/BTagMu.json",
+    "files": [
+      {
+        "das_names": [
+          "/BTagMu/Run2022C-22Sep2023-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2022",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "C"
+        }
+      },
+      {
+        "das_names": [
+          "/BTagMu/Run2022D-22Sep2023-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2022",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "D"
+        }
+      },
+      {
+        "das_names": [
+          "/BTagMu/Run2022E-22Sep2023-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2022",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "E"
+        }
+      },
+      {
+        "das_names": [
+          "/BTagMu/Run2022F-22Sep2023-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2022",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "F"
+        }
+      },
+      {
+        "das_names": [
+          "/BTagMu/Run2022G-22Sep2023-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2022",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "G"
+        }
+      },
+      {
+        "das_names": [
+          "/BTagMu/Run2023C-22Sep2023_v1-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2023",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "C"
+        }
+      },
+      {
+        "das_names": [
+          "/BTagMu/Run2023C-22Sep2023_v2-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2023",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "C"
+        }
+      },
+      {
+        "das_names": [
+          "/BTagMu/Run2023C-22Sep2023_v3-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2023",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "C"
+        }
+      },
+      {
+        "das_names": [
+          "/BTagMu/Run2023C-22Sep2023_v4-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2023",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "C"
+        }
+      },
+      {
+        "das_names": [
+          "/BTagMu/Run2023D-22Sep2023_v1-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2023",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "D"
+        }
+      },
+      {
+        "das_names": [
+          "/BTagMu/Run2023D-22Sep2023_v2-v1/NANOAOD"
+        ],
+        "metadata": {
+          "year": "2023",
+          "isMC": false,
+          "primaryDataset": "BTagMu",
+          "era": "D"
+        }
+      }
+    ]
+  }
+}
