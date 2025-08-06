@@ -69,21 +69,23 @@ In order to perform the calibration with Run 3 data, **a new file containing the
 Datasets to be included:
 
 - MC
-    - QCD_MuEnriched
-    - V+jets
-    - Single top
-    - ttbar
+    - [x] QCD_MuEnriched
+    - [ ] V+jets
+    - [ ] Single top
+    - [ ] ttbar
 - Data
-    - BTagMu
+    - [x] BTagMu
 
 To create json datasets:
 ```bash
-pocket-coffea build-datasets --cfg datasets/datasets_definitions_RunIISummer20UL.json -o
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_DATA_BTagMu_run3.json -o
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_QCD_MuEnriched_run3.json -o
 ```
 
 Restricting the dataset source in Europe (recommended for working from lxplus):
 ```bash
-pocket-coffea build-datasets --cfg datasets/datasets_definitions_RunIISummer20UL.json -o -rs 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_DATA_BTagMu_run3.json -o -rs 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_QCD_MuEnriched_run3.json -o -rs 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'
 ```
 
 For more detailed instructions on how to create datasets in PocketCoffea, please follow [this guide](https://pocketcoffea.readthedocs.io/en/latest/datasets.html#datasets-handling).
