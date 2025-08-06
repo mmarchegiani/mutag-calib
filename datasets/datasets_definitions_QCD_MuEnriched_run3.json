@@ -51,7 +51,7 @@
   },
   "QCD_PT-120to170_MuEnrichedPt5": {
     "sample": "QCD_MuEnriched",
-    "json_output": "datasets/QCD_PT-120to170_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
