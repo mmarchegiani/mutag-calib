@@ -1,5 +1,5 @@
 {
-  "BTagMu": {
+  "DATA_BTagMu": {
     "sample": "BTagMu",
     "json_output": "datasets/BTagMu.json",
     "files": [
@@ -60,39 +60,9 @@
       },
       {
         "das_names": [
-          "/BTagMu/Run2023C-22Sep2023_v1-v1/NANOAOD"
-        ],
-        "metadata": {
-          "year": "2023",
-          "isMC": false,
-          "primaryDataset": "BTagMu",
-          "era": "C"
-        }
-      },
-      {
-        "das_names": [
-          "/BTagMu/Run2023C-22Sep2023_v2-v1/NANOAOD"
-        ],
-        "metadata": {
-          "year": "2023",
-          "isMC": false,
-          "primaryDataset": "BTagMu",
-          "era": "C"
-        }
-      },
-      {
-        "das_names": [
-          "/BTagMu/Run2023C-22Sep2023_v3-v1/NANOAOD"
-        ],
-        "metadata": {
-          "year": "2023",
-          "isMC": false,
-          "primaryDataset": "BTagMu",
-          "era": "C"
-        }
-      },
-      {
-        "das_names": [
+          "/BTagMu/Run2023C-22Sep2023_v1-v1/NANOAOD",
+          "/BTagMu/Run2023C-22Sep2023_v2-v1/NANOAOD",
+          "/BTagMu/Run2023C-22Sep2023_v3-v1/NANOAOD",
           "/BTagMu/Run2023C-22Sep2023_v4-v1/NANOAOD"
         ],
         "metadata": {
@@ -104,17 +74,7 @@
       },
       {
         "das_names": [
-          "/BTagMu/Run2023D-22Sep2023_v1-v1/NANOAOD"
-        ],
-        "metadata": {
-          "year": "2023",
-          "isMC": false,
-          "primaryDataset": "BTagMu",
-          "era": "D"
-        }
-      },
-      {
-        "das_names": [
+          "/BTagMu/Run2023D-22Sep2023_v1-v1/NANOAOD",
           "/BTagMu/Run2023D-22Sep2023_v2-v1/NANOAOD"
         ],
         "metadata": {
