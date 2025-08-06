@@ -1,7 +1,7 @@
 {
-  "QCD_PT-1000_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-1000_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-1000_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-1000_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -10,7 +10,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 1.323
+          "xsec": 1.323,
+          "part": "Pt-1000",
         }
       },
       {
@@ -20,7 +21,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 1.323
+          "xsec": 1.323,
+          "part": "Pt-1000",
         }
       },
       {
@@ -30,7 +32,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 1.323
+          "xsec": 1.323,
+          "part": "Pt-1000"
         }
       },
       {
@@ -40,13 +43,14 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 1.323
+          "xsec": 1.323,
+          "part": "Pt-1000"
         }
       }
     ]
   },
-  "QCD_PT-120to170_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-120to170_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
+  "QCD_PT-120to170_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
     "json_output": "datasets/QCD_PT-120to170_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
     "files": [
       {
@@ -56,7 +60,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 22980.0
+          "xsec": 22980.0,
+          "part": "Pt-120to170"
         }
       },
       {
@@ -66,7 +71,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 22980.0
+          "xsec": 22980.0,
+          "part": "Pt-120to170"
         }
       },
       {
@@ -76,7 +82,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 22980.0
+          "xsec": 22980.0,
+          "part": "Pt-120to170"
         }
       },
       {
@@ -86,14 +93,15 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 22980.0
+          "xsec": 22980.0,
+          "part": "Pt-120to170"
         }
       }
     ]
   },
-  "QCD_PT-15to20_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-15to20_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-15to20_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-15to20_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -102,7 +110,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 2982000.0
+          "xsec": 2982000.0,
+          "part": "Pt-15to20"
         }
       },
       {
@@ -112,7 +121,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 2982000.0
+          "xsec": 2982000.0,
+          "part": "Pt-15to20"
         }
       },
       {
@@ -122,7 +132,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 2982000.0
+          "xsec": 2982000.0,
+          "part": "Pt-15to20"
         }
       },
       {
@@ -132,14 +143,15 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 2982000.0
+          "xsec": 2982000.0,
+          "part": "Pt-15to20"
         }
       }
     ]
   },
-  "QCD_PT-170to300_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-170to300_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-170to300_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-170to300_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -148,7 +160,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 7763.0
+          "xsec": 7763.0,
+          "part": "Pt-170to300"
         }
       },
       {
@@ -158,7 +171,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 7763.0
+          "xsec": 7763.0,
+          "part": "Pt-170to300"
         }
       },
       {
@@ -168,7 +182,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 7763.0
+          "xsec": 7763.0,
+          "part": "Pt-170to300"
         }
       },
       {
@@ -178,14 +193,15 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 7763.0
+          "xsec": 7763.0,
+          "part": "Pt-170to300"
         }
       }
     ]
   },
-  "QCD_PT-20to30_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-20to30_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-20to30_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-20to30_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -194,7 +210,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 2679000.0
+          "xsec": 2679000.0,
+          "part": "Pt-20to30"
         }
       },
       {
@@ -204,7 +221,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 2679000.0
+          "xsec": 2679000.0,
+          "part": "Pt-20to30"
         }
       },
       {
@@ -214,7 +232,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 2679000.0
+          "xsec": 2679000.0,
+          "part": "Pt-20to30"
         }
       },
       {
@@ -224,14 +243,15 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 2679000.0
+          "xsec": 2679000.0,
+          "part": "Pt-20to30"
         }
       }
     ]
   },
-  "QCD_PT-300to470_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-300to470_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-300to470_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-300to470_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -240,7 +260,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 699.1
+          "xsec": 699.1,
+          "part": "Pt-300to470"
         }
       },
       {
@@ -250,7 +271,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 699.1
+          "xsec": 699.1,
+          "part": "Pt-300to470"
         }
       },
       {
@@ -260,7 +282,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 699.1
+          "xsec": 699.1,
+          "part": "Pt-300to470"
         }
       },
       {
@@ -270,14 +293,15 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 699.1
+          "xsec": 699.1,
+          "part": "Pt-300to470"
         }
       }
     ]
   },
-  "QCD_PT-30to50_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-30to50_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-30to50_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-30to50_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -286,7 +310,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 1465000.0
+          "xsec": 1465000.0,
+          "part": "Pt-30to50"
         }
       },
       {
@@ -296,7 +321,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 1465000.0
+          "xsec": 1465000.0,
+          "part": "Pt-30to50"
         }
       },
       {
@@ -306,7 +332,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 1465000.0
+          "xsec": 1465000.0,
+          "part": "Pt-30to50"
         }
       },
       {
@@ -316,14 +343,15 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 1465000.0
+          "xsec": 1465000.0,
+          "part": "Pt-30to50"
         }
       }
     ]
   },
-  "QCD_PT-470to600_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-470to600_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-470to600_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-470to600_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -332,7 +360,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 68.24
+          "xsec": 68.24,
+          "part": "Pt-470to600"
         }
       },
       {
@@ -342,7 +371,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 68.24
+          "xsec": 68.24,
+          "part": "Pt-470to600"
         }
       },
       {
@@ -352,7 +382,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 68.24
+          "xsec": 68.24,
+          "part": "Pt-470to600"
         }
       },
       {
@@ -362,14 +393,15 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 68.24
+          "xsec": 68.24,
+          "part": "Pt-470to600"
         }
       }
     ]
   },
-  "QCD_PT-50to80_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-50to80_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-50to80_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-50to80_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -378,7 +410,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 402900.0
+          "xsec": 402900.0,
+          "part": "Pt-50to80"
         }
       },
       {
@@ -388,7 +421,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 402900.0
+          "xsec": 402900.0,
+          "part": "Pt-50to80"
         }
       },
       {
@@ -398,7 +432,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 402900.0
+          "xsec": 402900.0,
+          "part": "Pt-50to80"
         }
       },
       {
@@ -408,14 +443,15 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 402900.0
+          "xsec": 402900.0,
+          "part": "Pt-50to80"
         }
       }
     ]
   },
-  "QCD_PT-600to800_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-600to800_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-600to800_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-600to800_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -424,7 +460,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 21.37
+          "xsec": 21.37,
+          "part": "Pt-600to800"
         }
       },
       {
@@ -434,7 +471,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 21.37
+          "xsec": 21.37,
+          "part": "Pt-600to800"
         }
       },
       {
@@ -444,7 +482,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 21.37
+          "xsec": 21.37,
+          "part": "Pt-600to800"
         }
       },
       {
@@ -454,14 +493,15 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 21.37
+          "xsec": 21.37,
+          "part": "Pt-600to800"
         }
       }
     ]
   },
-  "QCD_PT-800to1000_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-800to1000_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-800to1000_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-800to1000_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -470,7 +510,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 3.913
+          "xsec": 3.913,
+          "part": "Pt-800to1000"
         }
       },
       {
@@ -480,7 +521,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 3.913
+          "xsec": 3.913,
+          "part": "Pt-800to1000"
         }
       },
       {
@@ -490,7 +532,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 3.913
+          "xsec": 3.913,
+          "part": "Pt-800to1000"
         }
       },
       {
@@ -500,14 +543,15 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 3.913
+          "xsec": 3.913,
+          "part": "Pt-800to1000"
         }
       }
     ]
   },
-  "QCD_PT-80to120_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8": {
-    "sample": "QCD_PT-80to120_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8",
-    "json_output": "datasets/QCD_PT-80to120_MuEnrichedPt5_TuneCP5_13p6TeV_pythia8.json",
+  "QCD_PT-80to120_MuEnrichedPt5": {
+    "sample": "QCD_MuEnriched",
+    "json_output": "datasets/MC_QCD_MuEnriched_run3.json",
     "files": [
       {
         "das_names": [
@@ -516,7 +560,8 @@
         "metadata": {
           "year": "2022_postEE",
           "isMC": true,
-          "xsec": 96200.0
+          "xsec": 96200.0,
+          "part": "Pt-80to120"
         }
       },
       {
@@ -526,7 +571,8 @@
         "metadata": {
           "year": "2022_preEE",
           "isMC": true,
-          "xsec": 96200.0
+          "xsec": 96200.0,
+          "part": "Pt-80to120"
         }
       },
       {
@@ -536,7 +582,8 @@
         "metadata": {
           "year": "2023_postBPix",
           "isMC": true,
-          "xsec": 96200.0
+          "xsec": 96200.0,
+          "part": "Pt-80to120"
         }
       },
       {
@@ -546,7 +593,8 @@
         "metadata": {
           "year": "2023_preBPix",
           "isMC": true,
-          "xsec": 96200.0
+          "xsec": 96200.0,
+          "part": "Pt-80to120"
         }
       }
     ]

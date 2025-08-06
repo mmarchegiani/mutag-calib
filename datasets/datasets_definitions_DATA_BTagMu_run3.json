@@ -1,7 +1,7 @@
 {
   "DATA_BTagMu": {
     "sample": "BTagMu",
-    "json_output": "datasets/BTagMu.json",
+    "json_output": "datasets/DATA_BTagMu_run3.json",
     "files": [
       {
         "das_names": [
