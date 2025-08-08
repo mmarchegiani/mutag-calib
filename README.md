@@ -63,34 +63,46 @@ Here is their description:
 
 ## Analysis steps
 ### Step 0: produce datasets definitions
-The folder `datasets` contains the file `datasets_definitions_RunIISummer20UL.json` which contains the metadata of all the Run 2 datasets used for the calibration.
-In order to perform the calibration with Run 3 data, **a new file containing the datasets definition of Run 3 datasets needs to be defined.**
+The folder `datasets` contains the `datasets_definitions_*.json` files which contain the metadata of all the Run 3 datasets used for the calibration, including DAS names, dataset and sample names, data/MC flag and cross-sections.
+These files can be generated using the interactive `dataset-discovery-cli` command of PocketCoffea to query and select datasets interactively directly from DAS.
 
-Datasets to be included:
+Datasets to be included for Run 3:
 
 - MC
     - [x] QCD_MuEnriched
-    - [ ] V+jets
-    - [ ] Single top
-    - [ ] ttbar
+    - [x] V+jets
+    - [ ] Single top fully hadronic and semileptonic
+    - [x] ttbar fully hadronic
+    - [ ] ggH(bb) and ggH(cc) signals (for validations)
 - Data
     - [x] BTagMu
 
-To create json datasets:
+To create json datasets, run the `build-datasets` command for each dataset definition file in the `datasets` folder:
 ```bash
 pocket-coffea build-datasets --cfg datasets/datasets_definitions_DATA_BTagMu_run3.json -o
 pocket-coffea build-datasets --cfg datasets/datasets_definitions_QCD_MuEnriched_run3.json -o
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_VJets_run3.json -o
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_TTto4Q_Run3.json -o
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_SingleTop_Run3.json -o
 ```
 
 Restricting the dataset source in Europe (recommended for working from lxplus):
 ```bash
 pocket-coffea build-datasets --cfg datasets/datasets_definitions_DATA_BTagMu_run3.json -o -rs 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'
 pocket-coffea build-datasets --cfg datasets/datasets_definitions_QCD_MuEnriched_run3.json -o -rs 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_VJets_run3.json -o -rs 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_TTto4Q_Run3.json -o -rs 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'
+pocket-coffea build-datasets --cfg datasets/datasets_definitions_SingleTop_Run3.json -o -rs 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'
 ```
+
+It is recommended to re-run the `build-datasets` command once in a while to update the file list of the datasets, as files from specific sites that are available in a given moment might not be available later on.
 
 For more detailed instructions on how to create datasets in PocketCoffea, please follow [this guide](https://pocketcoffea.readthedocs.io/en/latest/datasets.html#datasets-handling).
 
 Once the json datasets are created, the configuration files have to be updated to run on the newly defined datasets.
+
+### Step 0: update the trigger paths
+In order to run the analysis on Run 3 data, the trigger paths specified in the `mutag_calib/configs/params/triggers.yaml` file have to be updated with the Run 3 trigger paths.
 
 ### Step 1: compute 3D reweighting based on jet $p_T$, $\eta$, $\tau_{21}$
 Run jobs on DATA, QCD, V+jets and top datasets:
