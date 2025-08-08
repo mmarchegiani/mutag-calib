@@ -1,6 +1,6 @@
 {
   "DATA_BTagMu": {
-    "sample": "BTagMu",
+    "sample": "DATA_BTagMu",
     "json_output": "datasets/DATA_BTagMu_run3.json",
     "files": [
       {
