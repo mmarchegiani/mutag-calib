@@ -8,7 +8,7 @@
           "/BTagMu/Run2022C-22Sep2023-v1/NANOAOD"
         ],
         "metadata": {
-          "year": "2022",
+          "year": "2022_preEE",
           "isMC": false,
           "primaryDataset": "BTagMu",
           "era": "C"
@@ -19,7 +19,7 @@
           "/BTagMu/Run2022D-22Sep2023-v1/NANOAOD"
         ],
         "metadata": {
-          "year": "2022",
+          "year": "2022_preEE",
           "isMC": false,
           "primaryDataset": "BTagMu",
           "era": "D"
@@ -30,7 +30,7 @@
           "/BTagMu/Run2022E-22Sep2023-v1/NANOAOD"
         ],
         "metadata": {
-          "year": "2022",
+          "year": "2022_postEE",
           "isMC": false,
           "primaryDataset": "BTagMu",
           "era": "E"
@@ -41,7 +41,7 @@
           "/BTagMu/Run2022F-22Sep2023-v2/NANOAOD"
         ],
         "metadata": {
-          "year": "2022",
+          "year": "2022_postEE",
           "isMC": false,
           "primaryDataset": "BTagMu",
           "era": "F"
@@ -52,7 +52,7 @@
           "/BTagMu/Run2022G-22Sep2023-v1/NANOAOD"
         ],
         "metadata": {
-          "year": "2022",
+          "year": "2022_postEE",
           "isMC": false,
           "primaryDataset": "BTagMu",
           "era": "G"
@@ -66,7 +66,7 @@
           "/BTagMu/Run2023C-22Sep2023_v4-v1/NANOAOD"
         ],
         "metadata": {
-          "year": "2023",
+          "year": "2023_preBPix",
           "isMC": false,
           "primaryDataset": "BTagMu",
           "era": "C"
@@ -78,7 +78,7 @@
           "/BTagMu/Run2023D-22Sep2023_v2-v1/NANOAOD"
         ],
         "metadata": {
-          "year": "2023",
+          "year": "2023_postBPix",
           "isMC": false,
           "primaryDataset": "BTagMu",
           "era": "D"
