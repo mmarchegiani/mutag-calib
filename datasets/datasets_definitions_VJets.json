@@ -1,7 +1,7 @@
 {
   "Wto2Q-3Jets_HT-200to400": {
     "sample": "VJets",
-    "json_output": "datasets/datasets/MC_VJets_run3.json",
+    "json_output": "datasets/MC_VJets_run3.json",
     "files": [
       {
         "das_names": [
@@ -47,7 +47,7 @@
   },
   "Wto2Q-3Jets_HT-400to600": {
     "sample": "VJets",
-    "json_output": "datasets/datasets/MC_VJets_run3.json",
+    "json_output": "datasets/MC_VJets_run3.json",
     "files": [
       {
         "das_names": [
@@ -93,7 +93,7 @@
   },
   "Wto2Q-3Jets_HT-600to800": {
     "sample": "VJets",
-    "json_output": "datasets/datasets/MC_VJets_run3.json",
+    "json_output": "datasets/MC_VJets_run3.json",
     "files": [
       {
         "das_names": [
@@ -139,7 +139,7 @@
   },
   "Wto2Q-3Jets_HT-800": {
     "sample": "VJets",
-    "json_output": "datasets/datasets/MC_VJets_run3.json",
+    "json_output": "datasets/MC_VJets_run3.json",
     "files": [
       {
         "das_names": [
@@ -185,7 +185,7 @@
   },
   "Zto2Q-4Jets_HT-200to400": {
     "sample": "VJets",
-    "json_output": "datasets/datasets/MC_VJets_run3.json",
+    "json_output": "datasets/MC_VJets_run3.json",
     "files": [
       {
         "das_names": [
@@ -231,7 +231,7 @@
   },
   "Zto2Q-4Jets_HT-400to600": {
     "sample": "VJets",
-    "json_output": "datasets/datasets/MC_VJets_run3.json",
+    "json_output": "datasets/MC_VJets_run3.json",
     "files": [
       {
         "das_names": [
@@ -277,7 +277,7 @@
   },
   "Zto2Q-4Jets_HT-600to800": {
     "sample": "VJets",
-    "json_output": "datasets/datasets/MC_VJets_run3.json",
+    "json_output": "datasets/MC_VJets_run3.json",
     "files": [
       {
         "das_names": [
@@ -323,7 +323,7 @@
   },
   "Zto2Q-4Jets_HT-800": {
     "sample": "VJets",
-    "json_output": "datasets/datasets/MC_VJets_run3.json",
+    "json_output": "datasets/MC_VJets_run3.json",
     "files": [
       {
         "das_names": [
