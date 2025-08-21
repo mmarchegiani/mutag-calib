@@ -37,16 +37,6 @@ class ptReweightProcessor(fatjetBaseProcessor):
             if not histname in self.cfg.variables.keys():
                 raise Exception(f"'{histname}' is not present in the histogram keys.")
 
-    def load_metadata_extra(self):
-        super().load_metadata_extra()
-        if self._isMC:
-            expected_shape_variations = {"JES_Total_AK8PFPuppi", "JER_AK8PFPuppi"}
-            for sample, variations in self.cfg.available_shape_variations.items():
-                if not self.cfg.samples_metadata[sample]['isMC']: continue
-                if not (set(variations) == expected_shape_variations):
-                    missing_shape_variations = {var for var in expected_shape_variations if not var in variations}
-                    raise Exception(f"Incorrect configuration of the shape variations. Missing: {missing_shape_variations}")
-
     def apply_object_preselection(self, variation):
         super().apply_object_preselection(variation)
 
@@ -89,18 +79,3 @@ class ptReweightProcessor(fatjetBaseProcessor):
 
         #    # Apply muon tagging to AK8 jet collection
         #    self.events[coll] = self.events.FatJetGood[mask_mutag]
-
-    def define_common_variables_after_presel(self, variation):
-
-        for coll in ["FatJetGood"]:
-
-            Xbb = self.events[coll].particleNetMD_Xbb
-            Xcc = self.events[coll].particleNetMD_Xcc
-            QCD = self.events[coll].particleNetMD_QCD
-            fatjet_fields = {
-                "particleNetMD_Xbb_QCD" : Xbb / (Xbb + QCD),
-                "particleNetMD_Xcc_QCD" : Xcc / (Xcc + QCD),
-            }
-
-            for field, value in fatjet_fields.items():
-                self.events[coll] = ak.with_field(self.events[coll], value, field)
