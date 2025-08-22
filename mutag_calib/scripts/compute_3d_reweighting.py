@@ -83,7 +83,7 @@ def pt_reweighting(accumulator, year, histname, output, test=False, overwrite=Fa
     samples_data = list(filter(lambda d: 'DATA' in d, samples))
     samples_mc = list(filter(lambda d: 'DATA' not in d, samples))
     samples_qcd = list(filter(lambda d: 'QCD' in d, samples_mc))
-    samples_vjets_top = list(filter(lambda d: (('VJets' in d) | ('SingleTop_ttbar' in d)), samples_mc))
+    samples_vjets_top = list(filter(lambda d: (('VJets' in d) | ('SingleTop' in d)), samples_mc))
 
     # Build QCD, VJets+top and Data histograms by summing over all datasets
     h_qcd = sum([h[s][d] for s, datasets_dict in h.items() for d in datasets_dict if s in samples_qcd])
