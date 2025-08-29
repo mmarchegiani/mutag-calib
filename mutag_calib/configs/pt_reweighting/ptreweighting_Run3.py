@@ -8,6 +8,7 @@ from pocket_coffea.parameters.histograms import *
 import mutag_calib
 from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_ptmsd_window, get_nObj_minmsd, get_flavor
 from mutag_calib.configs.fatjet_base.custom.functions import get_inclusive_wp
+from mutag_calib.configs.fatjet_base.custom.weights import SF_trigger_prescale
 import mutag_calib.workflows.pt_reweighting as workflow
 from mutag_calib.workflows.pt_reweighting import ptReweightProcessor
 import numpy as np
@@ -23,9 +24,12 @@ defaults.register_configuration_dir("config_dir", localdir+"/params")
 parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/object_preselection.yaml",
                                                 f"{localdir}/params/triggers_run3.yaml",
+                                                f"{localdir}/params/triggers_prescales_run3.yaml",
                                                 update=True)
 
-samples = ["QCD_MuEnriched", "VJets", "TTto4Q","SingleTop_semileptonic", "SingleTop_fullyhadronic", "DATA_BTagMu"]
+samples = ["QCD_MuEnriched", "VJets", "TTto4Q","TWminus", "TWplus", "DATA_BTagMu"]
+#samples = ["QCD_MuEnriched", "VJets", "TTto4Q", "DATA_BTagMu"]
+#samples = ["TWminus", "TWplus"]
 subsamples = {}
 for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
     subsamples[s] = {f"{s}_{f}" : [get_flavor(f)] for f in ['l', 'c', 'b', 'cc', 'bb']}
@@ -87,12 +91,17 @@ cfg = Configurator(
                   "datasets/MC_TTto4Q_run3.json",
                   "datasets/MC_SingleTop_semileptonic_run3.json",
                   "datasets/MC_SingleTop_fullyhadronic_run3.json",
-                  "datasets/DATA_BTagMu_run3.json"],
+                  "datasets/DATA_BTagMu_run3.json"
+                  ],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
-            "year": ['2022_preEE', '2022_postEE', '2023_preBPix', '2023_postBPix']
-            # "year": ['2022_preEE']
+            "year": [
+                '2022_preEE',
+                '2022_postEE',
+                '2023_preBPix',
+                '2023_postBPix'
+            ]
         },
         "subsamples": subsamples
     },
@@ -118,10 +127,10 @@ cfg = Configurator(
         "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
     },
 
-    weights_classes = common_weights,
+    weights_classes = common_weights + [SF_trigger_prescale],
     weights = {
         "common": {
-            "inclusive": ["genWeight","lumi","XS",
+            "inclusive": ["genWeight","lumi","XS","sf_trigger_prescale",
                           "pileup"],
             "bycategory" : {
             }
