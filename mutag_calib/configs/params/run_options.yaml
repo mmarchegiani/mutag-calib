@@ -4,9 +4,18 @@ mem-per-worker: "8GB"
 disk-per-worker: "8GB"
 cores-per-worker: 1
 adaptive: false
-queue: "workday"
-walltime: "08:00:00"
+queue: "tomorrow"
+walltime: "24:00:00"
 performance-report: false
 custom-setup-commands: null
 conda-env: false
 local-virtualenv: false
+group-samples:
+  TTto4Q:
+    - "TTto4Q"
+  Vjets:
+    - "VJets"
+  SingleTop:
+    - "TWminus"
+    - "TWplus"
+
