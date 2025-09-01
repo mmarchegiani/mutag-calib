@@ -1,7 +1,7 @@
-from workflows.mutag_processor import mutagAnalysisProcessor
+from mutag_calib.workflows.mutag_processor import mutagAnalysisProcessor
 from pocket_coffea.lib.categorization import StandardSelection
 from lib.sv import *
-from config.fatjet_base.custom.cuts import mutag_fatjet_sel
+from mutag_calib.configs.fatjet_base.custom.cuts import mutag_fatjet_sel
 
 
 class mutagAnalysisOneMuonInAK8Processor(mutagAnalysisProcessor):
