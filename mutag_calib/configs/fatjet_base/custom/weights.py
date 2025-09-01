@@ -20,7 +20,7 @@ SF_trigger_prescale = WeightLambda.wrap_func(
 
 SF_ptetatau21_reweighting = WeightLambda.wrap_func(
     name="sf_ptetatau21_reweighting",
-    function=lambda events, size, metadata, shape_variations:
+    function=lambda params, metadata, events, size, shape_variations:
         sf_ptetatau21_reweighting(events, metadata['year'], params),
-    has_variations=False
+    has_variations=True
 )
