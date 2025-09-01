@@ -1,6 +1,6 @@
 from mutag_calib.workflows.mutag_processor import mutagAnalysisProcessor
 from pocket_coffea.lib.categorization import StandardSelection
-from lib.sv import *
+from mutag_calib.lib.sv import *
 from mutag_calib.configs.fatjet_base.custom.cuts import mutag_fatjet_sel
 
 
