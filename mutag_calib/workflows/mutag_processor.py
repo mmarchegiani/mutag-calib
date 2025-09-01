@@ -7,7 +7,7 @@ import correctionlib
 from mutag_calib.workflows.fatjet_base import fatjetBaseProcessor
 from pocket_coffea.utils.configurator import Configurator
 from pocket_coffea.lib.categorization import StandardSelection
-from lib.sv import *
+from mutag_calib.lib.sv import *
 from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd
 
 class mutagAnalysisProcessor(fatjetBaseProcessor):
