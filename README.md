@@ -9,10 +9,8 @@ by running the following commands:
 
 ```bash
 
-# Clone locally the PocketCoffea and mutag-calib repositories
-git clone git@github.com:PocketCoffea/PocketCoffea.git
+# Clone locally the mutag-calib repository
 git clone git@github.com:mmarchegiani/mutag-calib.git
-cd PocketCoffea
 
 #Enter the Singularity image
 apptainer shell --bind /afs -B /cvmfs/cms.cern.ch \
@@ -26,11 +24,7 @@ python -m venv --system-site-packages myenv
 # Activate the environment
 source myenv/bin/activate
 
-# Install PocketCoffea in EDITABLE mode
-pip install -e .[dev]
-
 # Install mutag-calib in EDITABLE mode
-cd -
 cd mutag-calib
 pip install -e .
 ```
@@ -51,6 +45,10 @@ source myenv/bin/activate
 > alias sing='apptainer shell --bind /afs -B /cvmfs/cms.cern.ch --bind /tmp --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit -B ${XDG_RUNTIME_DIR} --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc" /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable'
 > ```
 > Then, you can simply type `sing` to enter the Singularity image.
+
+| :warning: **WARNING** |
+|:---|
+| To avoid conflicts between the singularity environment and the virtual environment, it is recommended to run PocketCoffea commands by explicitly specifying the script's path. Instead of running `pocket-coffea run`, use the following command: `python -m pocket_coffea.scripts.runner` |
 
 ## Workflows
 The folder `workflows` contains different PocketCoffea workflows that are needed to perform the analysis.
