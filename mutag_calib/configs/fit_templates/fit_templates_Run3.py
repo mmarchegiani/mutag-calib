@@ -107,7 +107,7 @@ cfg = Configurator(
         "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
     },
 
-    weights_classes = common_weights + [SF_trigger_prescale + SF_ptetatau21],
+    weights_classes = common_weights + [SF_trigger_prescale + SF_ptetatau21_reweighting],
     weights = {
         "common": {
             "inclusive": ["genWeight","lumi","XS","sf_trigger_prescale",
