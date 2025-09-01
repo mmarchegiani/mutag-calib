@@ -46,7 +46,7 @@ def sf_ptetatau21_reweighting(events, year, params):
     The function returns the nominal, up and down weights, where the up/down variations are computed considering the statistical uncertainty on data and MC.'''
 
 
-    cset = correctionlib.CorrectionSet.from_file(ptetatau21_reweighting[year])
+    cset = correctionlib.CorrectionSet.from_file(params["ptetatau21_reweighting"][year])
     corr = cset[f"FatJetGoodNMuon1_pt_eta_tau21_corr_{year}"]
 
     cat = "pt300msd40"
