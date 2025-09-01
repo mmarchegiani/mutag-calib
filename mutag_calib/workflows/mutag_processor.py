@@ -7,7 +7,6 @@ import correctionlib
 from mutag_calib.workflows.fatjet_base import fatjetBaseProcessor
 from pocket_coffea.utils.configurator import Configurator
 from pocket_coffea.lib.categorization import StandardSelection
-from pocket_coffea.parameters.jet_scale_factors import ptetatau21_reweighting
 from lib.sv import *
 from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd
 
@@ -47,7 +46,7 @@ class mutagAnalysisProcessor(fatjetBaseProcessor):
         '''Correction of jets observable by a 3D reweighting based on (pT, eta, tau21).
         The function stores the nominal, up and down weights in self.weight_3d,
         where the up/down variations are computed considering the statistical uncertainty on data and MC.'''
-        cset = correctionlib.CorrectionSet.from_file(ptetatau21_reweighting[self._sample][self._year])
+        cset = correctionlib.CorrectionSet.from_file(self.params["ptetatau21_reweighting"][self._year])
         key = list(cset.keys())[0]
         corr = cset[key]
 
