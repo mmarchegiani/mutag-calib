@@ -168,6 +168,14 @@ def ptmsd(events, params, **kwargs):
 
     return ak.where(~ak.is_none(mask, axis=1), mask, False)
 
+def ptmsd_window(events, params, **kwargs):
+    # Mask to select events with a fatjet with minimum softdrop mass and maximum softdrop mass
+    mask = (events.FatJetGood.pt > params["pt"]) & (events.FatJetGood.msoftdrop > params["msd_min"]) & (events.FatJetGood.msoftdrop < params["msd_max"])
+
+    assert not ak.any(ak.is_none(mask, axis=1)), f"None in ptmsd_window\n{events.FatJetGood.pt[ak.is_none(mask, axis=1)]}"
+
+    return ak.where(~ak.is_none(mask, axis=1), mask, False)
+
 
 def ptmsdtau(events, params, **kwargs):
     # Mask to select events with a fatjet with minimum softdrop mass and maximum tau21

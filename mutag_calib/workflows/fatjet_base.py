@@ -120,9 +120,9 @@ class fatjetBaseProcessor(BaseProcessorABC):
         self.events["SVMatchedToFatJetGood"] = sv_matched_to_fatjet(self.events)
 
         # Compute final particleNetMD scores
-        Xbb = self.events.FatJetGood.particleNetMD_Xbb
-        Xcc = self.events.FatJetGood.particleNetMD_Xcc
-        QCD = self.events.FatJetGood.particleNetMD_QCD
+        # Xbb = self.events.FatJetGood.particleNetMD_Xbb
+        # Xcc = self.events.FatJetGood.particleNetMD_Xcc
+        # QCD = self.events.FatJetGood.particleNetMD_QCD
         sumcorrSVmass, logsumcorrSVmass = get_sumcorrmass(self.events.SVMatchedToFatJetGood)
         # Order SV by dxySig and compute the leading SV mass and its log
         #index_max_pt = ak.argsort(self.events.SVMatchedToFatJetGood.pt, ascending=False)
@@ -130,8 +130,8 @@ class fatjetBaseProcessor(BaseProcessorABC):
         sv1mass, logsv1mass = get_sv1mass(self.events.SVMatchedToFatJetGood[index_max_dxySig])
         fatjet_fields = {
             "nSVMatchedToFatJetGood": ak.count(self.events["SVMatchedToFatJetGood"].pt, axis=2),
-            "particleNetMD_Xbb_QCD" : Xbb / (Xbb + QCD),
-            "particleNetMD_Xcc_QCD" : Xcc / (Xcc + QCD),
+            # "particleNetMD_Xbb_QCD" : Xbb / (Xbb + QCD),
+            # "particleNetMD_Xcc_QCD" : Xcc / (Xcc + QCD),
             "sumcorrSVmass" : sumcorrSVmass,
             "logsumcorrSVmass" : logsumcorrSVmass,
             "sv1mass" : sv1mass,
