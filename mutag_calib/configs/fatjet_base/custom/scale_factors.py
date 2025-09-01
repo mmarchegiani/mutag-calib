@@ -47,9 +47,10 @@ def sf_ptetatau21_reweighting(events, year, params):
 
 
     cset = correctionlib.CorrectionSet.from_file(params["ptetatau21_reweighting"][year])
-    corr = cset[f"FatJetGoodNMuon1_pt_eta_tau21_corr_{year}"]
+    key = list(cset.keys())[0]
+    corr = cset[key]
 
-    cat = "pt300msd40"
+    cat = "inclusive"
     nfatjet  = ak.num(events.FatJetGood.pt)
     pos = ak.flatten(ak.local_index(events.FatJetGood.pt))
     pt = ak.flatten(events.FatJetGood.pt)
