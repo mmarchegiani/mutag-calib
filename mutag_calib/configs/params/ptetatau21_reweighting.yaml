@@ -1,0 +1,5 @@
+ptetatau21_reweighting:
+  2022_preEE:
+    mycorrection.json
+  2022_postEE:
+    mycorrection_2022_postEE.json
