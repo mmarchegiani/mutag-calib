@@ -1,5 +1,5 @@
 from pocket_coffea.lib.weights.weights import WeightLambda
-from mutag_calib.configs.fatjet_base.custom.scale_factors import pt_reweighting, pteta_reweighting, sf_trigger_prescale
+from mutag_calib.configs.fatjet_base.custom.scale_factors import pt_reweighting, pteta_reweighting, sf_ptetatau21_reweighting, sf_trigger_prescale
 
 pt_weight = WeightLambda.wrap_func(
     name="pt_reweighting",
