@@ -4,12 +4,12 @@ import awkward as ak
 
 import correctionlib
 
-from workflows.fatjet_base import fatjetBaseProcessor
+from mutag_calib.workflows.fatjet_base import fatjetBaseProcessor
 from pocket_coffea.utils.configurator import Configurator
 from pocket_coffea.lib.categorization import StandardSelection
 from pocket_coffea.parameters.jet_scale_factors import ptetatau21_reweighting
 from lib.sv import *
-from config.fatjet_base.custom.cuts import get_ptmsd
+from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd
 
 class mutagAnalysisProcessor(fatjetBaseProcessor):
     def __init__(self, cfg: Configurator):
