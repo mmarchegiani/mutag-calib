@@ -65,7 +65,17 @@ for coll in collections:
               Axis(coll="FatJetGood", field="tau21", label=r"$\tau_{21}$", type="variable", bins=[0, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 1]) ]
         ),
 
-# Build cartesian selection category for fatjets
+# Build dictionary of workflow options
+# We reweigh histograms differently depending whether:
+# - The histogram contains the whole jet collection ("all")
+workflow_options = {
+    "histograms_to_reweigh" : {
+        "by_pos" : {
+            "all" : [name for name in variables.keys() if name.startswith("FatJetGood_") and not name.endswith(("_1", "_2"))]
+        }
+    }
+}
+
 taggers = parameters["mutag_calibration"]["taggers"]
 
 # Note: Here we assume that the pt binning and WPs are the same for all the eras!
@@ -130,7 +140,7 @@ cfg = Configurator(
     },
 
     workflow = mutagAnalysisOneMuonInAK8Processor,
-    workflow_options = {},
+    workflow_options = workflow_options,
 
     skim = [get_nPVgood(1),
             eventFlags,
