@@ -40,15 +40,15 @@ class ptReweightProcessor(fatjetBaseProcessor):
     def apply_object_preselection(self, variation):
         super().apply_object_preselection(variation)
 
-        pt_min = 350.
+        pt_min = 300.
         msd = 40.
-        cuts_fatjet = {"pt350msd40" : [get_ptmsd(pt_min, msd)]}
+        cuts_fatjet = {"pt300msd40" : [get_ptmsd(pt_min, msd)]}
         selection_fatjet = StandardSelection(cuts_fatjet)
         selection_fatjet.prepare(
             events=self.events,
             processor_params=self.params
         )
-        mask_fatjet = selection_fatjet.get_mask("pt350msd40")
+        mask_fatjet = selection_fatjet.get_mask("pt300msd40")
 
         # Apply (pt, msd) cuts
         self.events["FatJetGood"] = self.events.FatJetGood[mask_fatjet]
