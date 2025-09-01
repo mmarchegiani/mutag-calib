@@ -2,6 +2,7 @@ from pocket_coffea.utils.configurator import Configurator
 from pocket_coffea.lib.cut_definition import Cut
 from pocket_coffea.lib.cut_functions import get_nObj_eq, get_nObj_min, get_HLTsel, get_nPVgood, goldenJson, eventFlags
 from pocket_coffea.parameters.cuts import passthrough
+from pocket_coffea.lib.categorization import CartesianSelection, MultiCut
 
 from pocket_coffea.lib.weights.common.common import common_weights
 from pocket_coffea.parameters.histograms import *
@@ -25,6 +26,7 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/triggers_run3.yaml",
                                                 f"{localdir}/params/triggers_prescales_run3.yaml",
                                                 f"{localdir}/params/ptetatau21_reweighting.yaml",
+                                                f"{localdir}/params/mutag_calibration.yaml",
                                                 update=True)
 
 samples = ["QCD_MuEnriched", "VJets", "TTto4Q","TWminus", "TWplus", "DATA_BTagMu"]
@@ -63,6 +65,47 @@ for coll in collections:
               Axis(coll="FatJetGood", field="tau21", label=r"$\tau_{21}$", type="variable", bins=[0, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 1]) ]
         ),
 
+# Build cartesian selection category for fatjets
+taggers = parameters["mutag_calibration"]["taggers"]
+
+# Note: Here we assume that the pt binning and WPs are the same for all the eras!
+# To be changed in the future if the WP is a function of the data taking year
+pt_binning = parameters["mutag_calibration"]["pt_binning"]["2022_preEE"]
+wp_dict = parameters["mutag_calibration"]["wp"]["2022_preEE"]
+
+common_cats = {
+    "inclusive" : [passthrough],
+    "pt300msd40" : [get_ptmsd(300., 40.)],
+    "pt300msd60" : [get_ptmsd(300., 60.)],
+    "pt300msd80" : [get_ptmsd(300., 80.)],
+    "pt300msd100" : [get_ptmsd(300., 100.)],
+    "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
+}
+
+msd = 40.
+
+cuts_pt = []
+cuts_names_pt = []
+for pt_low, pt_high in pt_binning.values():
+    cuts_pt.append(get_ptbin(pt_low, pt_high))
+    cuts_names_pt.append(f'Pt-{pt_low}to{pt_high}')
+cuts_tagger = []
+cuts_names_tagger = []
+for tagger in taggers:
+    for wp, wp_value in wp_dict[tagger].items():
+        for region in ["pass", "fail"]:
+            cuts_tagger.append(get_inclusive_wp(tagger, wp_value, region))
+            cuts_names_tagger.append(f"msd{int(msd)}{tagger}{region}{wp}wp")
+
+multicuts = [
+    MultiCut(name="tagger",
+             cuts=cuts_tagger,
+             cuts_names=cuts_names_tagger),
+    MultiCut(name="pt",
+             cuts=cuts_pt,
+             cuts_names=cuts_names_pt),
+]
+
 cfg = Configurator(
     parameters = parameters,
     datasets = {
@@ -98,14 +141,7 @@ cfg = Configurator(
             get_HLTsel()],
 
     preselections = [get_nObj_min(1, parameters.object_preselection["FatJet"]["pt"], "FatJetGood")],
-    categories = {
-        "inclusive" : [passthrough],
-        "pt300msd40" : [get_ptmsd(300., 40.)],
-        "pt300msd60" : [get_ptmsd(300., 60.)],
-        "pt300msd80" : [get_ptmsd(300., 80.)],
-        "pt300msd100" : [get_ptmsd(300., 100.)],
-        "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
-    },
+    categories = CartesianSelection(multicuts=multicuts, common_cats=common_cats),
 
     weights_classes = common_weights + [SF_trigger_prescale + SF_ptetatau21_reweighting],
     weights = {
