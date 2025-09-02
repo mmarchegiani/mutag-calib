@@ -157,7 +157,7 @@ cfg = Configurator(
     weights = {
         "common": {
             "inclusive": ["genWeight","lumi","XS","sf_trigger_prescale",
-                          "pileup", "sf_ptetatau21_reweighting"],
+                          "pileup"],
             "bycategory" : {
             }
         },

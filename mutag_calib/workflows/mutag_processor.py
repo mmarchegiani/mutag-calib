@@ -86,5 +86,31 @@ class mutagAnalysisProcessor(fatjetBaseProcessor):
                 for histname in hists:
                     self.custom_histogram_weights[histname] = self.weight_3d[pos]
 
+    # We redefine the fill_histograms method in order to use the custom histogram weights
+    def fill_histograms(self, variation):
+        '''Function which fill the histograms for each category and variation,
+        throught the HistManager.
+        '''
+        # Filling the autofill=True histogram automatically
+        # Calling hist manager with the subsample masks
+        self.hists_manager.fill_histograms(
+            self.events,
+            self._categories,
+            subsamples=self._subsamples[self._sample],
+            shape_variation=variation,
+            custom_fields=self.custom_histogram_fields,
+            custom_weight=self.custom_histogram_weights  # Here we pass the custom weights to the hist manager: this will apply our custom 3D weights during filling
+        )
+        # Saving the output for each sample/subsample
+        for subs in self._subsamples[self._sample].keys():
+            # When we loop on all the subsample we need to format correctly the output if
+            # there are no subsamples
+            if self._hasSubsamples:
+                name = f"{self._sample}__{subs}"
+            else:
+                name = self._sample
+            for var, H in self.hists_manager.get_histograms(subs).items():
+                self.output["variables"][var][name][self._dataset] = H
+
     def fill_column_accumulators(self, variation):
         pass
