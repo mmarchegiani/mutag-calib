@@ -114,8 +114,14 @@ python mutag_calib/scripts/compute_3d_reweighting.py -i pt_reweighting/output_al
 ```
 
 ### Step 2: Run jobs to produce fit templates in all the tagger categories
+To apply the 3D reweighting to the QCD MC sample, it is necessary to include the 3D reweighting maps in the parameters.
+For each data taking year, the corresponding file has to be specified in the `mutag_calib/configs/params/ptetatau21_reweighting.yaml` parameter file.
+A dedicated parameter file, `mutag_calib/configs/params/mutag_calibration.yaml`, is used to specify all the parameters related to the mu-tagged calibration. In this file are specified the AK8 taggers to calibrate, the $p_T$ binning and the tagger working points.
 
-TO DO.
+Launch jobs to produce fit templates including 3D reweighting of QCD sample:
+```bash
+pocket_coffea run --cfg mutag_calib/configs/fit_templates/fit_templates_Run3.py -o fit_templates -e dask@lxplus --custom-run-options mutag_calib/configs/params/run_options.yaml --process-separately
+```
 
 ### Step 3: Produce fit shapes and combine datacards
 
