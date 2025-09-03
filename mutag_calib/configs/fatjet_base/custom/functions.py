@@ -39,10 +39,14 @@ def tagger_mask_exclusive_wp(events, params, **kwargs):
     return mask
 
 def tagger_mask_inclusive_wp(events, params, **kwargs):
-    if type(params["wp"]) == float:
-        params["wp"] = (params["wp"], 1.0)
-    assert (len(params["wp"]) == 2), "The 'wp' parameter has to be a 2D tuple"
-    cut_low, cut_high = params["wp"]
+    wp = params["wp"]
+    if isinstance(wp, float):
+        cut_low, cut_high = wp, 1.0
+    else:
+        assert len(wp) == 2, "The 'wp' parameter has to be a float or a 2D tuple"
+        cut_low, cut_high = wp
+    # assert (len(params["wp"]) == 2), "The 'wp' parameter has to be a 2D tuple"
+    # cut_low, cut_high = params["wp"]
     assert (cut_low < cut_high), "The lower bound of the WP has to be smaller than the higher bound"
     mask = (events.FatJetGood[params["tagger"]] > cut_low)
 
