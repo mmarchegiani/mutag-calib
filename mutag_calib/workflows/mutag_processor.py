@@ -17,6 +17,7 @@ class mutagAnalysisProcessor(fatjetBaseProcessor):
             raise Exception("The entry of the config file 'workflow_options' does not contain a key 'histograms_to_reweigh'. Please specify it in the config file.")
         self.histograms_to_reweigh = self.cfg.workflow_options["histograms_to_reweigh"]
         self.weight_3d = defaultdict(dict)
+        self.custom_histogram_weights = {}
 
     def apply_object_preselection(self, variation, pt_min=350., msd=40.):
         super().apply_object_preselection(variation)
