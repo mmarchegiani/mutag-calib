@@ -173,7 +173,7 @@ cfg = Configurator(
     preselections = [get_nObj_min(1, parameters.object_preselection["FatJet"]["pt"], "FatJetGood")],
     categories = CartesianSelection(multicuts=multicuts, common_cats=common_cats),
 
-    weights_classes = common_weights + [SF_trigger_prescale],
+    weights_classes = common_weights + [SF_trigger_prescale, SF_ptetatau21_reweighting],
     weights = {
         "common": {
             "inclusive": ["genWeight","lumi","XS","sf_trigger_prescale",
