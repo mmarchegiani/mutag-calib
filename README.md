@@ -120,7 +120,7 @@ A dedicated parameter file, `mutag_calib/configs/params/mutag_calibration.yaml`,
 
 Launch jobs to produce fit templates including 3D reweighting of QCD sample:
 ```bash
-pocket_coffea run --cfg mutag_calib/configs/fit_templates/fit_templates_Run3.py -o fit_templates -e dask@lxplus --custom-run-options mutag_calib/configs/params/run_options.yaml --process-separately
+pocket-coffea run --cfg mutag_calib/configs/fit_templates/fit_templates_Run3.py -o fit_templates -e dask@lxplus --custom-run-options mutag_calib/configs/params/run_options.yaml --process-separately
 ```
 
 ### Step 3: Produce fit shapes and combine datacards
