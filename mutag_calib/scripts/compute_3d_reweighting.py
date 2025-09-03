@@ -143,7 +143,7 @@ def pt_reweighting(accumulator, year, histname, output, test=False, overwrite=Fa
     os.makedirs(output, exist_ok=True)
     outfile_reweighting = os.path.join(output, f'{histname}_{year}_reweighting.json')
     if not overwrite:
-        outfile_reweighting = overwrite_check(outfile_reweighting)
+        overwrite_check(outfile_reweighting)
     print(f"Saving pt reweighting factors in {outfile_reweighting}")
     with open(outfile_reweighting, "w") as fout:
         fout.write(cset.model_dump_json(exclude_unset=True))
