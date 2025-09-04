@@ -9,3 +9,4 @@ mutag_calib/workflows/__pycache__
 mutag_calib/lib/__pycache__
 pt_reweighting_Run3
 pt_3d_reweighting_Run3
+fit_templates_Run3
