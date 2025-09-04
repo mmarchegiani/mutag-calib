@@ -93,3 +93,34 @@ distributed.comm.core.CommClosedError
 [INFO    ] Working on group of datasets: Vjets (32 datasets)
 [INFO    ] Total number of events: 67206019
 [INFO    ] Reducing chunksize from 400000 to 336030 for dataset(s) Vjets
+[INFO    ] Grouping samples during processing
+[INFO    ] Grouping samples configuration: {'TTto4Q': ['TTto4Q'], 'Vjets': ['VJets'], 'SingleTop': ['TWminus', 'TWplus']}
+[INFO    ] Working on group of datasets: TTto4Q (4 datasets)
+[INFO    ] Total number of events: 390111821
+[INFO    ] Grouping samples during processing
+[INFO    ] Grouping samples configuration: {'TTto4Q': ['TTto4Q'], 'Vjets': ['VJets'], 'SingleTop': ['TWminus', 'TWplus']}
+[INFO    ] Working on group of datasets: TTto4Q (4 datasets)
+[INFO    ] Total number of events: 390111821
+[INFO    ] Working on group of datasets: Vjets (32 datasets)
+[INFO    ] Total number of events: 67206019
+[INFO    ] Reducing chunksize from 400000 to 336030 for dataset(s) Vjets
+[INFO    ] Grouping samples during processing
+[INFO    ] Grouping samples configuration: {'TTto4Q': ['TTto4Q'], 'Vjets': ['VJets'], 'SingleTop': ['TWminus', 'TWplus']}
+[INFO    ] Working on dataset: QCD_PT-1000_MuEnrichedPt5_Pt-1000_2022_postEE
+[INFO    ] Total number of events: 45523614
+[INFO    ] Reducing chunksize from 400000 to 227618 for dataset(s) QCD_PT-1000_MuEnrichedPt5_Pt-1000_2022_postEE
+[INFO    ] Grouping samples during processing
+[INFO    ] Grouping samples configuration: {'TTto4Q': ['TTto4Q'], 'Vjets': ['VJets'], 'SingleTop': ['TWminus', 'TWplus']}
+[INFO    ] Working on dataset: QCD_PT-1000_MuEnrichedPt5_Pt-1000_2022_postEE
+[INFO    ] Total number of events: 45523614
+[INFO    ] Reducing chunksize from 400000 to 227618 for dataset(s) QCD_PT-1000_MuEnrichedPt5_Pt-1000_2022_postEE
+[INFO    ] Grouping samples during processing
+[INFO    ] Grouping samples configuration: {'TTto4Q': ['TTto4Q'], 'Vjets': ['VJets'], 'SingleTop': ['TWminus', 'TWplus']}
+[INFO    ] Working on dataset: QCD_PT-1000_MuEnrichedPt5_Pt-1000_2022_postEE
+[INFO    ] Total number of events: 45523614
+[INFO    ] Reducing chunksize from 400000 to 227618 for dataset(s) QCD_PT-1000_MuEnrichedPt5_Pt-1000_2022_postEE
+[INFO    ] Grouping samples during processing
+[INFO    ] Grouping samples configuration: {'TTto4Q': ['TTto4Q'], 'Vjets': ['VJets'], 'SingleTop': ['TWminus', 'TWplus']}
+[INFO    ] Working on dataset: QCD_PT-1000_MuEnrichedPt5_Pt-1000_2022_postEE
+[INFO    ] Total number of events: 45523614
+[INFO    ] Reducing chunksize from 400000 to 227618 for dataset(s) QCD_PT-1000_MuEnrichedPt5_Pt-1000_2022_postEE
