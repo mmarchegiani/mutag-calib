@@ -59,11 +59,11 @@ for coll in collections:
     )
     variables[f"{coll}_logsumcorrSVmass"] = HistConf(
         [ Axis(coll="FatJetGood", field="logsumcorrSVmass", label=r"log($\sum({m^{corr}_{SV}})$)", bins=42, start=-2.4, stop=6) ]
-    ),
+    )
     variables[f"{coll}_logsumcorrSVmass_tau21"] = HistConf(
-            [ Axis(coll="FatJetGood", field="logsumcorrSVmass", label=r"log($\sum({m^{corr}_{SV}})$)", bins=42, start=-2.4, stop=6),
-              Axis(coll="FatJetGood", field="tau21", label=r"$\tau_{21}$", type="variable", bins=[0, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 1]) ]
-        ),
+        [ Axis(coll="FatJetGood", field="logsumcorrSVmass", label=r"log($\sum({m^{corr}_{SV}})$)", bins=42, start=-2.4, stop=6),
+          Axis(coll="FatJetGood", field="tau21", label=r"$\tau_{21}$", type="variable", bins=[0, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 1]) ]
+    )
 
 # Build dictionary of workflow options
 # We reweigh histograms differently depending whether:
@@ -96,7 +96,7 @@ msd = 40.
 
 cuts_pt = []
 cuts_names_pt = []
-for pt_low, pt_high in pt_binning.values():
+for pt_low, pt_high in pt_binning:
     cuts_pt.append(get_ptbin(pt_low, pt_high))
     cuts_names_pt.append(f'Pt-{pt_low}to{pt_high}')
 cuts_tagger = []
@@ -153,7 +153,7 @@ cfg = Configurator(
     preselections = [get_nObj_min(1, parameters.object_preselection["FatJet"]["pt"], "FatJetGood")],
     categories = CartesianSelection(multicuts=multicuts, common_cats=common_cats),
 
-    weights_classes = common_weights + [SF_trigger_prescale + SF_ptetatau21_reweighting],
+    weights_classes = common_weights + [SF_trigger_prescale],
     weights = {
         "common": {
             "inclusive": ["genWeight","lumi","XS","sf_trigger_prescale",
