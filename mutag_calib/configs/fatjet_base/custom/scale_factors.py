@@ -33,7 +33,7 @@ def pteta_reweighting(events, year):
 
     return pteta_corr.evaluate(cat, pt, eta)
 
-def sf_trigger_prescale(events, year, params):
+def sf_trigger_prescale(events, year, isMC, params):
     '''Trigger prescale factor extracted from the JSON files dumped by the script `dump_prescale.py`
     taken from the BTVNanoCommissioning repository.'''
 
@@ -44,7 +44,10 @@ def sf_trigger_prescale(events, year, params):
         "BTagMu_AK4Jet300_Mu5": events.HLT["BTagMu_AK4Jet300_Mu5"]
     }
 
-    psweight = ak.zeros_like(events.event, dtype=np.float32)
+    psweight = ak.ones_like(events.event, dtype=np.float32)
+
+    if isMC:
+        return psweight
 
     for trigger, trigbool in trigbools.items():
         psfile = params["HLT_triggers_prescales"][year]["BTagMu"][trigger]
