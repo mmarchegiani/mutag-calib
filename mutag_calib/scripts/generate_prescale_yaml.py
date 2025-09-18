@@ -70,7 +70,31 @@ def parse_prescale_data(data):
                         for i, weight in enumerate(content_weights):
                             lumi_start = edges[i]
                             lumi_end = edges[i+1] if i+1 < len(edges) else float('inf')
-                            lumi_range_size = lumi_end - lumi_start if lumi_end != float('inf') else float('inf')
+                            
+                            # Handle string "inf" values
+                            if lumi_start == "inf":
+                                lumi_start = float('inf')
+                            elif isinstance(lumi_start, str):
+                                try:
+                                    lumi_start = float(lumi_start)
+                                except ValueError:
+                                    print(f"        Warning: Could not convert lumi_start '{lumi_start}' to float")
+                                    lumi_start = 1.0
+                            
+                            if lumi_end == "inf":
+                                lumi_end = float('inf')
+                            elif isinstance(lumi_end, str):
+                                try:
+                                    lumi_end = float(lumi_end)
+                                except ValueError:
+                                    print(f"        Warning: Could not convert lumi_end '{lumi_end}' to float")
+                                    lumi_end = float('inf')
+                            
+                            # Calculate range size
+                            if lumi_end == float('inf') or lumi_start == float('inf'):
+                                lumi_range_size = float('inf')
+                            else:
+                                lumi_range_size = lumi_end - lumi_start
                             
                             prescale_info.append({
                                 'run': run_number,
@@ -166,6 +190,8 @@ def generate_prescale_yaml(config_path, output_path=None):
                     
                 except Exception as e:
                     print(f"      Error processing {json_file}: {e}")
+                    import traceback
+                    print(f"      Full traceback: {traceback.format_exc()}")
                     continue
     
     # Calculate averages and format output
