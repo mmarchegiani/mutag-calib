@@ -37,6 +37,9 @@ def sf_trigger_prescale(events, year, isMC, params):
     '''Trigger prescale factor extracted from the JSON files dumped by the script `dump_prescale.py`
     taken from the BTVNanoCommissioning repository.'''
 
+    if isMC:
+        raise Exception("Prescale weights are applicable only to data.")
+
     trigbools = {
         "BTagMu_AK8DiJet170_Mu5": events.HLT["BTagMu_AK8DiJet170_Mu5"],
         "BTagMu_AK8Jet300_Mu5": events.HLT["BTagMu_AK8Jet300_Mu5"],
@@ -45,9 +48,6 @@ def sf_trigger_prescale(events, year, isMC, params):
     }
 
     psweight = ak.ones_like(events.event, dtype=np.float32)
-
-    if isMC:
-        return psweight
 
     for trigger, trigbool in trigbools.items():
         psfile = params["HLT_triggers_prescales"][year]["BTagMu"][trigger]
