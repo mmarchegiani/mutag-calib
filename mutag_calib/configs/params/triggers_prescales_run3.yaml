@@ -1,25 +1,25 @@
 HLT_triggers_prescales:
     2022_preEE:
         BTagMu:
-          BTagMu_AK8DiJet170_Mu5 : ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8DiJet170_Mu5_run355374_362760.json
-          BTagMu_AK8Jet170_DoubleMu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8Jet170_DoubleMu5_run355374_362760.json
-          BTagMu_AK8Jet300_Mu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8Jet300_Mu5_run355374_362760.json
-          BTagMu_AK4Jet300_Mu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK4Jet300_Mu5_run355374_362760.json
+          BTagMu_AK8DiJet170_Mu5 : ${config_dir}/params/prescales/ps_weight_BTagMu_AK8DiJet170_Mu5_run355374_362760.json
+          BTagMu_AK8Jet170_DoubleMu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK8Jet170_DoubleMu5_run355374_362760.json
+          BTagMu_AK8Jet300_Mu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK8Jet300_Mu5_run355374_362760.json
+          BTagMu_AK4Jet300_Mu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK4Jet300_Mu5_run355374_362760.json
     2022_postEE:
         BTagMu:
-          BTagMu_AK8DiJet170_Mu5 : ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8DiJet170_Mu5_run355374_362760.json
-          BTagMu_AK8Jet170_DoubleMu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8Jet170_DoubleMu5_run355374_362760.json
-          BTagMu_AK8Jet300_Mu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8Jet300_Mu5_run355374_362760.json
-          BTagMu_AK4Jet300_Mu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK4Jet300_Mu5_run355374_362760.json
+          BTagMu_AK8DiJet170_Mu5 : ${config_dir}/params/prescales/ps_weight_BTagMu_AK8DiJet170_Mu5_run355374_362760.json
+          BTagMu_AK8Jet170_DoubleMu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK8Jet170_DoubleMu5_run355374_362760.json
+          BTagMu_AK8Jet300_Mu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK8Jet300_Mu5_run355374_362760.json
+          BTagMu_AK4Jet300_Mu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK4Jet300_Mu5_run355374_362760.json
     2023_preBPix:
         BTagMu:
-          BTagMu_AK8DiJet170_Mu5 : ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8DiJet170_Mu5_run366727_370790.json
-          BTagMu_AK8Jet170_DoubleMu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8Jet170_DoubleMu5_run366727_370790.json
-          BTagMu_AK8Jet300_Mu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8Jet300_Mu5_run366727_370790.json
-          BTagMu_AK4Jet300_Mu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK4Jet300_Mu5_run366727_370790.json
+          BTagMu_AK8DiJet170_Mu5 : ${config_dir}/params/prescales/ps_weight_BTagMu_AK8DiJet170_Mu5_run366727_370790.json
+          BTagMu_AK8Jet170_DoubleMu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK8Jet170_DoubleMu5_run366727_370790.json
+          BTagMu_AK8Jet300_Mu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK8Jet300_Mu5_run366727_370790.json
+          BTagMu_AK4Jet300_Mu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK4Jet300_Mu5_run366727_370790.json
     2023_postBPix:
         BTagMu:
-          BTagMu_AK8DiJet170_Mu5 : ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8DiJet170_Mu5_run366727_370790.json
-          BTagMu_AK8Jet170_DoubleMu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8Jet170_DoubleMu5_run366727_370790.json
-          BTagMu_AK8Jet300_Mu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK8Jet300_Mu5_run366727_370790.json
-          BTagMu_AK4Jet300_Mu5: ${config_dir:}/params/prescales/ps_weight_BTagMu_AK4Jet300_Mu5_run366727_370790.json
+          BTagMu_AK8DiJet170_Mu5 : ${config_dir}/params/prescales/ps_weight_BTagMu_AK8DiJet170_Mu5_run366727_370790.json
+          BTagMu_AK8Jet170_DoubleMu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK8Jet170_DoubleMu5_run366727_370790.json
+          BTagMu_AK8Jet300_Mu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK8Jet300_Mu5_run366727_370790.json
+          BTagMu_AK4Jet300_Mu5: ${config_dir}/params/prescales/ps_weight_BTagMu_AK4Jet300_Mu5_run366727_370790.json
