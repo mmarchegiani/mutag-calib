@@ -1,11 +1,4 @@
 jets_calibration:
-  variations:
-    '2022_preEE': []
-    '2022_postEE': []
-    '2023_preBPix': []
-    '2023_postBPix': []
-
-
   jet_types:
     MC:
       AK8PFPuppi:
