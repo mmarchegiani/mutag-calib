@@ -4,7 +4,6 @@ jets_calibration:
     '2022_postEE': []
     '2023_preBPix': []
     '2023_postBPix': []
-    '2024': []
 
 
   jet_types:
@@ -142,8 +141,6 @@ jets_calibration:
       AK8PFPuppi: "FatJet"
     2023_postBPix:
       AK8PFPuppi: "FatJet"
-    "2024":
-      AK8PFPuppi: "FatJet"
 
   apply_jec_MC:  # this is needed to know which collection is corrected with which jet factory
     2022_preEE: 
@@ -153,8 +150,6 @@ jets_calibration:
     2023_preBPix: 
       AK8PFPuppi: True
     2023_postBPix: 
-      AK8PFPuppi: True
-    "2024": 
       AK8PFPuppi: True
   
   apply_jec_Data:  # this is needed to know which collection is corrected with which jet factory
@@ -166,8 +161,6 @@ jets_calibration:
       AK8PFPuppi: True
     2023_postBPix: 
       AK8PFPuppi: True
-    "2024": 
-      AK8PFPuppi: True
 
   apply_pt_regr_MC:
     2022_preEE: 
@@ -178,8 +171,6 @@ jets_calibration:
       AK8PFPuppi: False
     2023_postBPix: 
       AK8PFPuppi: False
-    "2024":
-      AK8PFPuppi: False
 
   apply_pt_regr_Data:
     2022_preEE: 
@@ -189,8 +180,6 @@ jets_calibration:
     2023_preBPix: 
       AK8PFPuppi: False
     2023_postBPix: 
-      AK8PFPuppi: False
-    "2024": 
       AK8PFPuppi: False
 
   rescale_MET_config:
@@ -207,10 +196,6 @@ jets_calibration:
       MET_collection: "PuppiMET"
       Jet_collection: "Jet"
     2023_postBPix:
-      apply: False
-      MET_collection: "PuppiMET"
-      Jet_collection: "Jet"
-    "2024":
       apply: False
       MET_collection: "PuppiMET"
       Jet_collection: "Jet"
