@@ -57,7 +57,7 @@ def define_processes(samples, years):
         DataProcess(
             name="data_obs",
             samples=[],  # Will be populated from sample names starting with DATA_
-            years=years,
+            # years=years,
         )
     ])
     
@@ -209,7 +209,7 @@ def main():
     
     # Extract histograms, cutflow, and metadata
     histograms = output["variables"]
-    cutflow = output["cutflow"]
+    cutflow = histograms["FatJetGood_eta"]
     datasets_metadata = output["datasets_metadata"]
     categories = [cat for cat in cutflow.keys() if cat.startswith('msd')]
     
@@ -320,3 +320,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

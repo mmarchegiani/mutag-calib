@@ -31,6 +31,7 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/mutag_calibration_HHbbtt.yaml",
                                                 update=True)
 
+<<<<<<< HEAD:mutag_calib/configs/fit_templates/fit_templates_run3.py
 samples = [
     "QCD_MuEnriched",
     "VJets",
@@ -38,6 +39,10 @@ samples = [
     "SingleTop",
     "DATA_BTagMu"
 ]
+=======
+samples = ["QCD_MuEnriched", "VJets", "TTto4Q","TWminus", "TWplus", "DATA_BTagMu"]
+# samples = ["QCD_MuEnriched"]
+>>>>>>> c7ae238 (commit before rebase with Matteo repo):mutag_calib/configs/fit_templates/fit_templates_Run3.py
 subsamples = {}
 for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
     subsamples[s] = {f"{s}_{f}" : [get_flavor(f)] for f in ['l', 'c', 'b', 'cc', 'bb']}
@@ -140,11 +145,24 @@ multicuts = [
 cfg = Configurator(
     parameters = parameters,
     datasets = {
+<<<<<<< HEAD:mutag_calib/configs/fit_templates/fit_templates_run3.py
         "jsons": ["datasets/MC_QCD_MuEnriched_run3_redirector.json",
                   "datasets/MC_VJets_run3_redirector.json",
                   "datasets/MC_TTto4Q_run3.json",
                   "datasets/MC_singletop_run3.json",
                   "datasets/DATA_BTagMu_run3.json"
+=======
+        # "jsons": ["datasets/MC_QCD_MuEnriched_run3_redirector.json",
+        #           "datasets/MC_VJets_run3_redirector.json",
+        #           "datasets/MC_TTto4Q_run3.json",
+        #           "datasets/MC_SingleTop_semileptonic_run3.json",
+        #           "datasets/MC_SingleTop_fullyhadronic_run3.json",
+        #           "datasets/DATA_BTagMu_run3.json",
+        #           "datasets/MC_QCD_MuEnriched_800to1000_run3.json",
+        #           "datasets/MC_QCD_MuEnriched_80to120_run3.json"
+        #           ],
+        "jsons": ["datasets/MC_QCD_MuEnriched_800to1000_run3.json"
+>>>>>>> c7ae238 (commit before rebase with Matteo repo):mutag_calib/configs/fit_templates/fit_templates_Run3.py
                   ],
         "filter" : {
             "samples": samples,
