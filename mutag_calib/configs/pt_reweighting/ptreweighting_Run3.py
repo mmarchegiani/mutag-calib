@@ -28,9 +28,7 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/triggers_prescales_run3.yaml",
                                                 update=True)
 
-samples = ["QCD_MuEnriched", "VJets", "TTto4Q","TWminus", "TWplus", "DATA_BTagMu"]
-#samples = ["QCD_MuEnriched", "VJets", "TTto4Q", "DATA_BTagMu"]
-#samples = ["TWminus", "TWplus"]
+samples = ["QCD_MuEnriched", "VJets", "TTto4Q","SingleTop", "DATA_BTagMu"]
 subsamples = {}
 for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
     subsamples[s] = {f"{s}_{f}" : [get_flavor(f)] for f in ['l', 'c', 'b', 'cc', 'bb']}
