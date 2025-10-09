@@ -88,8 +88,7 @@ cfg = Configurator(
         "jsons": ["datasets/MC_QCD_MuEnriched_run3.json",
                   "datasets/MC_VJets_run3.json",
                   "datasets/MC_TTto4Q_run3.json",
-                  "datasets/MC_SingleTop_semileptonic_run3.json",
-                  "datasets/MC_SingleTop_fullyhadronic_run3.json",
+                  "datasets/MC_singletop_run3.json",
                   "datasets/DATA_BTagMu_run3.json"
                   ],
         "filter" : {
