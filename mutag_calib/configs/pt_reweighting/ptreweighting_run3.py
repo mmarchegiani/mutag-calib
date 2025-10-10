@@ -3,6 +3,7 @@ from pocket_coffea.lib.cut_definition import Cut
 from pocket_coffea.lib.cut_functions import get_nObj_eq, get_nObj_min, get_HLTsel, get_nPVgood, goldenJson, eventFlags
 from pocket_coffea.parameters.cuts import passthrough
 
+from pocket_coffea.lib.calibrators.common import JetsCalibrator
 from pocket_coffea.lib.weights.common.common import common_weights
 from pocket_coffea.parameters.histograms import *
 import mutag_calib
@@ -28,7 +29,13 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/triggers_prescales_run3.yaml",
                                                 update=True)
 
-samples = ["QCD_MuEnriched", "VJets", "TTto4Q","SingleTop", "DATA_BTagMu"]
+samples = [
+    "QCD_MuEnriched",
+    "VJets",
+    "TTto4Q",
+    "SingleTop",
+    "DATA_BTagMu"
+]
 subsamples = {}
 for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
     subsamples[s] = {f"{s}_{f}" : [get_flavor(f)] for f in ['l', 'c', 'b', 'cc', 'bb']}
@@ -137,6 +144,7 @@ cfg = Configurator(
         }
     },
 
+    calibrators = [JetsCalibrator],
     variations = {
         "weights": {
             "common": {
