@@ -1,6 +1,6 @@
 # Per-event cuts applied to each event
 from pocket_coffea.lib.cut_definition import Cut
-from mutag_calib.configs.fatjet_base.custom.functions import twojets_ptmsd, mutag_fatjet, mutag_subjet, ptbin, ptbin_mutag, msoftdrop, ptmsd, ptmsd_window, ptmsdtau, min_nObj_minmsd, flavor_mask
+from mutag_calib.configs.fatjet_base.custom.functions import twojets_ptmsd, mutag_fatjet, mutag_subjet, ptbin, ptbin_mutag, msoftdrop, msoftdropbin, ptmsd, ptmsd_window, ptmsdtau, min_nObj_minmsd, flavor_mask
 
 def twojets_presel(pt, msd, name=None):
     if name == None:
@@ -74,6 +74,16 @@ def get_msd(msd, name=None):
         name=name,
         params= {"msd" : msd},
         function=msoftdrop,
+        collection="FatJetGood"
+    )
+
+def get_msdbin(msd_min, msd_max, name=None):
+    if name == None:
+        name = f"msd{msd_min}to{msd_max}"
+    return Cut(
+        name=name,
+        params= {"msd_min" : msd_min, "msd_max": msd_max},
+        function=msoftdropbin,
         collection="FatJetGood"
     )
 

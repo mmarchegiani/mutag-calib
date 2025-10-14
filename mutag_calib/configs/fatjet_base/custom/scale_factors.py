@@ -1,6 +1,4 @@
 import awkward as ak
-import numpy as np
-import os
 
 import correctionlib
 
@@ -33,37 +31,15 @@ def pteta_reweighting(events, year):
 
     return pteta_corr.evaluate(cat, pt, eta)
 
-def sf_trigger_prescale(events, year, isMC, params):
-    '''Trigger prescale factor extracted from the JSON files dumped by the script `dump_prescale.py`
-    taken from the BTVNanoCommissioning repository.'''
+def sf_trigger_prescale(events, year, params):
+    '''Trigger prescale factor'''
+    # Here we assume that both BTagMu_AK4Jet300_Mu5 and BTagMu_AK8Jet170_DoubleMu5 triggers have a prescale of 1
+    sf = ak.Array(len(events)*[1.0])
+    pass_unprescaled_triggers = events.HLT["BTagMu_AK4Jet300_Mu5"] | events.HLT["BTagMu_AK8Jet170_DoubleMu5"]
+    sf = ak.where(events.HLT["BTagMu_AK8Jet300_Mu5"] & (~pass_unprescaled_triggers), 1. / params["HLT_triggers_prescales"][year]["BTagMu"]["BTagMu_AK8Jet300_Mu5"], sf)
+    sf = ak.where(events.HLT["BTagMu_AK8DiJet170_Mu5"] & (~events.HLT["BTagMu_AK8Jet300_Mu5"]) & (~pass_unprescaled_triggers), 1. / params["HLT_triggers_prescales"][year]["BTagMu"]["BTagMu_AK8DiJet170_Mu5"], sf)
 
-    if isMC:
-        raise Exception("Prescale weights are applicable only to data.")
-
-    trigbools = {
-        "BTagMu_AK8DiJet170_Mu5": events.HLT["BTagMu_AK8DiJet170_Mu5"],
-        "BTagMu_AK8Jet300_Mu5": events.HLT["BTagMu_AK8Jet300_Mu5"],
-        "BTagMu_AK8Jet170_DoubleMu5": events.HLT["BTagMu_AK8Jet170_DoubleMu5"],
-        "BTagMu_AK4Jet300_Mu5": events.HLT["BTagMu_AK4Jet300_Mu5"]
-    }
-
-    psweight = ak.ones_like(events.event, dtype=np.float32)
-
-    for trigger, trigbool in trigbools.items():
-        psfile = params["HLT_triggers_prescales"][year]["BTagMu"][trigger]
-        if not os.path.isfile(psfile):
-            raise NotImplementedError(
-                f"Prescale weights not available for {trigger} in {year}. Please run `scripts/dump_prescale.py`."
-            )
-        pseval = correctionlib.CorrectionSet.from_file(psfile)
-        thispsweight = pseval["prescaleWeight"].evaluate(
-            events.run,
-            f"HLT_{trigger}",
-            ak.values_astype(events.luminosityBlock, np.float32),
-        )
-        psweight = ak.where(trigbool, thispsweight, psweight)
-
-    return psweight
+    return sf
 
 def sf_ptetatau21_reweighting(events, year, params):
     '''Correction of jets observable by a 3D reweighting based on (pT, eta, tau21).

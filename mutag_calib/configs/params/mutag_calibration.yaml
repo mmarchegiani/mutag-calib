@@ -10,32 +10,37 @@ mutag_calibration:
       - [300, 'Inf']
     2023_postBPix:
       - [300, 'Inf']
+  msd_binning:
+    2022_preEE:
+      - [40, 'Inf']
+      - [80, 170]
+      - [30, 210]
+    2022_postEE:
+      - [40, 'Inf']
+      - [80, 170]
+      - [30, 210]
+    2023_preBPix:
+      - [40, 'Inf']
+      - [80, 170]
+      - [30, 210]
+    2023_postBPix:
+      - [40, 'Inf']
+      - [80, 170]
+      - [30, 210]
   wp:
     2022_preEE:
       particleNet_XbbVsQCD:
-        L: 0.7
-        M: 0.75
-        T: 0.8
-        XT: 0.85
-        XXT: 0.9
+        HHbbgg: 0.4
+        HHbbtt: 0.75
     2022_postEE:
       particleNet_XbbVsQCD:
-        L: 0.7
-        M: 0.75
-        T: 0.8
-        XT: 0.85
-        XXT: 0.9
+        HHbbgg: 0.4
+        HHbbtt: 0.75
     2023_preBPix:
       particleNet_XbbVsQCD:
-        L: 0.7
-        M: 0.75
-        T: 0.8
-        XT: 0.85
-        XXT: 0.9
+        HHbbgg: 0.4
+        HHbbtt: 0.75
     2023_postBPix:
       particleNet_XbbVsQCD:
-        L: 0.7
-        M: 0.75
-        T: 0.8
-        XT: 0.85
-        XXT: 0.9
+        HHbbgg: 0.4
+        HHbbtt: 0.75

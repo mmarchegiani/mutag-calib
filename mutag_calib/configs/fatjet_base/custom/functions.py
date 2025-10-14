@@ -161,6 +161,19 @@ def msoftdrop(events, params, **kwargs):
 
     return ak.where(~ak.is_none(mask, axis=1), mask, False)
 
+def msoftdropbin(events, params, **kwargs):
+    # Mask to select events with a fatjet with minimum softdrop mass and maximum
+    if params["msd_max"] == 'Inf':
+        mask = (events.FatJetGood.msoftdrop >= params["msd_min"])
+    elif type(params["msd_max"]) != str:
+        mask = (events.FatJetGood.msoftdrop >= params["msd_min"]) & (events.FatJetGood.msoftdrop < params["msd_max"])
+    else:
+        raise NotImplementedError
+
+    assert not ak.any(ak.is_none(mask, axis=1)), f"None in msoftdropbin\n{events.nJetGood[ak.is_none(mask, axis=1)]}"
+
+    return ak.where(~ak.is_none(mask, axis=1), mask, False)
+
 def ptmsd(events, params, **kwargs):
     # Mask to select events with a fatjet with minimum softdrop mass and maximum tau21
     #return (events.FatJetGood[:,0].pt > params["pt"]) & (events.FatJetGood[:,0].msoftdrop > params["msd"])
