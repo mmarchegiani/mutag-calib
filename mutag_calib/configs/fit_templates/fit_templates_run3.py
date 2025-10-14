@@ -4,10 +4,11 @@ from pocket_coffea.lib.cut_functions import get_nObj_eq, get_nObj_min, get_HLTse
 from pocket_coffea.parameters.cuts import passthrough
 from pocket_coffea.lib.categorization import CartesianSelection, MultiCut
 
+from pocket_coffea.lib.calibrators.common import JetsCalibrator
 from pocket_coffea.lib.weights.common.common import common_weights
 from pocket_coffea.parameters.histograms import *
 import mutag_calib
-from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_ptmsd_window, get_nObj_minmsd, get_flavor, get_ptbin
+from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_ptmsd_window, get_nObj_minmsd, get_flavor, get_ptbin, get_msdbin
 from mutag_calib.configs.fatjet_base.custom.functions import get_inclusive_wp
 from mutag_calib.configs.fatjet_base.custom.weights import SF_trigger_prescale, SF_ptetatau21_reweighting
 import mutag_calib.workflows.mutag_oneMuAK8_processor as workflow
@@ -29,7 +30,13 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/mutag_calibration.yaml",
                                                 update=True)
 
-samples = ["QCD_MuEnriched", "VJets", "TTto4Q","TWminus", "TWplus", "DATA_BTagMu"]
+samples = [
+    "QCD_MuEnriched",
+    "VJets",
+    "TTto4Q",
+    "SingleTop",
+    "DATA_BTagMu"
+]
 subsamples = {}
 for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
     subsamples[s] = {f"{s}_{f}" : [get_flavor(f)] for f in ['l', 'c', 'b', 'cc', 'bb']}
@@ -82,6 +89,7 @@ taggers = parameters["mutag_calibration"]["taggers"]
 # To be changed in the future if the WP is a function of the data taking year
 pt_binning = parameters["mutag_calibration"]["pt_binning"]["2022_preEE"]
 wp_dict = parameters["mutag_calibration"]["wp"]["2022_preEE"]
+msd_binning = parameters["mutag_calibration"]["msd_binning"]["2022_preEE"]
 
 common_cats = {
     "inclusive" : [passthrough],
@@ -92,28 +100,40 @@ common_cats = {
     "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
 }
 
-msd = 40.
-
+# Define cuts to select bins in pt
 cuts_pt = []
 cuts_names_pt = []
 for pt_low, pt_high in pt_binning:
     cuts_pt.append(get_ptbin(pt_low, pt_high))
     cuts_names_pt.append(f'Pt-{pt_low}to{pt_high}')
+
+# Define cuts to select bins in msoftdrop
+cuts_msd = []
+cuts_names_msd = []
+for msd_low, msd_high in msd_binning:
+    cuts_msd.append(get_msdbin(msd_low, msd_high))
+    cuts_names_msd.append(f'msd-{msd_low}to{msd_high}')
+
+# Define cuts to select bins in tagger WPs
 cuts_tagger = []
 cuts_names_tagger = []
 for tagger in taggers:
     for wp, wp_value in wp_dict[tagger].items():
         for region in ["pass", "fail"]:
             cuts_tagger.append(get_inclusive_wp(tagger, wp_value, region))
-            cuts_names_tagger.append(f"msd{int(msd)}{tagger}{region}{wp}wp")
+            cuts_names_tagger.append(f"{tagger}-{wp}-{region}")
 
+# Define multicuts for pt, msd and tagger WPs
 multicuts = [
-    MultiCut(name="tagger",
-             cuts=cuts_tagger,
-             cuts_names=cuts_names_tagger),
+    MultiCut(name="msd",
+             cuts=cuts_msd,
+             cuts_names=cuts_names_msd),
     MultiCut(name="pt",
              cuts=cuts_pt,
              cuts_names=cuts_names_pt),
+    MultiCut(name="tagger",
+             cuts=cuts_tagger,
+             cuts_names=cuts_names_tagger),
 ]
 
 cfg = Configurator(
@@ -122,8 +142,7 @@ cfg = Configurator(
         "jsons": ["datasets/MC_QCD_MuEnriched_run3.json",
                   "datasets/MC_VJets_run3.json",
                   "datasets/MC_TTto4Q_run3.json",
-                  "datasets/MC_SingleTop_semileptonic_run3.json",
-                  "datasets/MC_SingleTop_fullyhadronic_run3.json",
+                  "datasets/MC_singletop_run3.json",
                   "datasets/DATA_BTagMu_run3.json"
                   ],
         "filter" : {
@@ -165,6 +184,7 @@ cfg = Configurator(
         }
     },
 
+    calibrators = [JetsCalibrator],
     variations = {
         "weights": {
             "common": {

@@ -3,16 +3,19 @@ from pocket_coffea.lib.cut_definition import Cut
 from pocket_coffea.lib.cut_functions import get_nObj_eq, get_nObj_min, get_HLTsel, get_nPVgood, goldenJson, eventFlags
 from pocket_coffea.parameters.cuts import passthrough
 
+from pocket_coffea.lib.calibrators.common import JetsCalibrator
 from pocket_coffea.lib.weights.common.common import common_weights
 from pocket_coffea.parameters.histograms import *
-from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_nObj_minmsd, get_flavor
+import mutag_calib
+from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_ptmsd_window, get_nObj_minmsd, get_flavor
 from mutag_calib.configs.fatjet_base.custom.functions import get_inclusive_wp
+from mutag_calib.configs.fatjet_base.custom.weights import SF_trigger_prescale
 import mutag_calib.workflows.pt_reweighting as workflow
 from mutag_calib.workflows.pt_reweighting import ptReweightProcessor
 import numpy as np
 import os
 
-localdir = os.path.dirname(os.path.abspath(__file__))
+localdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Loading default parameters
 from pocket_coffea.parameters import defaults
@@ -20,21 +23,21 @@ default_parameters = defaults.get_default_parameters()
 defaults.register_configuration_dir("config_dir", localdir+"/params")
 
 parameters = defaults.merge_parameters_from_files(default_parameters,
-                                                f"{localdir}/../params/object_preselection.yaml",
-                                                f"{localdir}/../params/triggers_run3.yaml",
+                                                f"{localdir}/params/object_preselection.yaml",
+                                                f"{localdir}/params/jets_calibration.yaml",
+                                                f"{localdir}/params/triggers_run3.yaml",
+                                                f"{localdir}/params/triggers_prescales_run3.yaml",
                                                 update=True)
 
 samples = [
     "QCD_MuEnriched",
     "VJets",
-    #"SingleTop",
     "TTto4Q",
+    "SingleTop",
     "DATA_BTagMu"
-    ]
-
-# Divide MC samples into subsamples based on their flavor
+]
 subsamples = {}
-for s in filter(lambda x: 'DATA' not in x, samples):
+for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
     subsamples[s] = {f"{s}_{f}" : [get_flavor(f)] for f in ['l', 'c', 'b', 'cc', 'bb']}
 
 variables = {
@@ -48,24 +51,29 @@ variables = {
 #collections = ["FatJetGoodNMuon1", "FatJetGoodNMuon2", "FatJetGoodNMuonSJ1", "FatJetGoodNMuonSJUnique1"]
 collections = ["FatJetGood"]
 
-# Define histograms for FatJet collections needed to extract the reweighting maps
 for coll in collections:
     variables.update(**fatjet_hists(coll=coll))
     variables[f"{coll}_pt"] = HistConf([Axis(name=f"{coll}_pt", coll=coll, field="pt",
-                                                    label=r"FatJet $p_{T}$ [GeV]", bins=list(range(350, 1010, 10)))])
+                                                    label=r"FatJet $p_{T}$ [GeV]", bins=list(range(300, 1010, 10)))]
+    )
     variables[f"{coll}_msoftdrop"] = HistConf([Axis(name=f"{coll}_msoftdrop", coll=coll, field="msoftdrop",
-                                                           label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(40, 410, 10)))])
+                                                           label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(40, 410, 10)))]
+    )
+    variables[f"{coll}_tau21"] = HistConf([Axis(name=f"{coll}_tau21", coll=coll, field="tau21",
+                                                           label=r"FatJet $\tau_{21}$", bins=[0, 0.20, 0.25, 0.30, 0.35, 
+                                                           0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 1])]
+    )
     variables[f"{coll}_pt_eta"] = HistConf(
         [ Axis(name=f"{coll}_pos", coll=coll, field="pos", type="int", label=r"FatJet position", bins=2, start=0, stop=2),
           Axis(name=f"{coll}_pt", coll=coll, field="pt", type="variable", label=r"FatJet $p_{T}$ [GeV]",
-               bins=[350., 400., 450., 500., 550., 600., 700., 800., 900., 2500.]),
+               bins=[300., 320., 340., 360., 380., 400., 450., 500., 550., 600., 700., 800., 900., 2500.]),
           Axis(name=f"{coll}_eta", coll=coll, field="eta", type="variable", label=r"FatJet $\eta$",
                bins=[-5, -2, -1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 5]) ]
     )
     variables[f"{coll}_pt_eta_tau21"] = HistConf(
         [ Axis(name=f"{coll}_pos", coll=coll, field="pos", type="int", label=r"FatJet position", bins=2, start=0, stop=2),
           Axis(name=f"{coll}_pt", coll=coll, field="pt", type="variable", label=r"FatJet $p_{T}$ [GeV]",
-               bins=[350., 400., 450., 500., 550., 600., 700., 800., 900., 2500.]),
+               bins=[300., 320., 340., 360., 380., 400., 450., 500., 550., 600., 700., 800., 900., 2500.]),
           Axis(name=f"{coll}_eta", coll=coll, field="eta", type="variable", label=r"FatJet $\eta$",
                bins=[-5, -2, -1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 5]),
           Axis(name=f"{coll}_tau21", coll=coll, field="tau21", type="variable", label=r"FatJet $\tau_{21}$",
@@ -74,7 +82,7 @@ for coll in collections:
     variables[f"{coll}_pt_eta_tau21_bintau05"] = HistConf(
         [ Axis(name=f"{coll}_pos", coll=coll, field="pos", type="int", label=r"FatJet position", bins=2, start=0, stop=2),
           Axis(name=f"{coll}_pt", coll=coll, field="pt", type="variable", label=r"FatJet $p_{T}$ [GeV]",
-               bins=[350., 400., 450., 500., 550., 600., 700., 800., 900., 2500.]),
+               bins=[300., 320., 340., 360., 380., 400., 450., 500., 550., 600., 700., 800., 900., 2500.]),
           Axis(name=f"{coll}_eta", coll=coll, field="eta", type="variable", label=r"FatJet $\eta$",
                bins=[-5, -2, -1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 5]),
           Axis(name=f"{coll}_tau21", coll=coll, field="tau21", type="variable", label=r"FatJet $\tau_{21}$",
@@ -86,14 +94,19 @@ cfg = Configurator(
     datasets = {
         "jsons": ["datasets/MC_QCD_MuEnriched_run3.json",
                   "datasets/MC_VJets_run3.json",
-                  "datasets/MC_background_TTto4Q.json",
-                  "datasets/DATA_BTagMu_run3.json"],
+                  "datasets/MC_TTto4Q_run3.json",
+                  "datasets/MC_singletop_run3.json",
+                  "datasets/DATA_BTagMu_run3.json"
+                  ],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
             "year": [
-                '2022_preEE', '2022_postEE', '2023_preBPix', '2023_postBPix'
-                ]
+                '2022_preEE',
+                '2022_postEE',
+                '2023_preBPix',
+                '2023_postBPix'
+            ]
         },
         "subsamples": subsamples
     },
@@ -112,16 +125,17 @@ cfg = Configurator(
     preselections = [get_nObj_min(1, parameters.object_preselection["FatJet"]["pt"], "FatJetGood")],
     categories = {
         "inclusive" : [passthrough],
-        "pt350msd40" : [get_ptmsd(350., 40.)],
-        "pt350msd60" : [get_ptmsd(350., 60.)],
-        "pt350msd80" : [get_ptmsd(350., 80.)],
-        "pt350msd100" : [get_ptmsd(350., 100.)],
+        "pt300msd40" : [get_ptmsd(300., 40.)],
+        "pt300msd60" : [get_ptmsd(300., 60.)],
+        "pt300msd80" : [get_ptmsd(300., 80.)],
+        "pt300msd100" : [get_ptmsd(300., 100.)],
+        "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
     },
 
-    weights_classes = common_weights,
+    weights_classes = common_weights + [SF_trigger_prescale],
     weights = {
         "common": {
-            "inclusive": ["genWeight","lumi","XS",
+            "inclusive": ["genWeight","lumi","XS","sf_trigger_prescale",
                           "pileup"],
             "bycategory" : {
             }
@@ -130,6 +144,7 @@ cfg = Configurator(
         }
     },
 
+    calibrators = [JetsCalibrator],
     variations = {
         "weights": {
             "common": {
@@ -142,9 +157,8 @@ cfg = Configurator(
         },
         "shape": {
             "common": {
-                "inclusive" : [
-                    #"JES_Total_AK8PFPuppi", "JER_AK8PFPuppi"
-                    ]
+                # "inclusive" : ["JES_Total_AK8PFPuppi", "JER_AK8PFPuppi"]
+                "inclusive" : []
             }
         }
     },
@@ -157,3 +171,4 @@ cfg = Configurator(
 # Registering custom functions
 import cloudpickle
 cloudpickle.register_pickle_by_value(workflow)
+cloudpickle.register_pickle_by_value(mutag_calib)

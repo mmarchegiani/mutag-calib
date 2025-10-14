@@ -16,6 +16,5 @@ group-samples:
   Vjets:
     - "VJets"
   SingleTop:
-    - "TWminus"
-    - "TWplus"
+    - "SingleTop"
 

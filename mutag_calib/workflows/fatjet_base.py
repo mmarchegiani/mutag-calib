@@ -51,21 +51,6 @@ class fatjetBaseProcessor(BaseProcessorABC):
         self.events["MuonGood"] = lepton_selection_noniso(
             self.events, "Muon", self.params
         )
-        ################################################
-        self.events["ElectronGood"] = lepton_selection(
-            self.events, "Electron", self.params
-        )
-        leptons = ak.with_name(
-            ak.concatenate((self.events.MuonGood, self.events.ElectronGood), axis=1),
-            name='PtEtaPhiMCandidate',
-        )
-        self.events["LeptonGood"] = leptons[ak.argsort(leptons.pt, ascending=False)]
-
-        # Apply JEC + JER
-        #self.apply_JERC()
-        self.events["JetGood"], self.jetGoodMask = jet_selection(
-            self.events, "Jet", self.params, self._year, leptons_collection="LeptonGood"
-        )
 
         self.events["FatJetGood"], self.fatjetGoodMask = jet_selection(
             self.events, "FatJet", self.params, self._year
@@ -102,11 +87,6 @@ class fatjetBaseProcessor(BaseProcessorABC):
 
     def count_objects(self, variation):
         self.events["nMuonGood"] = ak.num(self.events.MuonGood)
-        self.events["nElectronGood"] = ak.num(self.events.ElectronGood)
-        self.events["nLeptonGood"] = (
-            self.events["nMuonGood"] + self.events["nElectronGood"]
-        )
-        self.events["nJetGood"] = ak.num(self.events.JetGood)
         self.events["nFatJetGood"] = ak.num(self.events.FatJetGood)
         self.events["nSV"] = ak.num(self.events.SV)
 
