@@ -48,7 +48,6 @@ export PYTHONPATH=`pwd`
 
 
 > [!TIP]
-> 💡 **Time-saving tip:**
 > 
 > To avoid typing the long `apptainer shell` command every time, you can create an alias in your `~/.bashrc` file:
 >
@@ -126,7 +125,6 @@ pocket-coffea run --cfg mutag_calib/configs/pt_reweighting/ptreweighting_run3.py
 ```
 
 > [!TIP]
-> 💡 **Time-saving tip**
 > 
 > The argument `--process-separately` will save one output .coffea file for each dataset. This is convenient because your processor will often crash on a specific dataset. In order to avoid losing precious CPU time for a single faulty dataset, it is better to save an output file for each dataset and then merge all the files into a single one after processing.
 > It is possible to merge datasets belonging to a specific sample while still procesing separately the remaining datasets. This is possible by passing custom run options with the `-ro` argument. For instance, by adding these lines to the `mutag_calib/configs/params/run_options.yaml` file:
