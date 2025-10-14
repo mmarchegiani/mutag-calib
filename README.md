@@ -46,11 +46,16 @@ source myenv/bin/activate
 export PYTHONPATH=`pwd`
 ```
 
-> **Tip:** You can create an alias for the `apptainer shell` command to enter the Singularity image and save it in your `~/.bashrc` file to avoid typing it every time. Add the following line to your `~/.bashrc`:
-> ```bash
-> alias sing='apptainer shell --bind /afs -B /cvmfs/cms.cern.ch --bind /tmp --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit -B ${XDG_RUNTIME_DIR} --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc" /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable'
-> ```
-> Then, you can simply type `sing` to enter the Singularity image.
+💡 **Time-saving tip**
+{: .tip }
+
+To avoid typing the long `apptainer shell` command every time, you can create an alias in your `~/.bashrc` file:
+
+```bash
+alias sing='apptainer shell --bind /afs -B /cvmfs/cms.cern.ch --bind /tmp --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit -B ${XDG_RUNTIME_DIR} --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc" /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable'
+```
+
+After adding this alias, you can simply type `sing` to enter the Singularity image!
 
 ## Workflows
 The folder `workflows` contains different PocketCoffea workflows that are needed to perform the analysis.
@@ -116,8 +121,26 @@ In order to run the analysis on Run 3 data, the trigger paths specified in the `
 ### Step 1: compute 3D reweighting based on jet $p_T$, $\eta$, $\tau_{21}$
 Run jobs on DATA, QCD, V+jets and top datasets:
 ```bash
-pocket-coffea run --cfg mutag_calib/configs/pt_reweighting/ptreweighting_run3.py -o pt_reweighting -e dask@lxplus
+pocket-coffea run --cfg mutag_calib/configs/pt_reweighting/ptreweighting_run3.py -o pt_reweighting -e dask@lxplus -ro mutag_calib/configs/params/run_options.yaml --process-separately 
 ```
+
+💡 **Time-saving tip**
+{: .tip }
+
+The argument `--process-separately` will save one output .coffea file for each dataset. This is convenient because your processor will often crash on a specific dataset. In order to avoid losing precious CPU time for a single faulty dataset, it is better to save an output file for each dataset and then merge all the files into a single one after processing.
+It is possible to merge datasets belonging to a specific sample while still procesing separately the remaining datasets. This is possible by passing custom run options with the `-ro` argument. For instance, by adding these lines to the `mutag_calib/configs/params/run_options.yaml` file:
+```yaml
+group-samples:
+  TTto4Q:
+    - "TTto4Q"
+  Vjets:
+    - "VJets"
+  SingleTop:
+    - "SingleTop"
+```
+Single output files including all data-taking years will be saved: `output_TTto4Q.coffea`, `output_Vjets.coffea` and `output_SingleTop.coffea`. Instead for QCD and DATA, one output file for each dataset and data-taking year will be saved, for example: `output_QCD_PT-170to300_MuEnrichedPt5_Pt-170to300_2023_preBPix.coffea`.
+
+After merging the output files, you can proceed with the next steps of the analysis.
 
 Produce 3D reweighting map with:
 ```bash
