@@ -46,16 +46,17 @@ source myenv/bin/activate
 export PYTHONPATH=`pwd`
 ```
 
-💡 **Time-saving tip**
-{: .tip }
 
-To avoid typing the long `apptainer shell` command every time, you can create an alias in your `~/.bashrc` file:
-
-```bash
-alias sing='apptainer shell --bind /afs -B /cvmfs/cms.cern.ch --bind /tmp --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit -B ${XDG_RUNTIME_DIR} --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc" /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable'
-```
-
-After adding this alias, you can simply type `sing` to enter the Singularity image!
+> [!TIP]
+> 💡 **Time-saving tip:**
+> 
+> To avoid typing the long `apptainer shell` command every time, you can create an alias in your `~/.bashrc` file:
+>
+> ```bash
+> alias sing='apptainer shell --bind /afs -B /cvmfs/cms.cern.ch --bind /tmp --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit -B ${XDG_RUNTIME_DIR} --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc" /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable'
+> ```
+>
+> After adding this alias, you can simply type `sing` to enter the Singularity image!
 
 ## Workflows
 The folder `workflows` contains different PocketCoffea workflows that are needed to perform the analysis.
@@ -124,23 +125,24 @@ Run jobs on DATA, QCD, V+jets and top datasets:
 pocket-coffea run --cfg mutag_calib/configs/pt_reweighting/ptreweighting_run3.py -o pt_reweighting -e dask@lxplus -ro mutag_calib/configs/params/run_options.yaml --process-separately 
 ```
 
-💡 **Time-saving tip**
-{: .tip }
+> [!TIP]
+> 💡 **Time-saving tip**
+> 
+> The argument `--process-separately` will save one output .coffea file for each dataset. This is convenient because your processor will often crash on a specific dataset. In order to avoid losing precious CPU time for a single faulty dataset, it is better to save an output file for each dataset and then merge all the files into a single one after processing.
+> It is possible to merge datasets belonging to a specific sample while still procesing separately the remaining datasets. This is possible by passing custom run options with the `-ro` argument. For instance, by adding these lines to the `mutag_calib/configs/params/run_options.yaml` file:
+> ```yaml
+> group-samples:
+>   TTto4Q:
+>     - "TTto4Q"
+>   Vjets:
+>     - "VJets"
+>   SingleTop:
+>     - "SingleTop"
+> ```
+> Single output files including all data-taking years will be saved: `output_TTto4Q.coffea`, `output_Vjets.coffea` and `output_SingleTop.coffea`. Instead for QCD and DATA, one output file for each dataset and data-taking year will be saved, for example: `output_QCD_PT-170to300_MuEnrichedPt5_Pt-170to300_2023_preBPix.coffea`.
+> 
 
-The argument `--process-separately` will save one output .coffea file for each dataset. This is convenient because your processor will often crash on a specific dataset. In order to avoid losing precious CPU time for a single faulty dataset, it is better to save an output file for each dataset and then merge all the files into a single one after processing.
-It is possible to merge datasets belonging to a specific sample while still procesing separately the remaining datasets. This is possible by passing custom run options with the `-ro` argument. For instance, by adding these lines to the `mutag_calib/configs/params/run_options.yaml` file:
-```yaml
-group-samples:
-  TTto4Q:
-    - "TTto4Q"
-  Vjets:
-    - "VJets"
-  SingleTop:
-    - "SingleTop"
-```
-Single output files including all data-taking years will be saved: `output_TTto4Q.coffea`, `output_Vjets.coffea` and `output_SingleTop.coffea`. Instead for QCD and DATA, one output file for each dataset and data-taking year will be saved, for example: `output_QCD_PT-170to300_MuEnrichedPt5_Pt-170to300_2023_preBPix.coffea`.
-
-After merging the output files, you can proceed with the next steps of the analysis.
+After merging the output files with the `merge-outputs` command, it is possible to produce the 3D reweighting map.
 
 Produce 3D reweighting map with:
 ```bash
