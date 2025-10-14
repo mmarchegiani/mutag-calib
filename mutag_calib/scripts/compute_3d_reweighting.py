@@ -77,7 +77,8 @@ pt_eta_tau21_3d_maps = [
     #'FatJetGoodNMuonSJUnique1_pt_eta_tau21', 'FatJetGoodNMuonSJUnique1_pt_eta_tau21_bintau05',
 ]
 
-def pt_reweighting(accumulator, year, histname, output, test=False, overwrite=False):
+def pt_reweighting(accumulator, histname, output, test=False, overwrite=False):
+    years = accumulator["datasets_metadata"]["by_datataking_period"].keys()
     h = accumulator['variables'][histname]
     samples = h.keys()
     samples_data = list(filter(lambda d: 'DATA' in d, samples))
@@ -85,92 +86,94 @@ def pt_reweighting(accumulator, year, histname, output, test=False, overwrite=Fa
     samples_qcd = list(filter(lambda d: 'QCD' in d, samples_mc))
     samples_vjets_top = list(filter(lambda d: (('VJets' in d) | ('SingleTop' in d) | ('TTto4Q' in d)), samples_mc))
 
-    # Build QCD, VJets+top and Data histograms by summing over all datasets
-    h_qcd = sum([h[s][d] for s, datasets_dict in h.items() for d in datasets_dict if s in samples_qcd])
-    h_vjets_top = sum([h[s][d] for s, datasets_dict in h.items() for d in datasets_dict if s in samples_vjets_top])
-    h_data = sum([h[s][d] for s, datasets_dict in h.items() for d in datasets_dict if s in samples_data])
+    # Compute a 3D correction for each year and save it in a separate json file
+    for year in years:
+        # Build QCD, VJets+top and Data histograms by summing over all datasets and filtering by year
+        h_qcd = sum([h[s][d] for s, datasets_dict in h.items() for d in datasets_dict if ((s in samples_qcd) & (year in d))])
+        h_vjets_top = sum([h[s][d] for s, datasets_dict in h.items() for d in datasets_dict if ((s in samples_vjets_top) & (year in d))])
+        h_data = sum([h[s][d] for s, datasets_dict in h.items() for d in datasets_dict if ((s in samples_data) & (year in d))])
 
-    axes = dense_axes(h_qcd)
-    categories = get_axis_items(h_qcd, 'cat')
-    variations = get_axis_items(h_qcd, 'variation')
+        axes = dense_axes(h_qcd)
+        categories = get_axis_items(h_qcd, 'cat')
+        variations = get_axis_items(h_qcd, 'variation')
 
-    ratio_dict = defaultdict(float)
+        ratio_dict = defaultdict(float)
 
-    for cat in categories:
-        ratio_dict[cat] = {}
-        for var_shape in variations:
-            slicing_mc = {'cat': cat, 'variation': var_shape}
+        for cat in categories:
+            ratio_dict[cat] = {}
+            for var_shape in variations:
+                slicing_mc = {'cat': cat, 'variation': var_shape}
 
-            if 'era' in h_data.axes.name:
-                slicing_data = {'cat': cat, 'era': sum}
-            else:
-                slicing_data = {'cat': cat}
-            ratio, unc, unc_no_diff = get_data_mc_ratio(
-                h_data[slicing_data],
-                h_qcd[slicing_mc],
-                h_vjets_top[slicing_mc]
-            )
-            mod_ratio  = np.nan_to_num(ratio, nan=1.0)
-            mod_unc = np.nan_to_num(unc, nan=0.0)
-            mod_unc_no_diff = np.nan_to_num(unc_no_diff, nan=0.0)
+                if 'era' in h_data.axes.name:
+                    slicing_data = {'cat': cat, 'era': sum}
+                else:
+                    slicing_data = {'cat': cat}
+                ratio, unc, unc_no_diff = get_data_mc_ratio(
+                    h_data[slicing_data],
+                    h_qcd[slicing_mc],
+                    h_vjets_top[slicing_mc]
+                )
+                mod_ratio  = np.nan_to_num(ratio, nan=1.0)
+                mod_unc = np.nan_to_num(unc, nan=0.0)
+                mod_unc_no_diff = np.nan_to_num(unc_no_diff, nan=0.0)
 
-            ratio_dict[cat][var_shape] = {}
-            ratio_dict[cat][var_shape].update({ "nominal" : mod_ratio })
-            ratio_dict[cat][var_shape].update({ "statUp" : mod_ratio + mod_unc })
-            ratio_dict[cat][var_shape].update({ "statDown" : mod_ratio - mod_unc })
+                ratio_dict[cat][var_shape] = {}
+                ratio_dict[cat][var_shape].update({ "nominal" : mod_ratio })
+                ratio_dict[cat][var_shape].update({ "statUp" : mod_ratio + mod_unc })
+                ratio_dict[cat][var_shape].update({ "statDown" : mod_ratio - mod_unc })
 
-    categories = list(ratio_dict.keys())
-    shape_variations = list(ratio_dict[categories[0]].keys())
-    variations = list(ratio_dict[categories[0]][shape_variations[0]].keys())
-    axis_category = hist.axis.StrCategory(categories, name="cat")
-    axis_shape_variation = hist.axis.StrCategory(shape_variations, name="shape_variation")
-    axis_variation = hist.axis.StrCategory(variations, name="variation")
-    # Stack nominal, statUp, statDown maps for each category
-    stack_map = np.stack([[list(ratio_dict[cat][var_shape].values()) for var_shape in shape_variations] for cat in categories])
-    sfhist = hist.Hist(axis_category, axis_shape_variation, axis_variation, *axes, data=stack_map)
-    sfhist.label = "out"
-    sfhist.name = f"{histname}_corr_{year}"
-    description = "Reweighting SF matching the leading fatjet pT and eta MC distribution to data."
-    clibcorr = correctionlib.convert.from_histogram(sfhist, flow="clamp")
-    clibcorr.description = description
-    cset = correctionlib.schemav2.CorrectionSet(
-        schema_version=2,
-        description="MC to data reweighting SF",
-        corrections=[clibcorr],
-    )
-    rich.print(cset)
+        categories = list(ratio_dict.keys())
+        shape_variations = list(ratio_dict[categories[0]].keys())
+        variations = list(ratio_dict[categories[0]][shape_variations[0]].keys())
+        axis_category = hist.axis.StrCategory(categories, name="cat")
+        axis_shape_variation = hist.axis.StrCategory(shape_variations, name="shape_variation")
+        axis_variation = hist.axis.StrCategory(variations, name="variation")
+        # Stack nominal, statUp, statDown maps for each category
+        stack_map = np.stack([[list(ratio_dict[cat][var_shape].values()) for var_shape in shape_variations] for cat in categories])
+        sfhist = hist.Hist(axis_category, axis_shape_variation, axis_variation, *axes, data=stack_map)
+        sfhist.label = "out"
+        sfhist.name = f"{histname}_corr_{year}"
+        description = "Reweighting SF matching the leading fatjet pT and eta MC distribution to data."
+        clibcorr = correctionlib.convert.from_histogram(sfhist, flow="clamp")
+        clibcorr.description = description
+        cset = correctionlib.schemav2.CorrectionSet(
+            schema_version=2,
+            description="MC to data reweighting SF",
+            corrections=[clibcorr],
+        )
+        rich.print(cset)
 
-    os.makedirs(output, exist_ok=True)
-    outfile_reweighting = os.path.join(output, f'{histname}_{year}_reweighting.json')
-    if not overwrite:
-        overwrite_check(outfile_reweighting)
-    print(f"Saving pt reweighting factors in {outfile_reweighting}")
-    with open(outfile_reweighting, "w") as fout:
-        fout.write(cset.model_dump_json(exclude_unset=True))
-    fout.close()
-    if test:
-        print(f"Loading correction from {outfile_reweighting}...")
-        cset = correctionlib.CorrectionSet.from_file(os.path.abspath(outfile_reweighting))
-        print("(cat): inclusive,", "(var): nominal")
-        pt_corr = cset[sfhist.name]
-        pos  = np.array([0, 1, 0, 1, 0], dtype=int)
-        pt  = np.array([50, 100, 400, 500, 1000], dtype=float)
-        eta = np.array([-2, -1, 0, 1, 2], dtype=float)
-        print("pos =", pos)
-        print("pt =", pt)
-        print("eta =", eta)
-        if histname in pt_eta_2d_maps:
-            args = (pos, pt, eta)
+        os.makedirs(output, exist_ok=True)
+        outfile_reweighting = os.path.join(output, f'{histname}_{year}_reweighting.json')
+        if not overwrite:
+            overwrite_check(outfile_reweighting)
+        print(f"Saving pt reweighting factors in {outfile_reweighting}")
+        with open(outfile_reweighting, "w") as fout:
+            fout.write(cset.model_dump_json(exclude_unset=True))
+        fout.close()
+        if test:
+            print(f"Loading correction from {outfile_reweighting}")
+            cset = correctionlib.CorrectionSet.from_file(os.path.abspath(outfile_reweighting))
+            print("(cat): inclusive,", "(var): nominal")
+            pt_corr = cset[sfhist.name]
+            pos  = np.array([0, 1, 0, 1, 0], dtype=int)
+            pt  = np.array([50, 100, 400, 500, 1000], dtype=float)
+            eta = np.array([-2, -1, 0, 1, 2], dtype=float)
+            print("pos =", pos)
+            print("pt =", pt)
+            print("eta =", eta)
+            if histname in pt_eta_2d_maps:
+                args = (pos, pt, eta)
 
-        elif histname in pt_eta_tau21_3d_maps:
-            tau21 = np.array([0.1, 0.35, 0.65, 0.8, 0.9], dtype=float)
-            print("tau21 =", tau21)
-            args = (pos, pt, eta, tau21)
-        for var_shape in shape_variations:
-            categorical_args = ['inclusive', var_shape, 'nominal']
-            print(categorical_args)
-            print(pt_corr.evaluate(*categorical_args, *args))
-            print()
+            elif histname in pt_eta_tau21_3d_maps:
+                tau21 = np.array([0.1, 0.35, 0.65, 0.8, 0.9], dtype=float)
+                print("tau21 =", tau21)
+                args = (pos, pt, eta, tau21)
+            for var_shape in shape_variations:
+                categorical_args = ['inclusive', var_shape, 'nominal']
+                print(categorical_args)
+                print(pt_corr.evaluate(*categorical_args, *args))
+                print()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Compute pt reweighting factors.")
@@ -182,12 +185,5 @@ if __name__ == "__main__":
 
     accumulator = load(args.input)
 
-    years = list(accumulator["datasets_metadata"]["by_datataking_period"].keys())
-
-    if len(years) > 1:
-        raise Exception("Only one data-taking year can be processed at a time.")
-    else:
-        year = years[0]
-
     for histname in pt_eta_2d_maps + pt_eta_tau21_3d_maps:
-        pt_reweighting(accumulator=accumulator, year=year, histname=histname, output=args.output, test=args.test, overwrite=args.overwrite)
+        pt_reweighting(accumulator=accumulator, histname=histname, output=args.output, test=args.test, overwrite=args.overwrite)
