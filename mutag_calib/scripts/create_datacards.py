@@ -204,7 +204,7 @@ def main():
     args = parser.parse_args()
     
     # Load the coffea output
-    print(f"Loading coffea output from {args.input_file}")
+    print(f"Loading coffea output from {args.input_file}\n")
     output = load(args.input_file)
     
     # Extract histograms, cutflow, and metadata
@@ -320,4 +320,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
