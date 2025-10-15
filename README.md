@@ -16,7 +16,7 @@ git clone git@github.com:mmarchegiani/mutag-calib.git
 apptainer shell --bind /afs -B /cvmfs/cms.cern.ch \
          --bind /tmp  --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit \
          -B ${XDG_RUNTIME_DIR}  --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc"  \
-         /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable
+         /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-latest
 
 # Create a local virtual environment using the packages defined in the apptainer image
 python -m venv --system-site-packages myenv
@@ -38,7 +38,7 @@ Now the environment is setup. In order to use this environment in the future, ju
 apptainer shell --bind /afs -B /cvmfs/cms.cern.ch \
          --bind /tmp  --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit \
          -B ${XDG_RUNTIME_DIR}  --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc"  \
-         /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable
+         /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-latest
 # Activate the environment
 source myenv/bin/activate
 
@@ -52,7 +52,7 @@ export PYTHONPATH=`pwd`
 > To avoid typing the long `apptainer shell` command every time, you can create an alias in your `~/.bashrc` file:
 >
 > ```bash
-> alias sing='apptainer shell --bind /afs -B /cvmfs/cms.cern.ch --bind /tmp --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit -B ${XDG_RUNTIME_DIR} --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc" /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-stable'
+> alias sing='apptainer shell --bind /afs -B /cvmfs/cms.cern.ch --bind /tmp --bind /eos/cms/ -B /etc/sysconfig/ngbauth-submit -B ${XDG_RUNTIME_DIR} --env KRB5CCNAME="FILE:${XDG_RUNTIME_DIR}/krb5cc" /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-analysis/general/pocketcoffea:lxplus-el9-latest'
 > ```
 >
 > After adding this alias, you can simply type `sing` to enter the Singularity image!
