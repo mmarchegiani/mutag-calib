@@ -12,15 +12,17 @@ import os
 import argparse
 import yaml
 from pathlib import Path
+from collections import defaultdict
+import uproot
 from coffea.util import load
 
-from pocket_coffea.utils.stat import MCProcess, DataProcess, SystematicUncertainty, Datacard, MCProcesses, DataProcesses, Systematics
+from pocket_coffea.utils.stat import MCProcess, DataProcess, SystematicUncertainty, MCProcesses, DataProcesses, Systematics
 from pocket_coffea.utils.stat.combine import combine_datacards
 
 # Import the configuration to get the same parameters
 import mutag_calib
 from mutag_calib.configs.fit_templates.fit_templates_run3 import parameters
-
+from mutag_calib.utils.stat.datacard_mutag import DatacardMutag
 
 def load_parameters():
     """Load parameters from the configuration files."""
@@ -55,8 +57,8 @@ def define_processes(samples, years):
             name="b",
             samples=samples["b"],  # Will be populated from sample names ending with _b or _bb
             years=years,
-            is_signal=True,  # b-jets are the signal for the mutag calibration measurement
-            has_rateParam=False,
+            is_signal=True,        # b-jets are the signal process for the calibration
+            has_rateParam=True,
         )
     ])
     
@@ -137,6 +139,22 @@ def define_systematics(years, mc_process_names):
     
     return systematics
 
+def get_passfail_ratio(datacards):
+    sumw_percat = {}
+    for cat, datacard in datacards.items():
+        shape_histograms = datacard.create_shape_histogram_dict(is_data=False)
+        sumw_percat[cat] = {process_name.split("_nominal")[0] : hist.values().sum() for process_name, hist in shape_histograms.items()}
+
+    passfail_ratio = defaultdict(dict)
+    parent_categories = set(['-'.join(cat.split("-")[:-1]) for cat in datacards.keys()])
+    for parent_cat in parent_categories:
+        sumw_pass = sumw_percat[f"{parent_cat}-pass"]
+        sumw_fail = sumw_percat[f"{parent_cat}-fail"]
+        for flavor in sumw_pass.keys():
+            passfail_ratio[parent_cat][flavor] = float(sumw_pass[flavor] / sumw_fail[flavor])
+
+    return dict(passfail_ratio)
+
 def print_report(successful_categories, failed_categories):
     for d_cat in successful_categories:
         print(f"✅ Year: {d_cat['year']}, Category: {d_cat['category']}, Folder: {d_cat['folder']}")
@@ -157,6 +175,7 @@ def main():
     parser.add_argument("--variable", default="FatJetGood_logsumcorrSVmass", help="Variable to use for the fit")
     parser.add_argument("--years", nargs="+", default=["2022_preEE", "2022_postEE", "2023_preBPix", "2023_postBPix"], 
                        help="Years to include in the analysis")
+    parser.add_argument("--verbose", "-v", action="store_true", default=False, help="Enable verbose output")
     
     args = parser.parse_args()
     
@@ -178,6 +197,9 @@ def main():
     samples = categorize_samples(cutflow)
     print(f"Found samples: {samples}")
     print(f"Available histograms: {list(histograms.keys())}")
+
+    successful_categories = []
+    failed_categories = []
 
     for year in args.years:
         # Define processes and systematics
@@ -202,54 +224,72 @@ def main():
         all_datacards = {}
         
         # Create datacards for each combination
-        successful_categories = []
-        failed_categories = []
         for cat in categories:
+
+            print(f"Creating datacard: Year: {year}\tCategory: {cat}")
+            
+            # Create datacard
+            datacard = DatacardMutag(
+                histograms=histograms[args.variable],
+                datasets_metadata=datasets_metadata,
+                cutflow=cutflow,
+                years=[year],
+                mc_processes=mc_processes,
+                data_processes=data_processes,
+                systematics=systematics,
+                category=cat,  # Category string matching the multicuts structure
+                verbose=args.verbose
+            )
+            
+            # Store for combination between pass and fail regions
+            all_datacards[cat] = datacard
                 
+        passfail_ratio = get_passfail_ratio(all_datacards)
+
+        # Loop over categories again to dump datacards modified with pass/fail ratios
+        parent_categories = set()
+        for cat in categories:
+            # Extract parent category (without pass/fail)
+            parent_category = '-'.join(cat.split("-")[:-1])
+            parent_categories.add(parent_category)
+            region = cat.split("-")[-1]
             # Create directory for this category
-            category_dir = output_dir / year / cat
+            category_dir = output_dir / year / parent_category / region
             category_dir.mkdir(parents=True, exist_ok=True)
-            
-            print(f"Creating datacard for category: {cat}")
-            
+            datacard = all_datacards[cat]
+
+            # Modify action of rateParam for fail regions by passing the passfail_ratio argument
+            if cat.endswith("-pass"):
+                kwargs = {"directory" : str(category_dir)}
+            elif cat.endswith("-fail"):
+                parent_cat = '-'.join(cat.split("-")[:-1])
+                kwargs = {"directory" : str(category_dir), "passfail_ratio" : passfail_ratio[parent_cat]}
             try:
-                # Create datacard
-                datacard = Datacard(
-                    histograms=histograms[args.variable],
-                    datasets_metadata=datasets_metadata,
-                    cutflow=cutflow,
-                    years=[year],
-                    mc_processes=mc_processes,
-                    data_processes=data_processes,
-                    systematics=systematics,
-                    category=cat,  # Category string matching the multicuts structure
-                )
-                
-                datacard.dump(str(category_dir))
-                
-                # Store for combination
-                all_datacards[str(category_dir)] = datacard
-                
+                datacard.dump(**kwargs)
                 successful_categories.append({"year": year, "category": cat, "folder": str(category_dir)})
-                
             except Exception as e:
+                print(f"Failed to create datacard for Year: {year}, Category: {cat}")
+                print(str(e))
                 failed_categories.append({"year": year, "category": cat, "error": str(e)})
-                print(f"  Error creating datacard for {cat}: {e}")
-                continue
-    
+
+        # Create combined datacard for pass+fail regions, for each parent category
+        for parent_cat in parent_categories:
+            print(f"\nCreating combined datacard for category: {parent_cat} (pass+fail)")
+            directory = output_dir / year / parent_cat
+            combine_datacards(
+                datacards={f"{region}/datacard.txt": all_datacards[f"{parent_cat}-{region}"] for region in ["pass", "fail"]},
+                directory=directory
+            )
+            # Save pass/fail ratio to a YAML file
+            filename = directory / "passfail_ratio.yaml"
+            print(f"Saving pass/fail ratio to {filename}")
+            with open(filename, "w") as f:
+                yaml.dump({"passfail_ratio" : passfail_ratio[parent_cat]}, f, indent=4)
+
+            print(f"Combined datacard saved in {directory}")
+
+    # Print summary report
     print_report(successful_categories, failed_categories)
-
-    # Create combined datacard
-    print(f"\nCreating combined datacard...")
-    combine_datacards(
-        datacards=all_datacards,
-        directory=str(output_dir)
-    )
-    print(f"Combined datacard saved: {output_dir / 'combined_datacard.txt'}")
-    
-    print(f"\nDatacard creation completed. Output directory: {output_dir}")
-    print(f"Total categories created: {len(all_datacards)}")
-
 
 if __name__ == "__main__":
     main()

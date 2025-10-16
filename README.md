@@ -176,5 +176,58 @@ pocket-coffea run --cfg mutag_calib/configs/fit_templates/fit_templates_run3.py 
 ```
 
 ### Step 3: Produce fit shapes and combine datacards
+In order to produce the fit shapes and combine datacards for the fit, a dedicated script can be run with the following command:
+```bash
+python mutag_calib/scripts/create_datacards.py fit_templates/output_all.coffea --years 2022_preEE 2022_postEE 2023_preBPix 2023_PostBPix
+```
+The script will create a folder `fit_templates/datacards` containing a system of subfolders organized by data-taking era, category and pass/fail regions. The folder will have the following structure:
+```bash
+|-- 2022_postEE
+|   |-- msd-30to210_Pt-300toInf_particleNet_XbbVsQCD-HHbbgg
+|   |   |-- combine_cards.sh
+|   |   |-- fail
+|   |   |   |-- datacard.txt
+|   |   |   `-- shapes.root
+|   |   |-- pass
+|   |   |   |-- datacard.txt
+|   |   |   `-- shapes.root
+|   |   `-- passfail_ratio.yaml
+|   |-- msd-30to210_Pt-300toInf_particleNet_XbbVsQCD-HHbbtt
+|   |   |-- combine_cards.sh
+|   |   |-- fail
+|   |   |   |-- datacard.txt
+|   |   |   `-- shapes.root
+|   |   |-- pass
+|   |   |   |-- datacard.txt
+|   |   |   `-- shapes.root
+|   |   `-- passfail_ratio.yaml
+```
+The datacards for the pass and fail regions of the tagger are stored in separated subfolders of the category folder, `pass` and `fail`.
 
-TO DO.
+### Step 4: Run combine fit
+In order to run the maximum likelihood fit to extract the AK8 jet scale factors, it is necessary to use the [Combine](https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/latest/) package. This package is based on RooFit and it runs outside of the Python environment used for the production of the fit templates. A dedicated CMSSW installation needs to be setup to use the Combine statistical tool.
+
+Do a fresh login to a lxplus machine without entering in the PocketCoffea singularity image. If you are in the singularity image, type `exit` to exit the container.
+In a clean environment, setup the combine tool following the recommendations in the [Combine documentation](https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/latest/#combine-v10-recommended-version). The same commands can be found in the `setup_combine.sh` script. You can run it with the following command:
+```bash
+source setup_combine.sh
+```
+This will setup a `CMSSW_14_1_0_pre4` installation and build the necessary packages. The installation might take a few minutes.
+
+Once the installation is completed, you can use the newly installed CMSSW environment with the usual command:
+```bash
+cd CMSSW_14_1_0_pre4/src
+cmsenv
+cd -
+```
+
+Move to the folder of the category that you are interested to calibrate. A bash script `combine_cards.sh` is provided to combine the datacards in the pass and fail regions. Run the `combine_cards.sh` script with the following command:
+```bash
+source combine_cards.sh
+```
+This script will create the Combine workspace file, `workspace.root`, and the combined datacard text file, `datacard_combined.txt`.
+
+Now you can run the usual Combine commands to perform maximum likelihood fits and extract the Xbb scale factors!
+
+**TO DO: provide standard Combine scripts in the repository**
+
