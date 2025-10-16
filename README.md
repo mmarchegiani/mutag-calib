@@ -229,5 +229,8 @@ This script will create the Combine workspace file, `workspace.root`, and the co
 
 Now you can run the usual Combine commands to perform maximum likelihood fits and extract the Xbb scale factors!
 
-**TO DO: provide standard Combine scripts in the repository**
+Example Combine scripts to extract the SF can be found in the `mutag_calib/scripts/fit` folder. Example:
+```bash
+combine -M FitDiagnostics -d workspace.root --saveWorkspace --name .msd-80to170_Pt-300toInf_particleNet_XbbVsQCD-HHbbtt --cminDefaultMinimizerStrategy 2 --robustFit=1 --saveShapes --saveWithUncertainties --saveOverallShapes --redefineSignalPOIs=r,SF_c,SF_light --setParameters r=1,l=1 --freezeParameters l --robustHesse=1 --stepSize=0.001 --X-rtd=MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=9999999 --cminFallbackAlgo Minuit2,Migrad,0:0.2 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND
+```
 
