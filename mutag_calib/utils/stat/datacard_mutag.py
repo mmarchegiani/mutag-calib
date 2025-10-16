@@ -44,8 +44,12 @@ class DatacardMutag(Datacard):
         content = ""
         for process in self.mc_processes.values():
             for year in process.years:
-                if not process.is_signal and process.has_rateParam:
-                    line = f"SF_{process.name}".ljust(self.adjust_syst_colum)
+                if process.has_rateParam:
+                    if process.is_signal:
+                        rate_param_name = "r"
+                    else:
+                        rate_param_name = f"SF_{process.name}"
+                    line = rate_param_name.ljust(self.adjust_syst_colum)
                     line += "rateParam".ljust(self.adjust_columns)
                     if passfail_ratio is None:
                         line += f"* {process.name}_{year} 1 [0,5]".ljust(
@@ -53,7 +57,7 @@ class DatacardMutag(Datacard):
                         )
                     else:
                         formula = self.get_passfail_formula(process, year, passfail_ratio)
-                        line += f"* {process.name}_{year} {formula} SF_{process.name}".ljust(
+                        line += f"* {process.name}_{year} {formula} {rate_param_name}".ljust(
                             self.adjust_columns
                         )
                     line += self.linesep
