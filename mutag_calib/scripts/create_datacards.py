@@ -21,17 +21,7 @@ from pocket_coffea.utils.stat.combine import combine_datacards
 
 # Import the configuration to get the same parameters
 import mutag_calib
-from mutag_calib.configs.fit_templates.fit_templates_run3 import parameters
 from mutag_calib.utils.stat.datacard_mutag import DatacardMutag
-
-def load_parameters():
-    """Load parameters from the configuration files."""
-    # Get the same parameters as used in fit_templates_Run3.py
-    taggers = parameters["mutag_calibration"]["taggers"]
-    pt_binning_list = parameters["mutag_calibration"]["pt_binning"]["2022_preEE"]
-    wp_dict = parameters["mutag_calibration"]["wp"]["2022_preEE"]
-    
-    return taggers, pt_binning_list, wp_dict
 
 
 def define_processes(samples, years):
@@ -140,20 +130,51 @@ def define_systematics(years, mc_process_names):
     return systematics
 
 def get_passfail_ratio(datacards):
-    sumw_percat = {}
-    for cat, datacard in datacards.items():
-        shape_histograms = datacard.create_shape_histogram_dict(is_data=False)
-        sumw_percat[cat] = {process_name.split("_nominal")[0] : hist.values().sum() for process_name, hist in shape_histograms.items()}
+    """Calculate the pass/fail ratio for each category and tau21 cut value.
+    
+    Args:
+        datacards: Nested dictionary of format datacards[category][tau21] = datacard
+    
+    Returns:
+        Dictionary of pass/fail ratios organized by parent category and tau21 cut
+    """
+    sumw_percat = defaultdict(dict)
+    # First level: categories
+    for cat in datacards:
+        # Second level: tau21 cuts
+        for tau21, datacard in datacards[cat].items():
+            shape_histograms = datacard.create_shape_histogram_dict(is_data=False)
+            sumw_percat[cat][tau21] = {
+                process_name.split("_nominal")[0]: hist.values().sum() 
+                for process_name, hist in shape_histograms.items()
+            }
 
-    passfail_ratio = defaultdict(dict)
+    passfail_ratio = defaultdict(lambda: defaultdict(dict))
     parent_categories = set(['-'.join(cat.split("-")[:-1]) for cat in datacards.keys()])
+    
     for parent_cat in parent_categories:
-        sumw_pass = sumw_percat[f"{parent_cat}-pass"]
-        sumw_fail = sumw_percat[f"{parent_cat}-fail"]
-        for flavor in sumw_pass.keys():
-            passfail_ratio[parent_cat][flavor] = float(sumw_pass[flavor] / sumw_fail[flavor])
+        for tau21 in datacards[f"{parent_cat}-pass"].keys():
+            sumw_pass = sumw_percat[f"{parent_cat}-pass"][tau21]
+            sumw_fail = sumw_percat[f"{parent_cat}-fail"][tau21]
+            for flavor in sumw_pass.keys():
+                passfail_ratio[parent_cat][tau21][flavor] = float(sumw_pass[flavor] / sumw_fail[flavor])
 
     return dict(passfail_ratio)
+
+def get_1d_histogram(h2d_dict, tau21_cut):
+    """Function to get the 1D histogram from the 2D histogram by integrating over the axis corresponding to tau21."""
+    h1d_dict = {}
+    for proc, ds_dict in h2d_dict.items():
+        # print(f"Processing {proc}...\n")
+        h1d_dict[proc] = {}
+        # print(f"ds_dict.keys(): {ds_dict.keys()}\n")
+        for ds, histo2d in ds_dict.items():
+            # print(f"Dataset: {ds}\n")
+            ax_tau21 = histo2d.axes["FatJetGood.tau21"]
+            bin_stop = next(i for i, edge in enumerate(ax_tau21.edges[1:]) if edge > tau21_cut)
+            histo_cut = histo2d.integrate(ax_tau21.name, 0, bin_stop)
+            h1d_dict[proc][ds] = histo_cut
+    return h1d_dict
 
 def print_report(successful_categories, failed_categories):
     for d_cat in successful_categories:
@@ -168,11 +189,14 @@ def print_report(successful_categories, failed_categories):
     print(f"✅  Successful: {len(successful_categories)} / {ncat}")
     print(f"❌  Failed: {len(failed_categories)} / {ncat}")
 
+# Helper function to extract the tau21 string for directory naming
+get_tau21_str = lambda x: f"tau21_{x:.2f}".replace('.', 'p')
+
 def main():
     parser = argparse.ArgumentParser(description="Create combine datacards from pocketcoffea output")
     parser.add_argument("input_file", help="Path to the pocketcoffea output .coffea file")
     parser.add_argument("--output-dir", "-o", default=None, help="Output directory for datacards")
-    parser.add_argument("--variable", default="FatJetGood_logsumcorrSVmass", help="Variable to use for the fit")
+    parser.add_argument("--variable", default="FatJetGood_logsumcorrSVmass_tau21", help="Variable to use for the fit")
     parser.add_argument("--years", nargs="+", default=["2022_preEE", "2022_postEE", "2023_preBPix", "2023_postBPix"], 
                        help="Years to include in the analysis")
     parser.add_argument("--verbose", "-v", action="store_true", default=False, help="Enable verbose output")
@@ -188,10 +212,6 @@ def main():
     cutflow = output["cutflow"]
     datasets_metadata = output["datasets_metadata"]
     categories = [cat for cat in cutflow.keys() if cat.startswith('msd')]
-    
-    # Load configuration parameters
-    taggers, pt_binning_list, wp_dict = load_parameters()
-    msd = 40.  # Mass cut value used in the analysis
     
     # Categorize samples
     samples = categorize_samples(cutflow)
@@ -221,72 +241,79 @@ def main():
         output_dir.mkdir(exist_ok=True)
         
         # Dictionary to store all datacards for combination
-        all_datacards = {}
+        all_datacards = defaultdict(dict)
         
         # Create datacards for each combination
         for cat in categories:
 
-            print(f"Creating datacard: Year: {year}\tCategory: {cat}")
-            
-            # Create datacard
-            datacard = DatacardMutag(
-                histograms=histograms[args.variable],
-                datasets_metadata=datasets_metadata,
-                cutflow=cutflow,
-                years=[year],
-                mc_processes=mc_processes,
-                data_processes=data_processes,
-                systematics=systematics,
-                category=cat,  # Category string matching the multicuts structure
-                verbose=args.verbose
-            )
-            
-            # Store for combination between pass and fail regions
-            all_datacards[cat] = datacard
+            for tau21 in [0.2, 0.25, 0.3, 0.35, 0.4]:
+                print(f"Creating datacard: Year: {year}\tCategory: {cat}\ttau21 < {tau21}")
+                
+                # Get the 1D histogram by integrating over tau21 axis with a specific cut: tau21 < tau21_cut
+                histo_1d = get_1d_histogram(histograms[args.variable], tau21)
+                # Create datacard
+                datacard = DatacardMutag(
+                    histograms=histo_1d,
+                    datasets_metadata=datasets_metadata,
+                    cutflow=cutflow,
+                    years=[year],
+                    mc_processes=mc_processes,
+                    data_processes=data_processes,
+                    systematics=systematics,
+                    category=cat,  # Category string matching the multicuts structure
+                    verbose=args.verbose
+                )
+                
+                # Store for combination between pass and fail regions
+                all_datacards[cat][tau21] = datacard
                 
         passfail_ratio = get_passfail_ratio(all_datacards)
 
         # Loop over categories again to dump datacards modified with pass/fail ratios
         parent_categories = set()
         for cat in categories:
-            # Extract parent category (without pass/fail)
-            parent_category = '-'.join(cat.split("-")[:-1])
-            parent_categories.add(parent_category)
-            region = cat.split("-")[-1]
-            # Create directory for this category
-            category_dir = output_dir / year / parent_category / region
-            category_dir.mkdir(parents=True, exist_ok=True)
-            datacard = all_datacards[cat]
+            for tau21 in [0.2, 0.25, 0.3, 0.35, 0.4]:
+                # Extract parent category (without pass/fail)
+                parent_category = '-'.join(cat.split("-")[:-1])
+                parent_categories.add(parent_category)
+                region = cat.split("-")[-1]
+                # Create directory for this category
+                tau21_str = get_tau21_str(tau21)
+                category_dir = output_dir / year / parent_category / tau21_str / region
+                category_dir.mkdir(parents=True, exist_ok=True)
+                datacard = all_datacards[cat][tau21]
 
-            # Modify action of rateParam for fail regions by passing the passfail_ratio argument
-            if cat.endswith("-pass"):
-                kwargs = {"directory" : str(category_dir)}
-            elif cat.endswith("-fail"):
-                parent_cat = '-'.join(cat.split("-")[:-1])
-                kwargs = {"directory" : str(category_dir), "passfail_ratio" : passfail_ratio[parent_cat]}
-            try:
-                datacard.dump(**kwargs)
-                successful_categories.append({"year": year, "category": cat, "folder": str(category_dir)})
-            except Exception as e:
-                print(f"Failed to create datacard for Year: {year}, Category: {cat}")
-                print(str(e))
-                failed_categories.append({"year": year, "category": cat, "error": str(e)})
+                # Modify action of rateParam for fail regions by passing the passfail_ratio argument
+                if cat.endswith("-pass"):
+                    kwargs = {"directory" : str(category_dir)}
+                elif cat.endswith("-fail"):
+                    parent_cat = '-'.join(cat.split("-")[:-1])
+                    kwargs = {"directory" : str(category_dir), "passfail_ratio" : passfail_ratio[parent_cat][tau21]}
+                try:
+                    datacard.dump(**kwargs)
+                    successful_categories.append({"year": year, "category": cat, "folder": str(category_dir)})
+                except Exception as e:
+                    print(f"Failed to create datacard for Year: {year}, Category: {cat}")
+                    print(str(e))
+                    failed_categories.append({"year": year, "category": cat, "error": str(e)})
 
         # Create combined datacard for pass+fail regions, for each parent category
         for parent_cat in parent_categories:
-            print(f"\nCreating combined datacard for category: {parent_cat} (pass+fail)")
-            directory = output_dir / year / parent_cat
-            combine_datacards(
-                datacards={f"{region}/datacard.txt": all_datacards[f"{parent_cat}-{region}"] for region in ["pass", "fail"]},
-                directory=directory
-            )
-            # Save pass/fail ratio to a YAML file
-            filename = directory / "passfail_ratio.yaml"
-            print(f"Saving pass/fail ratio to {filename}")
-            with open(filename, "w") as f:
-                yaml.dump({"passfail_ratio" : passfail_ratio[parent_cat]}, f, indent=4)
+            for tau21 in [0.2, 0.25, 0.3, 0.35, 0.4]:
+                print(f"\nCreating combined datacard for category: {parent_cat} with tau21 < {tau21} (pass + fail)")
+                tau21_str = get_tau21_str(tau21)
+                directory = output_dir / year / parent_cat / tau21_str
+                combine_datacards(
+                    datacards={f"{region}/datacard.txt": all_datacards[f"{parent_cat}-{region}"][tau21] for region in ["pass", "fail"]},
+                    directory=directory
+                )
+                # Save pass/fail ratio to a YAML file
+                filename = directory / "passfail_ratio.yaml"
+                print(f"Saving pass/fail ratio to {filename}")
+                with open(filename, "w") as f:
+                    yaml.dump({"passfail_ratio" : passfail_ratio[parent_cat][tau21]}, f, indent=4)
 
-            print(f"Combined datacard saved in {directory}")
+                print(f"Combined datacard saved in {directory}")
 
     # Print summary report
     print_report(successful_categories, failed_categories)

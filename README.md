@@ -188,29 +188,30 @@ In order to produce the fit shapes and combine datacards for the fit, a dedicate
 ```bash
 python mutag_calib/scripts/create_datacards.py fit_templates/output_all.coffea --years 2022_preEE 2022_postEE 2023_preBPix 2023_PostBPix
 ```
-The script will create a folder `fit_templates/datacards` containing a system of subfolders organized by data-taking era, category and pass/fail regions. The folder will have the following structure:
+The script will create a folder `fit_templates/datacards` containing a system of subfolders organized by data-taking era, category, $\tau_{21}$ cut and pass/fail regions. The folder will have the following structure:
 ```bash
-|-- 2022_postEE
-|   |-- msd-30to210_Pt-300toInf_particleNet_XbbVsQCD-HHbbgg
-|   |   |-- combine_cards.sh
-|   |   |-- fail
-|   |   |   |-- datacard.txt
-|   |   |   `-- shapes.root
-|   |   |-- pass
-|   |   |   |-- datacard.txt
-|   |   |   `-- shapes.root
-|   |   `-- passfail_ratio.yaml
-|   |-- msd-30to210_Pt-300toInf_particleNet_XbbVsQCD-HHbbtt
-|   |   |-- combine_cards.sh
-|   |   |-- fail
-|   |   |   |-- datacard.txt
-|   |   |   `-- shapes.root
-|   |   |-- pass
-|   |   |   |-- datacard.txt
-|   |   |   `-- shapes.root
-|   |   `-- passfail_ratio.yaml
+├── 2022_postEE
+│   ├── msd-30to210_Pt-300toInf_particleNet_XbbVsQCD-HHbbgg
+│   │   ├── tau21_0p20
+│   │   │   ├── combine_cards.sh
+│   │   │   ├── fail
+│   │   │   │   ├── datacard.txt
+│   │   │   │   └── shapes.root
+│   │   │   ├── pass
+│   │   │   │   ├── datacard.txt
+│   │   │   │   └── shapes.root
+│   │   │   └── passfail_ratio.yaml
+│   │   ├── tau21_0p25
+│   │   │   ├── combine_cards.sh
+│   │   │   ├── fail
+│   │   │   │   ├── datacard.txt
+│   │   │   │   └── shapes.root
+│   │   │   ├── pass
+│   │   │   │   ├── datacard.txt
+│   │   │   │   └── shapes.root
+│   │   │   └── passfail_ratio.yaml
 ```
-The datacards for the pass and fail regions of the tagger are stored in separated subfolders of the category folder, `pass` and `fail`.
+The datacards for the pass and fail regions of the tagger are stored in separate subfolders of the $\tau_{21}$ folder, `pass` and `fail`.
 
 ### Step 4: Run combine fit
 In order to run the maximum likelihood fit to extract the AK8 jet scale factors, it is necessary to use the [Combine](https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/latest/) package. This package is based on RooFit and it runs outside of the Python environment used for the production of the fit templates. A dedicated CMSSW installation needs to be setup to use the Combine statistical tool.
@@ -229,7 +230,7 @@ cmsenv
 cd -
 ```
 
-Move to the folder of the category that you are interested to calibrate. A bash script `combine_cards.sh` is provided to combine the datacards in the pass and fail regions. Run the `combine_cards.sh` script with the following command:
+Move to the folder of the category and $\tau_{21}$ cut that you are interested to calibrate. A bash script `combine_cards.sh` is provided to combine the datacards in the pass and fail regions. Run the `combine_cards.sh` script with the following command:
 ```bash
 source combine_cards.sh
 ```
