@@ -150,7 +150,8 @@ python mutag_calib/scripts/compute_3d_reweighting.py -i pt_reweighting/output_al
 ### Step 2: Run jobs to produce fit templates in all the tagger categories
 To apply the 3D reweighting to the QCD MC sample, it is necessary to include the 3D reweighting maps in the parameters.
 For each data taking year, the corresponding file has to be specified in the `mutag_calib/configs/params/ptetatau21_reweighting.yaml` parameter file.
-A dedicated parameter file, `mutag_calib/configs/params/mutag_calibration.yaml`, is used to specify all the parameters related to the mu-tagged calibration. In this file are specified the AK8 taggers to calibrate, the $p_T$ binning and the tagger working points.
+Dedicated parameter files can be found in the folder `mutag_calib/configs/params`.
+For example, `mutag_calib/configs/params/mutag_calibration.yaml`, is used to specify all the parameters related to the mu-tagged calibration for the HHbbtt analysis. In this file are specified the AK8 taggers to calibrate, the $p_T$ and $M_{SD}$ binning and the tagger working points.
 Example:
 ```yaml
 mutag_calibration:
@@ -159,6 +160,9 @@ mutag_calibration:
   pt_binning:
     2022_preEE:
       - [300, 'Inf']
+      - [300, 350]
+      - [350, 425]
+      - [425, 'Inf']
   msd_binning:
     2022_preEE:
       - [40, 'Inf']
@@ -166,13 +170,17 @@ mutag_calibration:
   wp:
     2022_preEE:
       particleNet_XbbVsQCD:
-        HHbbgg: 0.4
         HHbbtt: 0.75
 ```
 
-Launch jobs to produce fit templates including 3D reweighting of QCD sample:
+Launch jobs to produce fit templates including 3D reweighting of QCD sample (**command specific to the HHbbtt analysis**):
 ```bash
-pocket-coffea run --cfg mutag_calib/configs/fit_templates/fit_templates_run3.py -o fit_templates -e dask@lxplus --custom-run-options mutag_calib/configs/params/run_options.yaml --process-separately
+pocket-coffea run --cfg mutag_calib/configs/fit_templates/fit_templates_HHbbtt.py -o fit_templates_HHbbtt -e dask@lxplus --custom-run-options mutag_calib/configs/params/run_options.yaml --process-separately
+```
+
+Similarly for the **HHbbgg analysis**:
+```bash
+pocket-coffea run --cfg mutag_calib/configs/fit_templates/fit_templates_HHbbgg.py -o fit_templates_HHbbgg -e dask@lxplus --custom-run-options mutag_calib/configs/params/run_options.yaml --process-separately
 ```
 
 ### Step 3: Produce fit shapes and combine datacards
@@ -231,6 +239,11 @@ Now you can run the usual Combine commands to perform maximum likelihood fits an
 
 Example Combine scripts to extract the SF can be found in the `mutag_calib/scripts/fit` folder. Example:
 ```bash
-combine -M FitDiagnostics -d workspace.root --saveWorkspace --name .msd-80to170_Pt-300toInf_particleNet_XbbVsQCD-HHbbtt --cminDefaultMinimizerStrategy 2 --robustFit=1 --saveShapes --saveWithUncertainties --saveOverallShapes --redefineSignalPOIs=r,SF_c,SF_light --setParameters r=1,l=1 --freezeParameters l --robustHesse=1 --stepSize=0.001 --X-rtd=MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=9999999 --cminFallbackAlgo Minuit2,Migrad,0:0.2 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND
+combine -M FitDiagnostics -d workspace.root --saveWorkspace \
+--name .msd-80to170_Pt-300toInf_particleNet_XbbVsQCD-HHbbtt --cminDefaultMinimizerStrategy 2 \
+--robustFit=1 --saveShapes --saveWithUncertainties --saveOverallShapes \
+--redefineSignalPOIs=r,SF_c,SF_light --setParameters r=1,l=1 --freezeParameters l \
+--robustHesse=1 --stepSize=0.001 --X-rtd=MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=9999999 \
+--cminFallbackAlgo Minuit2,Migrad,0:0.2 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND
 ```
 
