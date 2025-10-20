@@ -31,16 +31,14 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/mutag_calibration_HHbbtt.yaml",
                                                 update=True)
 
-# samples = [
-#     "QCD_MuEnriched",
-#     "VJets",
-#     "TTto4Q",
-#     "SingleTop",
-#     "DATA_BTagMu"
-# ]
 samples = [
+    "QCD_MuEnriched",
+    "VJets",
+    "TTto4Q",
+    "SingleTop",
     "DATA_BTagMu"
 ]
+
 subsamples = {}
 for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
     subsamples[s] = {f"{s}_{f}" : [get_flavor(f)] for f in ['l', 'c', 'b', 'cc', 'bb']}
@@ -143,13 +141,11 @@ multicuts = [
 cfg = Configurator(
     parameters = parameters,
     datasets = {
-        # "jsons": ["datasets/MC_QCD_MuEnriched_run3_redirector.json",
-        #           "datasets/MC_VJets_run3_redirector.json",
-        #           "datasets/MC_TTto4Q_run3_redirector.json",
-        #           "datasets/MC_singletop_run3.json",
-        #           "datasets/DATA_BTagMu_run3.json"
-        "jsons": ["datasets/DATA_BTagMu_run3.json",
-                  ],
+        "jsons": ["datasets/MC_QCD_MuEnriched_run3.json",
+                  "datasets/MC_VJets_run3.json",
+                  "datasets/MC_TTto4Q_run3.json",
+                  "datasets/MC_singletop_run3.json",
+                  "datasets/DATA_BTagMu_run3.json"],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
