@@ -19,7 +19,7 @@ class mutagAnalysisProcessor(fatjetBaseProcessor):
         self.weight_3d = defaultdict(dict)
         self.custom_histogram_weights = {}
 
-    def apply_object_preselection(self, variation, pt_min=350., msd=40.):
+    def apply_object_preselection(self, variation, pt_min=300., msd=40.):
         super().apply_object_preselection(variation)
 
         mask_name = f"pt{int(pt_min)}msd{int(msd)}"
