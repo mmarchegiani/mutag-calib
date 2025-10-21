@@ -38,6 +38,7 @@ samples = [
     "SingleTop",
     "DATA_BTagMu"
 ]
+
 subsamples = {}
 for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
     subsamples[s] = {f"{s}_{f}" : [get_flavor(f)] for f in ['l', 'c', 'b', 'cc', 'bb']}
@@ -144,8 +145,7 @@ cfg = Configurator(
                   "datasets/MC_VJets_run3.json",
                   "datasets/MC_TTto4Q_run3.json",
                   "datasets/MC_singletop_run3.json",
-                  "datasets/DATA_BTagMu_run3.json"
-                  ],
+                  "datasets/DATA_BTagMu_run3.json"],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
@@ -167,13 +167,13 @@ cfg = Configurator(
             goldenJson,
             get_nObj_min(1, 200., "FatJet"),
             get_nObj_minmsd(1, 30., "FatJet"),
-            get_nObj_min(2, 3., "Muon"),
+            get_nObj_min(1, 3., "Muon"),
             get_HLTsel()],
 
     preselections = [get_nObj_min(1, parameters.object_preselection["FatJet"]["pt"], "FatJetGood")],
     categories = CartesianSelection(multicuts=multicuts, common_cats=common_cats),
 
-    weights_classes = common_weights + [SF_trigger_prescale],
+    weights_classes = common_weights + [SF_trigger_prescale, SF_ptetatau21_reweighting],
     weights = {
         "common": {
             "inclusive": ["genWeight","lumi","XS","sf_trigger_prescale",
