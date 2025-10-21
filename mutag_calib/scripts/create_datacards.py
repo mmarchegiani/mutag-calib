@@ -57,7 +57,7 @@ def define_processes(samples, years):
         DataProcess(
             name="data_obs",
             samples=[],  # Will be populated from sample names starting with DATA_
-            # years=years,
+            years=years,
         )
     ])
     
@@ -204,12 +204,12 @@ def main():
     args = parser.parse_args()
     
     # Load the coffea output
-    print(f"Loading coffea output from {args.input_file}\n")
+    print(f"Loading coffea output from {args.input_file}")
     output = load(args.input_file)
     
     # Extract histograms, cutflow, and metadata
     histograms = output["variables"]
-    cutflow = histograms["FatJetGood_eta"]
+    cutflow = output["cutflow"]
     datasets_metadata = output["datasets_metadata"]
     categories = [cat for cat in cutflow.keys() if cat.startswith('msd')]
     
