@@ -124,11 +124,9 @@ cfg = Configurator(
 
     preselections = [get_nObj_min(1, parameters.object_preselection["FatJet"]["pt"], "FatJetGood")],
     categories = {
-        "inclusive" : [passthrough],
-        "pt300msd40" : [get_ptmsd(300., 40.)],
-        "pt300msd60" : [get_ptmsd(300., 60.)],
+        "pt300msd30" : [get_ptmsd(300., 30.)],
         "pt300msd80" : [get_ptmsd(300., 80.)],
-        "pt300msd100" : [get_ptmsd(300., 100.)],
+        "pt300msd30to210" : [get_ptmsd_window(300., 30., 210.)],
         "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
     },
 
