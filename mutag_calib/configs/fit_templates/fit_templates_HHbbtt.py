@@ -10,7 +10,7 @@ from pocket_coffea.parameters.histograms import *
 import mutag_calib
 from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_ptmsd_window, get_nObj_minmsd, get_flavor, get_ptbin, get_msdbin
 from mutag_calib.configs.fatjet_base.custom.functions import get_inclusive_wp
-from mutag_calib.configs.fatjet_base.custom.weights import SF_trigger_prescale, SF_ptetatau21_reweighting
+from mutag_calib.configs.fatjet_base.custom.weights import SF_trigger_prescale
 import mutag_calib.workflows.mutag_oneMuAK8_processor as workflow
 from mutag_calib.workflows.mutag_oneMuAK8_processor import mutagAnalysisOneMuonInAK8Processor
 import os
@@ -173,7 +173,7 @@ cfg = Configurator(
     preselections = [get_nObj_min(1, parameters.object_preselection["FatJet"]["pt"], "FatJetGood")],
     categories = CartesianSelection(multicuts=multicuts, common_cats=common_cats),
 
-    weights_classes = common_weights + [SF_trigger_prescale, SF_ptetatau21_reweighting],
+    weights_classes = common_weights + [SF_trigger_prescale],
     weights = {
         "common": {
             "inclusive": ["genWeight","lumi","XS","sf_trigger_prescale",
