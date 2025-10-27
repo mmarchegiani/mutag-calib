@@ -105,9 +105,9 @@ def define_systematics(years, mc_process_names):
         ),
         SystematicUncertainty(
             name="pileup",
-            typ="lnN", 
-            processes=mc_process_names,
-            value=1.01,  # 1% pileup uncertainty
+            typ="shape",
+            processes={name : 1.0 for name in mc_process_names},
+            #value=1.01,  # 1% pileup uncertainty
             years=years,
         ),
         # Add process-specific uncertainties
@@ -115,14 +115,14 @@ def define_systematics(years, mc_process_names):
             name="light_norm",
             typ="lnN",
             processes=["light"],
-            value=1.10,  # 10% normalization uncertainty for light jets
+            value=1.20,  # 20% normalization uncertainty for light jets
             years=years,
         ),
         SystematicUncertainty(
             name="c_norm", 
             typ="lnN",
             processes=["c"],
-            value=1.15,  # 15% normalization uncertainty for c jets
+            value=1.20,  # 20% normalization uncertainty for c jets
             years=years,
         ),
     ])
