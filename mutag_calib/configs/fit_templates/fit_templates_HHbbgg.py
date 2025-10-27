@@ -59,7 +59,7 @@ for coll in collections:
                                                     label=r"FatJet $p_{T}$ [GeV]", bins=list(range(300, 1010, 10)))]
     )
     variables[f"{coll}_msoftdrop"] = HistConf([Axis(name=f"{coll}_msoftdrop", coll=coll, field="msoftdrop",
-                                                           label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(40, 410, 10)))]
+                                                           label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(0, 410, 10)))]
     )
     variables[f"{coll}_tau21"] = HistConf([Axis(name=f"{coll}_tau21", coll=coll, field="tau21",
                                                            label=r"FatJet $\tau_{21}$", bins=[0, 0.20, 0.25, 0.30, 0.35, 
