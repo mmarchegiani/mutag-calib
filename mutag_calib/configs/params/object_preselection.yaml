@@ -24,7 +24,7 @@ object_preselection:
   FatJet:
     pt: 300.0  #adapted for bbtautau run3 analysis
     eta: 2.4
-    msd: 40.0
+    msd: 30.0
     jetId: 2
     nmu: 1
     #nsubjet: 2

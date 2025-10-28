@@ -3,9 +3,7 @@ from collections import defaultdict
 
 from pocket_coffea.workflows.base import BaseProcessorABC
 from pocket_coffea.utils.configurator import Configurator
-from pocket_coffea.lib.leptons import lepton_selection
 from pocket_coffea.lib.jets import jet_selection
-from pocket_coffea.lib.hist_manager import Axis
 
 from mutag_calib.lib.leptons import lepton_selection_noniso
 from mutag_calib.lib.sv import get_corrmass, sv_matched_to_fatjet, get_sumcorrmass, get_sv1mass

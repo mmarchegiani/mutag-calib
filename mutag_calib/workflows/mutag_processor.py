@@ -1,14 +1,10 @@
 from collections import defaultdict
-
 import awkward as ak
-
 import correctionlib
 
 from mutag_calib.workflows.fatjet_base import fatjetBaseProcessor
 from pocket_coffea.utils.configurator import Configurator
-from pocket_coffea.lib.categorization import StandardSelection
 from mutag_calib.lib.sv import *
-from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd
 
 class mutagAnalysisProcessor(fatjetBaseProcessor):
     def __init__(self, cfg: Configurator):
@@ -19,23 +15,8 @@ class mutagAnalysisProcessor(fatjetBaseProcessor):
         self.weight_3d = defaultdict(dict)
         self.custom_histogram_weights = {}
 
-    def apply_object_preselection(self, variation, pt_min=300., msd=40.):
+    def apply_object_preselection(self, variation):
         super().apply_object_preselection(variation)
-
-        mask_name = f"pt{int(pt_min)}msd{int(msd)}"
-        cuts_fatjet = {mask_name : [get_ptmsd(pt_min, msd)]}
-        selection_fatjet = StandardSelection(cuts_fatjet)
-        selection_fatjet.prepare(
-            events=self.events,
-            processor_params=self.params,
-            year=self._year,
-            sample=self._sample,
-            isMC=self._isMC,
-        )
-        mask_fatjet = selection_fatjet.get_mask(mask_name)
-
-        # Apply (pt, msd) cuts
-        self.events["FatJetGood"] = self.events.FatJetGood[mask_fatjet]
 
         # Restrict analysis to leading and subleading jets only
         self.events["FatJetGood"] = self.events.FatJetGood[ak.local_index(self.events.FatJetGood, axis=1) < 2]
@@ -48,11 +29,12 @@ class mutagAnalysisProcessor(fatjetBaseProcessor):
         '''Correction of jets observable by a 3D reweighting based on (pT, eta, tau21).
         The function stores the nominal, up and down weights in self.weight_3d,
         where the up/down variations are computed considering the statistical uncertainty on data and MC.'''
-        cset = correctionlib.CorrectionSet.from_file(self.params["ptetatau21_reweighting"][self._year])
+        cset = correctionlib.CorrectionSet.from_file(self.params["ptetatau21_reweighting"][self._year]["file"])
+        assert len(list(cset.keys())) == 1, "The correction file should contain only one correction."
         key = list(cset.keys())[0]
         corr = cset[key]
 
-        cat = "inclusive"
+        cat = self.params["ptetatau21_reweighting"][self._year]["category"]
         nfatjet  = ak.num(self.events.FatJetGood.pt)
         pos = ak.flatten(self.events.FatJetGood.pos)
         pt = ak.flatten(self.events.FatJetGood.pt)
