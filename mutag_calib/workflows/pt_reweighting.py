@@ -1,13 +1,4 @@
-import os
-from collections import defaultdict
-
 import awkward as ak
-import numpy as np
-import hist
-from coffea.util import save, load
-
-import correctionlib, rich
-import correctionlib.convert
 
 from pocket_coffea.utils.configurator import Configurator
 from pocket_coffea.lib.categorization import StandardSelection
@@ -40,19 +31,6 @@ class ptReweightProcessor(fatjetBaseProcessor):
     def apply_object_preselection(self, variation):
         super().apply_object_preselection(variation)
 
-        pt_min = 300.
-        msd = 40.
-        cuts_fatjet = {"pt300msd40" : [get_ptmsd(pt_min, msd)]}
-        selection_fatjet = StandardSelection(cuts_fatjet)
-        selection_fatjet.prepare(
-            events=self.events,
-            processor_params=self.params
-        )
-        mask_fatjet = selection_fatjet.get_mask("pt300msd40")
-
-        # Apply (pt, msd) cuts
-        self.events["FatJetGood"] = self.events.FatJetGood[mask_fatjet]
-
         # Restrict analysis to leading and subleading jets only
         self.events["FatJetGood"] = self.events.FatJetGood[ak.local_index(self.events.FatJetGood, axis=1) < 2]
 
@@ -62,10 +40,10 @@ class ptReweightProcessor(fatjetBaseProcessor):
 
         # Build 4 distinct AK8 jet collections with 4 different muon tagging scenarios
         cuts_mutag = {
-            "FatJetGoodNMuon1" : [get_ptmsd(pt_min, msd), mutag_fatjet_sel(nmu=self.params.object_preselection["FatJet"]["nmu"])],
-            #"FatJetGoodNMuon2" : [get_ptmsd(pt_min, msd), mutag_fatjet_sel(nmu=2)],
-            #"FatJetGoodNMuonSJ1" : [get_ptmsd(pt_min, msd), mutag_subjet_sel(unique_matching=False)],
-            #"FatJetGoodNMuonSJUnique1" : [get_ptmsd(pt_min, msd), mutag_subjet_sel(unique_matching=True)],
+            "FatJetGoodNMuon1" : [mutag_fatjet_sel(nmu=self.params.object_preselection["FatJet"]["nmu"])],
+            #"FatJetGoodNMuon2" : [mutag_fatjet_sel(nmu=2)],
+            #"FatJetGoodNMuonSJ1" : [mutag_subjet_sel(unique_matching=False)],
+            #"FatJetGoodNMuonSJUnique1" : [mutag_subjet_sel(unique_matching=True)],
         }
         selection_mutag = StandardSelection(cuts_mutag)
         selection_mutag.prepare(

@@ -154,7 +154,8 @@ def pt_reweighting(accumulator, histname, output, test=False, overwrite=False):
         if test:
             print(f"Loading correction from {outfile_reweighting}")
             cset = correctionlib.CorrectionSet.from_file(os.path.abspath(outfile_reweighting))
-            print("(cat): inclusive,", "(var): nominal")
+            cat = categories[0]
+            print(f"(cat): {cat},", "(var): nominal")
             pt_corr = cset[sfhist.name]
             pos  = np.array([0, 1, 0, 1, 0], dtype=int)
             pt  = np.array([50, 100, 400, 500, 1000], dtype=float)
@@ -170,7 +171,7 @@ def pt_reweighting(accumulator, histname, output, test=False, overwrite=False):
                 print("tau21 =", tau21)
                 args = (pos, pt, eta, tau21)
             for var_shape in shape_variations:
-                categorical_args = ['inclusive', var_shape, 'nominal']
+                categorical_args = [cat, var_shape, 'nominal']
                 print(categorical_args)
                 print(pt_corr.evaluate(*categorical_args, *args))
                 print()

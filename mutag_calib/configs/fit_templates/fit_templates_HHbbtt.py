@@ -27,7 +27,7 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/jets_calibration.yaml",
                                                 f"{localdir}/params/triggers_run3.yaml",
                                                 f"{localdir}/params/triggers_prescales_run3.yaml",
-                                                f"{localdir}/params/ptetatau21_reweighting.yaml",
+                                                f"{localdir}/params/ptetatau21_reweighting_HHbbtt.yaml",
                                                 f"{localdir}/params/mutag_calibration_HHbbtt.yaml",
                                                 update=True)
 

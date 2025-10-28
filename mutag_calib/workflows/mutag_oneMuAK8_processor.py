@@ -6,12 +6,12 @@ from mutag_calib.configs.fatjet_base.custom.cuts import mutag_fatjet_sel
 
 class mutagAnalysisOneMuonInAK8Processor(mutagAnalysisProcessor):
 
-    def apply_object_preselection(self, variation, pt_min=300., msd=40.):
-        super().apply_object_preselection(variation, pt_min=300., msd=40.)
+    def apply_object_preselection(self, variation):
+        super().apply_object_preselection(variation)
 
         mask_name = "FatJetGoodNMuon1"
         cuts_mutag = {
-            mask_name : [mutag_fatjet_sel(nmu=1)],
+            mask_name : [mutag_fatjet_sel(nmu=self.params.object_preselection["FatJet"]["nmu"])],
         }
         selection_mutag = StandardSelection(cuts_mutag)
         selection_mutag.prepare(
