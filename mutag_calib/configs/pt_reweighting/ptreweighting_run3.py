@@ -29,12 +29,15 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/triggers_prescales_run3.yaml",
                                                 update=True)
 
+# samples = [
+#     "QCD_MuEnriched",
+#     "VJets",
+#     "TTto4Q",
+#     "SingleTop",
+#     "DATA_BTagMu"
+# ]
 samples = [
-    "QCD_MuEnriched",
-    "VJets",
-    "TTto4Q",
-    "SingleTop",
-    "DATA_BTagMu"
+    "QCD_MuEnriched"
 ]
 subsamples = {}
 for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
@@ -92,11 +95,17 @@ for coll in collections:
 cfg = Configurator(
     parameters = parameters,
     datasets = {
-        "jsons": ["datasets/MC_QCD_MuEnriched_run3.json",
-                  "datasets/MC_VJets_run3.json",
-                  "datasets/MC_TTto4Q_run3.json",
-                  "datasets/MC_singletop_run3.json",
-                  "datasets/DATA_BTagMu_run3.json"
+        # "jsons": ["datasets/MC_QCD_MuEnriched_run3.json",
+        #           "datasets/MC_VJets_run3.json",
+        #           "datasets/MC_TTto4Q_run3.json",
+        #           "datasets/MC_singletop_run3.json",
+        #           "datasets/DATA_BTagMu_run3.json"
+        #           ],
+        "jsons": ["datasets/MC_VJets_run3_redirector.json",
+                  "datasets/MC_TTto4Q_run3_redirector.json",
+                  "datasets/MC_singletop_run3_redirector.json",
+                  "datasets/DATA_BTagMu_run3_redirector.json",
+                  "datasets/MC_QCD_MuEnriched_missing_run3_redirector.json"
                   ],
         "filter" : {
             "samples": samples,
