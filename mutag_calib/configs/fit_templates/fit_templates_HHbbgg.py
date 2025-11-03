@@ -29,6 +29,7 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/triggers_prescales_run3.yaml",
                                                 f"{localdir}/params/ptetatau21_reweighting_HHbbgg.yaml",
                                                 f"{localdir}/params/mutag_calibration_HHbbgg.yaml",
+                                                f"{localdir}/params/plotting_style.yaml",
                                                 update=True)
 
 samples = [
@@ -59,6 +60,9 @@ for coll in collections:
                                                     label=r"FatJet $p_{T}$ [GeV]", bins=list(range(300, 1010, 10)))]
     )
     variables[f"{coll}_msoftdrop"] = HistConf([Axis(name=f"{coll}_msoftdrop", coll=coll, field="msoftdrop",
+                                                           label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(0, 410, 10)))]
+    )
+    variables[f"{coll}_msoftdrop_raw"] = HistConf([Axis(name=f"{coll}_msoftdrop_raw", coll=coll, field="msoftdrop_raw",
                                                            label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(0, 410, 10)))]
     )
     variables[f"{coll}_tau21"] = HistConf([Axis(name=f"{coll}_tau21", coll=coll, field="tau21",

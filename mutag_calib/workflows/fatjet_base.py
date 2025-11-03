@@ -28,6 +28,13 @@ class fatjetBaseProcessor(BaseProcessorABC):
         #    )
         #)
 
+    def process_extra_after_skim(self):
+        super().process_extra_after_skim()
+        # Save raw softdrop mass before any calibration as a new field of FatJet
+        self.events["FatJet"] = ak.with_field(
+            self.events.FatJet, self.events.FatJet.msoftdrop, "msoftdrop_raw"
+        )
+
     def apply_object_preselection(self, variation):
         '''
         The ttHbb processor cleans
