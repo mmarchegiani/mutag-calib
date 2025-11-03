@@ -485,7 +485,7 @@
             "root://rdr.echo.stfc.ac.uk//store/data/Run2023C/BTagMu/NANOAOD/22Sep2023_v3-v1/50000/f1ec2503-225d-44ee-867d-b2260d04c6da.root",
             "root://rdr.echo.stfc.ac.uk//store/data/Run2023C/BTagMu/NANOAOD/22Sep2023_v3-v1/50000/f45fead5-3d08-42be-9eb8-f8294631d239.root",
             "root://rdr.echo.stfc.ac.uk//store/data/Run2023C/BTagMu/NANOAOD/22Sep2023_v3-v1/50000/f7ad4481-94e5-4874-bbb6-633e376db800.root",
-            "root://rdr.echo.stfc.ac.uk//store/data/Run2023C/BTagMu/NANOAOD/22Sep2023_v3-v1/50000/fd123275-d27e-4572-8c56-0f4e8e436d1e.root"
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023C/BTagMu/NANOAOD/22Sep2023_v3-v1/50000/fd123275-d27e-4572-8c56-0f4e8e436d1e.root"
         ]
     },
     "DATA_BTagMu_2023_preBPix_EraCv4": {
@@ -634,22 +634,22 @@
             "root://dcache-cms-xrootd.desy.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v1-v1/50000/c7b8d4ab-253b-4a15-b114-6bc208c128f6.root",
             "root://dcache-cms-xrootd.desy.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v1-v1/50000/e49a2c64-f367-4ed4-b8bd-fb18971cfbd4.root",
             "root://dcache-cms-xrootd.desy.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v1-v1/50000/f82dba5d-855b-44f6-9b64-6bf5e5e23f0a.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/2530000/04d9ab0a-a7a8-459d-9bb2-a76a0cd27e44.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/06daa46b-5cd7-40e2-884f-b3b1d3bb6862.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/0a86d711-b699-4312-99c7-d45facf6aa24.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/2d6d3501-482a-4c44-9a02-6ada9a7023af.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/34de87f9-fdfc-40a8-9e9a-1faca233b162.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/4285cebe-50d1-4ffa-8945-e9af7a0bea28.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/4c8deca4-c762-4d1d-8480-cf859d3f3ebd.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/5075152e-6be0-4ddb-8589-749f8225f54e.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/66dbb94d-c56c-4014-a617-a58477f8d12c.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/68fc3749-a42f-43c4-b2cb-82fe31dce2f3.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/99f1db9f-bc8c-4791-9fd3-e430afb14cd6.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/a1a21761-0f44-47bf-abee-ae8017ecb504.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/aec6946e-ed30-4abd-995b-ccdd2c225204.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/c5d43d18-930b-4a38-838c-d1f3cf3f55c9.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/ca002844-49a4-4837-8e4a-66d85c840ff1.root",
-            "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/f6fcec45-b87d-4ab8-a758-06281e9106a3.root"
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/2530000/04d9ab0a-a7a8-459d-9bb2-a76a0cd27e44.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/06daa46b-5cd7-40e2-884f-b3b1d3bb6862.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/0a86d711-b699-4312-99c7-d45facf6aa24.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/2d6d3501-482a-4c44-9a02-6ada9a7023af.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/34de87f9-fdfc-40a8-9e9a-1faca233b162.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/4285cebe-50d1-4ffa-8945-e9af7a0bea28.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/4c8deca4-c762-4d1d-8480-cf859d3f3ebd.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/5075152e-6be0-4ddb-8589-749f8225f54e.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/66dbb94d-c56c-4014-a617-a58477f8d12c.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/68fc3749-a42f-43c4-b2cb-82fe31dce2f3.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/99f1db9f-bc8c-4791-9fd3-e430afb14cd6.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/a1a21761-0f44-47bf-abee-ae8017ecb504.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/aec6946e-ed30-4abd-995b-ccdd2c225204.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/c5d43d18-930b-4a38-838c-d1f3cf3f55c9.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/ca002844-49a4-4837-8e4a-66d85c840ff1.root",
+            "root://hip-cms-se.csc.fi:1094//store/data/Run2023D/BTagMu/NANOAOD/22Sep2023_v2-v1/50000/f6fcec45-b87d-4ab8-a758-06281e9106a3.root"
         ]
     }
 }
