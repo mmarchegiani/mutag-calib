@@ -10,8 +10,31 @@ jets_calibration:
       AK8PFPuppi: "FatJet"
 
   variations:
-    full_variations: 
-      AK8PFPuppi: "${default_jets_calibration.variations.full_variations.AK4PFPuppi}"
+    AK8PFPuppi:
+      2016_PreVFP:
+      - JES_Total
+      - JER
+      2016_PostVFP: 
+      - JES_Total
+      - JER
+      "2017": 
+      - JES_Total
+      - JER
+      "2018": 
+      - JES_Total
+      - JER
+      2022_preEE:
+      - JES_Total
+      - JER
+      2022_postEE: 
+      - JES_Total
+      - JER
+      2023_preBPix: 
+      - JES_Total
+      - JER
+      2023_postBPix: 
+      - JES_Total
+      - JER
 
   apply_jec_MC:  # this is needed to know which collection is corrected with which jet factory
     2022_preEE: 
@@ -95,4 +118,3 @@ jets_calibration:
       MET_collection: "PuppiMET"
       Jet_collection: "Jet"
   
-
