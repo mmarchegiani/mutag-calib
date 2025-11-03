@@ -1,130 +1,4 @@
 jets_calibration:
-  jet_types:
-    MC:
-      AK8PFPuppi:
-        "2022_preEE":
-          - "${config_dir:}/jec/Summer22/Summer22_22Sep2023_V2_MC_L1FastJet_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer22/Summer22_22Sep2023_V2_MC_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer22/Summer22_22Sep2023_V2_MC_L2Relative_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer22/Summer22_22Sep2023_V2_MC_L2Residual_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer22/Summer22_22Sep2023_V2_MC_L3Absolute_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer22/Summer22_22Sep2023_V2_MC_Uncertainty_AK8PFPuppi.junc.txt.gz"
-          - "${config_dir:}/jec/Summer22/Summer22_22Sep2023_V2_MC_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-        "2022_postEE":
-          - "${config_dir:}/jec/Summer22EE/Summer22EE_22Sep2023_V2_MC_L1FastJet_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer22EE/Summer22EE_22Sep2023_V2_MC_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer22EE/Summer22EE_22Sep2023_V2_MC_L2Relative_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer22EE/Summer22EE_22Sep2023_V2_MC_L2Residual_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer22EE/Summer22EE_22Sep2023_V2_MC_L3Absolute_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer22EE/Summer22EE_22Sep2023_V2_MC_Uncertainty_AK8PFPuppi.junc.txt.gz"
-          - "${config_dir:}/jec/Summer22EE/Summer22EE_22Sep2023_V2_MC_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-        "2023_preBPix":
-          - "${config_dir:}/jec/Summer23/Summer23Prompt23_V3_MC_L1FastJet_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer23/Summer23Prompt23_V3_MC_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer23/Summer23Prompt23_V3_MC_L2Relative_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer23/Summer23Prompt23_V3_MC_L2Residual_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer23/Summer23Prompt23_V3_MC_L3Absolute_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer23/Summer23Prompt23_V3_MC_Uncertainty_AK8PFPuppi.junc.txt.gz"
-          - "${config_dir:}/jec/Summer23/Summer23Prompt23_V3_MC_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-        "2023_postBPix":
-          - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_V3_MC_L1FastJet_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_V3_MC_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_V3_MC_L2Relative_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_V3_MC_L2Residual_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_V3_MC_L3Absolute_AK8PFPuppi.jec.txt.gz"
-          - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_V3_MC_Uncertainty_AK8PFPuppi.junc.txt.gz"
-          - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_V3_MC_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-
-    Data:
-      AK8PFPuppi:
-        "2022_preEE":
-          C:
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_L1FastJet_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_L2Relative_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_L2Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_L3Absolute_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_Uncertainty_AK8PFPuppi.junc.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-          D:
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_L1FastJet_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_L2Relative_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_L2Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_L3Absolute_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_Uncertainty_AK8PFPuppi.junc.txt.gz"
-            - "${config_dir:}/jec/Summer22/Summer22-22Sep2023_RunCD_V2_DATA_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-        "2022_postEE":
-          E:
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunE_V2_DATA_L1FastJet_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunE_V2_DATA_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunE_V2_DATA_L2Relative_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunE_V2_DATA_L2Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunE_V2_DATA_L3Absolute_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunE_V2_DATA_Uncertainty_AK8PFPuppi.junc.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunE_V2_DATA_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-          F:
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunF_V2_DATA_L1FastJet_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunF_V2_DATA_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunF_V2_DATA_L2Relative_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunF_V2_DATA_L2Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunF_V2_DATA_L3Absolute_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunF_V2_DATA_Uncertainty_AK8PFPuppi.junc.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunF_V2_DATA_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-          G:
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunG_V2_DATA_L1FastJet_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunG_V2_DATA_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunG_V2_DATA_L2Relative_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunG_V2_DATA_L2Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunG_V2_DATA_L3Absolute_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunG_V2_DATA_Uncertainty_AK8PFPuppi.junc.txt.gz"
-            - "${config_dir:}/jec/Summer22EE/Summer22EE-22Sep2023_RunG_V2_DATA_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-        "2023_preBPix":
-          Cv1:
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L1FastJet_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L2Relative_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L2Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L3Absolute_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_Uncertainty_AK8PFPuppi.junc.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-          Cv2:
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L1FastJet_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L2Relative_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L2Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L3Absolute_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_Uncertainty_AK8PFPuppi.junc.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-          Cv3:
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L1FastJet_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L2Relative_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L2Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_L3Absolute_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_Uncertainty_AK8PFPuppi.junc.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv123_V3_DATA_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-          Cv4:
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv4_V3_DATA_L1FastJet_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv4_V3_DATA_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv4_V3_DATA_L2Relative_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv4_V3_DATA_L2Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv4_V3_DATA_L3Absolute_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv4_V3_DATA_Uncertainty_AK8PFPuppi.junc.txt.gz"
-            - "${config_dir:}/jec/Summer23/Summer23Prompt23_RunCv4_V3_DATA_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-        "2023_postBPix":
-          D:
-            - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_RunD_V3_DATA_L1FastJet_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_RunD_V3_DATA_L2L3Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_RunD_V3_DATA_L2Relative_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_RunD_V3_DATA_L2Residual_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_RunD_V3_DATA_L3Absolute_AK8PFPuppi.jec.txt.gz"
-            - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_RunD_V3_DATA_Uncertainty_AK8PFPuppi.junc.txt.gz"
-            - "${config_dir:}/jec/Summer23BPix/Summer23BPixPrompt23_RunD_V3_DATA_UncertaintySources_AK8PFPuppi.junc.txt.gz"
-
-
-  jec_name_map_MC: "${default_jets_calibration.jec_name_map_MC}"
-  jec_name_map_Data: "${default_jets_calibration.jec_name_map_Data}"
   collection:
     2022_preEE:
       AK8PFPuppi: "FatJet"
@@ -134,6 +8,10 @@ jets_calibration:
       AK8PFPuppi: "FatJet"
     2023_postBPix:
       AK8PFPuppi: "FatJet"
+
+  variations:
+    full_variations: 
+      AK8PFPuppi: "${default_jets_calibration.variations.full_variations.AK4PFPuppi}"
 
   apply_jec_MC:  # this is needed to know which collection is corrected with which jet factory
     2022_preEE: 
@@ -174,6 +52,30 @@ jets_calibration:
       AK8PFPuppi: False
     2023_postBPix: 
       AK8PFPuppi: False
+
+  apply_jec_msoftdrop_MC:
+    2022_preEE:
+      AK8PFPuppi: True
+    2022_postEE: 
+      AK8PFPuppi: True
+    2023_preBPix: 
+      AK8PFPuppi: True
+    2023_postBPix: 
+      AK8PFPuppi: True
+    "2024": 
+      AK8PFPuppi: True
+
+  apply_jec_msoftdrop_Data:
+    2022_preEE:
+      AK8PFPuppi: True
+    2022_postEE: 
+      AK8PFPuppi: True
+    2023_preBPix: 
+      AK8PFPuppi: True
+    2023_postBPix: 
+      AK8PFPuppi: True
+    "2024": 
+      AK8PFPuppi: True
 
   rescale_MET_config:
     2022_preEE:   
