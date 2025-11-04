@@ -73,14 +73,19 @@ These files can be generated using the interactive `dataset-discovery-cli` comma
 
 Datasets to be included for Run 3:
 
-- MC
-    - [x] QCD_MuEnriched
-    - [x] V+jets
-    - [x] Single top fully hadronic and semileptonic
-    - [x] ttbar fully hadronic
+- [x] 2022+2023
+- [ ] 2024
+  - MC
+    - [ ] QCD_MuEnriched
+    - [ ] V+jets
+    - [ ] Single top fully hadronic and semileptonic
+    - [ ] ttbar fully hadronic
+  - Data
+    - [] BTagMu
+  - MC for systematics
+    - [x] QCD_HT
+  - Validations
     - [ ] ggH(bb) and ggH(cc) signals (for validations)
-- Data
-    - [x] BTagMu
 
 To create json datasets, run the `build-datasets` command for each dataset definition file in the `datasets` folder:
 ```bash
@@ -116,7 +121,7 @@ In order to run the analysis on Run 3 data, the trigger paths specified in the `
 - [x] `2022_postEE`
 - [x] `2023_preBPix`
 - [x] `2023_postBPix`
-- [ ] `2024`
+- [x] `2024`
 
 ### Step 1: compute 3D reweighting based on jet $p_T$, $\eta$, $\tau_{21}$
 Run jobs on DATA, QCD, V+jets and top datasets:
