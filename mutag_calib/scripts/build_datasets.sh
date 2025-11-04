@@ -9,5 +9,5 @@ files=(
 )
 
 for cfg in "${files[@]}"; do
-	pocket-coffea build-datasets --cfg "$cfg" -o -rs 'T[123]_(FR|IT|DE|BE|CH|UK|ES|UA|LV|HU|PT|FI)_\w+' -bs T1_DE_KIT_Disk -bs T1_FR_CCIN2P3_Disk -bs T1_US_FNAL_Disk -bs T1_RU_JINR_Disk
+	pocket-coffea build-datasets --cfg "$cfg" -o -rs 'T[123]_(FR|IT|DE|CH|UK|ES|UA|LV|HU|PT|FI)_\w+' -bs T1_DE_KIT_Disk -bs T1_FR_CCIN2P3_Disk -bs T1_US_FNAL_Disk -bs T1_RU_JINR_Disk
 done
