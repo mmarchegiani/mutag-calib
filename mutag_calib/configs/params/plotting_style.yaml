@@ -6,30 +6,25 @@ plotting_style:
     "l":
       - QCD_MuEnriched__QCD_MuEnriched_l
       - TTto4Q__TTto4Q_l
-      - TWplus__TWplus_l
-      - TWminus__TWminus_l
+      - SingleTop__SingleTop_l
       - VJets__VJets_l
     "c":
       - QCD_MuEnriched__QCD_MuEnriched_c
       - TTto4Q__TTto4Q_c
-      - TWplus__TWplus_c
-      - TWminus__TWminus_c
+      - SingleTop__SingleTop_c
       - VJets__VJets_c
       - QCD_MuEnriched__QCD_MuEnriched_cc
       - TTto4Q__TTto4Q_cc
-      - TWplus__TWplus_cc
-      - TWminus__TWminus_cc
+      - SingleTop__SingleTop_cc
       - VJets__VJets_cc
     "b":
       - QCD_MuEnriched__QCD_MuEnriched_b
       - TTto4Q__TTto4Q_b
-      - TWplus__TWplus_b
-      - TWminus__TWminus_b
+      - SingleTop__SingleTop_b
       - VJets__VJets_b
       - QCD_MuEnriched__QCD_MuEnriched_bb
       - TTto4Q__TTto4Q_bb
-      - TWplus__TWplus_bb
-      - TWminus__TWminus_bb
+      - SingleTop__SingleTop_bb
       - VJets__VJets_bb
 
   colors_mc:
