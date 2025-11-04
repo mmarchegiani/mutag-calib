@@ -140,7 +140,14 @@ pocket-coffea run --cfg mutag_calib/configs/pt_reweighting/ptreweighting_run3.py
 > Single output files including all data-taking years will be saved: `output_TTto4Q.coffea`, `output_Vjets.coffea` and `output_SingleTop.coffea`. Instead for QCD and DATA, one output file for each dataset and data-taking year will be saved, for example: `output_QCD_PT-170to300_MuEnrichedPt5_Pt-170to300_2023_preBPix.coffea`.
 > 
 
-After merging the output files with the `merge-outputs` command, it is possible to produce the 3D reweighting map.
+After merging the output files with the `merge-outputs` command, it is possible to plot all the histograms and produce the 3D reweighting map.
+
+Produce the plots of all 1D histograms with:
+```bash
+cd pt_reweighting
+make-plots -i output_all.coffea
+```
+The plots are saved in the `plots` subfolder. 
 
 Produce 3D reweighting map with:
 ```bash
@@ -182,6 +189,8 @@ Similarly for the **HHbbgg analysis**:
 ```bash
 pocket-coffea run --cfg mutag_calib/configs/fit_templates/fit_templates_HHbbgg.py -o fit_templates_HHbbgg -e dask@lxplus --custom-run-options mutag_calib/configs/params/run_options.yaml --process-separately
 ```
+
+Merge outputs and produce plots with similar commands as in Step 2.
 
 ### Step 3: Produce fit shapes and combine datacards
 In order to produce the fit shapes and combine datacards for the fit, a dedicated script can be run with the following command:
@@ -243,8 +252,10 @@ Example Combine scripts to extract the SF can be found in the `mutag_calib/scrip
 combine -M FitDiagnostics -d workspace.root --saveWorkspace \
 --name .msd-80to170_Pt-300toInf_particleNet_XbbVsQCD-HHbbtt --cminDefaultMinimizerStrategy 2 \
 --robustFit=1 --saveShapes --saveWithUncertainties --saveOverallShapes \
---redefineSignalPOIs=r,SF_c,SF_light --setParameters r=1,l=1 --freezeParameters l \
+--redefineSignalPOIs=r,SF_c,SF_light --setParameters SF_light=1 --freezeParameters SF_light \
 --robustHesse=1 --stepSize=0.001 --X-rtd=MINIMIZER_analytic --X-rtd MINIMIZER_MaxCalls=9999999 \
 --cminFallbackAlgo Minuit2,Migrad,0:0.2 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND
 ```
+
+Note that the `--redefineSignalPOIs=r,SF_c,SF_light` is added to the combine command in order to perform a fit with 3 POIs to measure the b, c and light SFs simultaneously. For the calibration of bb taggers such as `ParticleNetXbbVsQCD`, it is sometimes necessary to freeze the light SF by adding `--setParameters SF_light=1 --freezeParameters SF_light`, since in the pass region of this tagger the light jets are negligible and the light SF cannot be measured.
 
