@@ -28,6 +28,13 @@ class fatjetBaseProcessor(BaseProcessorABC):
         #    )
         #)
 
+    def process_extra_after_skim(self):
+        super().process_extra_after_skim()
+        # Save raw softdrop mass before any calibration as a new field of FatJet
+        self.events["FatJet"] = ak.with_field(
+            self.events.FatJet, self.events.FatJet.msoftdrop, "msoftdrop_raw"
+        )
+
     def apply_object_preselection(self, variation):
         '''
         The ttHbb processor cleans
@@ -66,19 +73,19 @@ class fatjetBaseProcessor(BaseProcessorABC):
         # the third object are the dimuon pairs constructed from the matched muons
 
         self.events["MuonGoodMatchedToFatJetGood"] = muons_matched_to_fatjet(self.events)
-        muon_matched_to_leading_subjet = muon_matched_to_subjet(self.events, pos=0, unique=False)
-        muon_matched_to_subleading_subjet = muon_matched_to_subjet(self.events, pos=1, unique=False)
-        self.events["MuonGoodMatchedToSubJet"] = ak.concatenate((muon_matched_to_leading_subjet, muon_matched_to_subleading_subjet), axis=2)
-        muon_matched_uniquely_to_leading_subjet = muon_matched_to_subjet(self.events, pos=0, unique=True)
-        muon_matched_uniquely_to_subleading_subjet = muon_matched_to_subjet(self.events, pos=1, unique=True)
-        self.events["MuonGoodMatchedUniquelyToSubJet"] = ak.concatenate((muon_matched_uniquely_to_leading_subjet, muon_matched_uniquely_to_subleading_subjet), axis=2)
+        #muon_matched_to_leading_subjet = muon_matched_to_subjet(self.events, pos=0, unique=False)
+        #muon_matched_to_subleading_subjet = muon_matched_to_subjet(self.events, pos=1, unique=False)
+        #self.events["MuonGoodMatchedToSubJet"] = ak.concatenate((muon_matched_to_leading_subjet, muon_matched_to_subleading_subjet), axis=2)
+        #muon_matched_uniquely_to_leading_subjet = muon_matched_to_subjet(self.events, pos=0, unique=True)
+        #muon_matched_uniquely_to_subleading_subjet = muon_matched_to_subjet(self.events, pos=1, unique=True)
+        #self.events["MuonGoodMatchedUniquelyToSubJet"] = ak.concatenate((muon_matched_uniquely_to_leading_subjet, muon_matched_uniquely_to_subleading_subjet), axis=2)
 
         fatjet_fields = {
             "tau21" : self.events.FatJetGood.tau2 / self.events.FatJetGood.tau1,
             #"nSubJet" : ak.count(events.FatJetGood.subjets.pt, axis=2),
             "nMuonGoodMatchedToFatJetGood" : ak.count(self.events["MuonGoodMatchedToFatJetGood"].pt, axis=2),
-            "nMuonGoodMatchedToSubJet" : ak.count(self.events["MuonGoodMatchedToSubJet"].pt, axis=2),
-            "nMuonGoodMatchedUniquelyToSubJet" : ak.count(self.events["MuonGoodMatchedUniquelyToSubJet"].pt, axis=2)
+            #"nMuonGoodMatchedToSubJet" : ak.count(self.events["MuonGoodMatchedToSubJet"].pt, axis=2),
+            #"nMuonGoodMatchedUniquelyToSubJet" : ak.count(self.events["MuonGoodMatchedUniquelyToSubJet"].pt, axis=2)
         }
         for field, value in fatjet_fields.items():
             self.events["FatJetGood"] = ak.with_field(self.events.FatJetGood, value, field)
