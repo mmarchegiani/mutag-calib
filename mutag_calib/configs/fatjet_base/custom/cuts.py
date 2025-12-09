@@ -1,6 +1,6 @@
 # Per-event cuts applied to each event
 from pocket_coffea.lib.cut_definition import Cut
-from mutag_calib.configs.fatjet_base.custom.functions import twojets_ptmsd, mutag_fatjet, mutag_subjet, ptbin, ptbin_mutag, msoftdrop, msoftdropbin, ptmsd, ptmsd_window, ptmsdtau, min_nObj_minmsd, flavor_mask
+from mutag_calib.configs.fatjet_base.custom.functions import twojets_ptmsd, mutag_fatjet, mutag_subjet, ptbin, ptbin_mutag, msoftdrop, msoftdropbin, ptmsd, ptmsd_window, ptmsdtau, min_nObj_minmsd, flavor_mask, get_fatjets_with_matched_genjet
 
 def twojets_presel(pt, msd, name=None):
     if name == None:
@@ -148,3 +148,9 @@ def get_flavor(flavor):
         function=flavor_mask,
         collection="FatJetGood"
     )
+
+hasMatchedGenJet = Cut(
+    name="hasMatchedGenJet",
+    params={},
+    function=get_fatjets_with_matched_genjet
+)
