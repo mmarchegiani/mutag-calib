@@ -10,7 +10,10 @@ mutag_calib/workflows/__pycache__
 mutag_calib/lib/__pycache__
 mutag_calib/utils/stat/__pycache__/
 pt_reweighting_run3
+pt_reweighting_run3_msoftdrop_correction
+pt_reweighting_run3_2024
 fit_templates_HHbbtt
-fit_templates_HHbbtt_run3
+fit_templates_HHbbtt_msoftdrop_correction
 plotting_SFs.py
+plot_SFs_tau21.py
 CMSSW_14_1_0_pre4
