@@ -15,6 +15,8 @@ from pathlib import Path
 from collections import defaultdict
 import uproot
 from coffea.util import load
+from hist import Hist
+from hist.axis import StrCategory
 
 from pocket_coffea.utils.stat import MCProcess, DataProcess, SystematicUncertainty, MCProcesses, DataProcesses, Systematics
 from pocket_coffea.utils.stat.combine import combine_datacards
@@ -75,7 +77,13 @@ def categorize_samples(cutflow):
 
     for dataset, samples_dict in cutflow[baseline_category].items():
         for sample_name in samples_dict.keys():
-            if sample_name.startswith("DATA_"):
+            if sample_name.startswith("QCD_Madgraph_"):  # we don't want QCD Madgraph samples in the datacards, we use it for systematics
+                continue
+            elif sample_name.startswith("VJets_"):  # only for debugging
+                continue
+            elif sample_name.startswith("SingleTop_"):  # only for debugging
+                continue
+            elif sample_name.startswith("DATA_"):
                 data_samples.add(sample_name)
             elif sample_name.endswith("_l"):
                 light_samples.add(sample_name)
@@ -161,19 +169,67 @@ def get_passfail_ratio(datacards):
 
     return dict(passfail_ratio)
 
+def add_Madgraph_systematic(histogram_logsumSVmass_tau21):
+    """Function to add the Madgraph systematic uncertainty to the histogram."""
+    # select the qcd_samples
+    qcd_samples = [
+        s for s in histogram_logsumSVmass_tau21.keys()
+        if s.startswith("QCD_")
+    ]
+    #extract the flavors
+    flavors = {
+        s.split("__")[1].split("_")[-1]
+        for s in qcd_samples
+        if "__" in s and len(s.split("__")[1].split("_")) >= 2
+    }
+    print(f"flavors: {flavors}")
+    for flav in flavors:
+        mu_name = f"QCD_MuEnriched__QCD_MuEnriched_{flav}"
+        mg_name = f"QCD_Madgraph__QCD_Madgraph_{flav}"
+        # check that both MuEnriched and Madgraph flavor samples are in the keys
+        if mu_name not in histogram_logsumSVmass_tau21 or mg_name not in histogram_logsumSVmass_tau21:
+            continue
+        mu_datasets = histogram_logsumSVmass_tau21[mu_name]
+        mg_datasets = histogram_logsumSVmass_tau21[mg_name]
+        mg_sum = sum(h.values().sum() for h in mg_datasets.values())
+        mu_sum = sum(h.values().sum() for h in mu_datasets.values())
+        ratio = mg_sum / mu_sum
+        for dataset, h_mu in mu_datasets.items():
+            current_vars = list(h_mu.axes["variation"])  # variations already present
+            print(f"current_vars: {current_vars}")
+            new_vars = current_vars + [f"QCD_MuEnriched_ratio_Up", f"QCD_MuEnriched_ratio_Down"]  # adding new variations
+            print(f"new_vars: {new_vars}")
+            new_vars_axis = StrCategory(new_vars, name="variation")  # new variation axis
+            new_hist = Hist(
+                h_mu.axes["cat"],
+                new_vars_axis,
+                h_mu.axes["FatJetGood.logsumcorrSVmass"],
+                h_mu.axes["FatJetGood.tau21"],
+                storage=h_mu.storage_type()
+            )
+            for v in current_vars:
+                new_hist[{ "variation": v }].view(flow=True)[:] = h_mu[{ "variation": v }].view(flow=True)
+            nominal_vals = h_mu[{ "variation": "nominal" }].view(flow=True)
+            new_hist[{ "variation": "QCD_MuEnriched_ratio_Up" }].view(flow=True)[:] = nominal_vals * ratio
+            new_hist[{ "variation": "QCD_MuEnriched_ratio_Down" }].view(flow=True)[:] = nominal_vals * (2 - ratio)
+            if ratio > 2:
+                raise ValueError(f"ratio > 2 for flavor {flav}, cannot create down variation")
+            histogram_logsumSVmass_tau21[mu_name][dataset] = new_hist
+
 def get_1d_histogram(h2d_dict, tau21_cut):
     """Function to get the 1D histogram from the 2D histogram by integrating over the axis corresponding to tau21."""
     h1d_dict = {}
     for proc, ds_dict in h2d_dict.items():
-        # print(f"Processing {proc}...\n")
+        # print(f"\nProcessing {proc}...\n")
         h1d_dict[proc] = {}
-        # print(f"ds_dict.keys(): {ds_dict.keys()}\n")
+        # print(f"{ds_dict.keys()}\n")
         for ds, histo2d in ds_dict.items():
             # print(f"Dataset: {ds}\n")
             ax_tau21 = histo2d.axes["FatJetGood.tau21"]
             bin_stop = next(i for i, edge in enumerate(ax_tau21.edges[1:]) if edge > tau21_cut)
             histo_cut = histo2d.integrate(ax_tau21.name, 0, bin_stop)
             h1d_dict[proc][ds] = histo_cut
+    # print(f"{h1d_dict.keys()}\n")
     return h1d_dict
 
 def print_report(successful_categories, failed_categories):
@@ -224,6 +280,8 @@ def main():
     for year in args.years:
         # Define processes and systematics
         mc_processes, data_processes = define_processes(samples, [year])
+        print(f"{mc_processes.items()}")
+        print(f"{data_processes.items()}")
         
         # Update process samples based on what we found
         for process_name, process in mc_processes.items():
@@ -233,6 +291,9 @@ def main():
             process.samples = samples[process_name]
         
         systematics = define_systematics([year], [p_name for p_name, p in mc_processes.items()])
+
+        # Add the variation QCD_Madgraph/QCD_MuEnriched to the Hist
+        add_Madgraph_systematic(histograms[args.variable])
         
         # Create output directory
         if args.output_dir is None:

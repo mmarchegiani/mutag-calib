@@ -1,0 +1,10 @@
+passfail_ratio:
+    b_2022_preEE: .nan
+    b_2022_preEE_pileupDown: .nan
+    b_2022_preEE_pileupUp: .nan
+    c_2022_preEE: .nan
+    c_2022_preEE_pileupDown: .nan
+    c_2022_preEE_pileupUp: .nan
+    light_2022_preEE: .nan
+    light_2022_preEE_pileupDown: .nan
+    light_2022_preEE_pileupUp: .nan

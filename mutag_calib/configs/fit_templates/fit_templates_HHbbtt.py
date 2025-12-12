@@ -41,7 +41,7 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
 #     "DATA_BTagMu"
 # ]
 samples = [
-    "QCD_Madgraph"
+    "SingleTop"
 ]
 
 subsamples = {}
@@ -155,7 +155,7 @@ cfg = Configurator(
         #           "datasets/MC_TTto4Q_run3_redirector.json",
         #           "datasets/MC_singletop_run3_redirector.json",
         #           "datasets/DATA_BTagMu_run3_redirector.json"],
-        "jsons": ["datasets/MC_QCD_Madgraph_run3_redirector.json"],
+        "jsons": ["datasets/MC_singletop_run3_missing_redirector.json"],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
