@@ -1,3 +1,0 @@
-#!/bin/bash
-combineCards.py msd_40toInf_Pt_425toInf_particleNet_XbbVsQCD_HHbbtt_pass_2022_preEE=pass/datacard.txt msd_40toInf_Pt_425toInf_particleNet_XbbVsQCD_HHbbtt_fail_2022_preEE=fail/datacard.txt > datacard_combined.txt
-text2workspace.py datacard_combined.txt -o workspace.root 
