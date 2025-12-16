@@ -79,10 +79,10 @@ def categorize_samples(cutflow):
         for sample_name in samples_dict.keys():
             if sample_name.startswith("QCD_Madgraph_"):  # we don't want QCD Madgraph samples in the datacards, we use it for systematics
                 continue
-            elif sample_name.startswith("VJets_"):  # only for debugging
-                continue
-            elif sample_name.startswith("SingleTop_"):  # only for debugging
-                continue
+            # elif sample_name.startswith("VJets_"):  # only for debugging
+            #     continue
+            # elif sample_name.startswith("SingleTop_"):  # only for debugging
+            #     continue
             elif sample_name.startswith("DATA_"):
                 data_samples.add(sample_name)
             elif sample_name.endswith("_l"):
@@ -116,6 +116,36 @@ def define_systematics(years, mc_process_names):
             typ="shape",
             processes={name : 1.0 for name in mc_process_names},
             #value=1.01,  # 1% pileup uncertainty
+            years=years,
+        ),
+        SystematicUncertainty(
+            name="QCD_MuEnriched_ratio",
+            typ="shape",
+            processes={name: 1.0 for name in mc_process_names},
+            years=years,
+        ),
+        SystematicUncertainty(
+            name="sf_partonshower_fsr",
+            typ="shape",
+            processes={name: 1.0 for name in mc_process_names},
+            years=years,
+        ),
+        SystematicUncertainty(
+            name="sf_partonshower_isr",
+            typ="shape",
+            processes={name: 1.0 for name in mc_process_names},
+            years=years,
+        ),
+        SystematicUncertainty(
+            name="AK8PFPuppi_JER",
+            typ="shape",
+            processes={name: 1.0 for name in mc_process_names},
+            years=years,
+        ),
+        SystematicUncertainty(
+            name="AK8PFPuppi_JES_Total",
+            typ="shape",
+            processes={name: 1.0 for name in mc_process_names},
             years=years,
         ),
         # Add process-specific uncertainties
@@ -182,7 +212,7 @@ def add_Madgraph_systematic(histogram_logsumSVmass_tau21):
         for s in qcd_samples
         if "__" in s and len(s.split("__")[1].split("_")) >= 2
     }
-    print(f"flavors: {flavors}")
+    print(f"flavors: {flavors}\n")
     for flav in flavors:
         mu_name = f"QCD_MuEnriched__QCD_MuEnriched_{flav}"
         mg_name = f"QCD_Madgraph__QCD_Madgraph_{flav}"
@@ -195,10 +225,11 @@ def add_Madgraph_systematic(histogram_logsumSVmass_tau21):
         mu_sum = sum(h.values().sum() for h in mu_datasets.values())
         ratio = mg_sum / mu_sum
         for dataset, h_mu in mu_datasets.items():
+            print(f"dataset: {dataset}\n")
             current_vars = list(h_mu.axes["variation"])  # variations already present
-            print(f"current_vars: {current_vars}")
-            new_vars = current_vars + [f"QCD_MuEnriched_ratio_Up", f"QCD_MuEnriched_ratio_Down"]  # adding new variations
-            print(f"new_vars: {new_vars}")
+            print(f"current_vars: {current_vars}\n")
+            new_vars = current_vars + [f"QCD_MuEnriched_ratioUp", f"QCD_MuEnriched_ratioDown"]  # adding new variations
+            print(f"new_vars: {new_vars}\n")
             new_vars_axis = StrCategory(new_vars, name="variation")  # new variation axis
             new_hist = Hist(
                 h_mu.axes["cat"],
@@ -210,8 +241,8 @@ def add_Madgraph_systematic(histogram_logsumSVmass_tau21):
             for v in current_vars:
                 new_hist[{ "variation": v }].view(flow=True)[:] = h_mu[{ "variation": v }].view(flow=True)
             nominal_vals = h_mu[{ "variation": "nominal" }].view(flow=True)
-            new_hist[{ "variation": "QCD_MuEnriched_ratio_Up" }].view(flow=True)[:] = nominal_vals * ratio
-            new_hist[{ "variation": "QCD_MuEnriched_ratio_Down" }].view(flow=True)[:] = nominal_vals * (2 - ratio)
+            new_hist[{ "variation": "QCD_MuEnriched_ratioUp" }].view(flow=True)[:] = nominal_vals * ratio
+            new_hist[{ "variation": "QCD_MuEnriched_ratioDown" }].view(flow=True)[:] = nominal_vals * (2 - ratio)
             if ratio > 2:
                 raise ValueError(f"ratio > 2 for flavor {flav}, cannot create down variation")
             histogram_logsumSVmass_tau21[mu_name][dataset] = new_hist
@@ -280,8 +311,8 @@ def main():
     for year in args.years:
         # Define processes and systematics
         mc_processes, data_processes = define_processes(samples, [year])
-        print(f"{mc_processes.items()}")
-        print(f"{data_processes.items()}")
+        print(f"{mc_processes.items()}\n")
+        print(f"{data_processes.items()}\n")
         
         # Update process samples based on what we found
         for process_name, process in mc_processes.items():
@@ -289,11 +320,12 @@ def main():
         
         for process_name, process in data_processes.items():
             process.samples = samples[process_name]
-        
-        systematics = define_systematics([year], [p_name for p_name, p in mc_processes.items()])
 
         # Add the variation QCD_Madgraph/QCD_MuEnriched to the Hist
         add_Madgraph_systematic(histograms[args.variable])
+        
+        systematics = define_systematics([year], [p_name for p_name, p in mc_processes.items()])
+        print(f"systematics: {systematics}\n")
         
         # Create output directory
         if args.output_dir is None:

@@ -17,3 +17,7 @@ fit_templates_HHbbtt_good
 plotting_SFs.py
 plot_SFs_tau21.py
 CMSSW_14_1_0_pre4
+run_combine_cards.py
+fit_diagnostics.py
+extract_fit_results.py
+run_fit_results.py
