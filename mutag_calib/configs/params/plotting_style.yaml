@@ -8,29 +8,24 @@ plotting_style:
       - TTto4Q__TTto4Q_l
       - SingleTop__SingleTop_l
       - VJets__VJets_l
-      - SingleTop__SingleTop_l
     "c":
       - QCD_MuEnriched__QCD_MuEnriched_c
       - TTto4Q__TTto4Q_c
       - SingleTop__SingleTop_c
       - VJets__VJets_c
-      - SingleTop__SingleTop_c
       - QCD_MuEnriched__QCD_MuEnriched_cc
       - TTto4Q__TTto4Q_cc
       - SingleTop__SingleTop_cc
       - VJets__VJets_cc
-      - SingleTop__SingleTop_cc
     "b":
       - QCD_MuEnriched__QCD_MuEnriched_b
       - TTto4Q__TTto4Q_b
       - SingleTop__SingleTop_b
       - VJets__VJets_b
-      - SingleTop__SingleTop_b
       - QCD_MuEnriched__QCD_MuEnriched_bb
       - TTto4Q__TTto4Q_bb
       - SingleTop__SingleTop_bb
       - VJets__VJets_bb
-      - SingleTop__SingleTop_bb
 
   exclude_samples: ["QCD_Madgraph__QCD_Madgraph_c", "QCD_Madgraph__QCD_Madgraph_cc", "QCD_Madgraph__QCD_Madgraph_b", "QCD_Madgraph__QCD_Madgraph_bb", "QCD_Madgraph__QCD_Madgraph_l"]
 
@@ -38,4 +33,3 @@ plotting_style:
     l: CMS_red
     c: CMS_orange
     b: CMS_blue
-
