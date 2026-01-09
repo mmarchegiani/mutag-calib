@@ -14,10 +14,11 @@ pt_reweighting_run3_2024
 pt_reweighting_run3_msoftdrop_correction
 fit_templates_HHbbtt
 fit_templates_HHbbtt_good
-plotting_SFs.py
-plot_SFs_tau21.py
 CMSSW_14_1_0_pre4
-run_combine_cards.py
-fit_diagnostics.py
-extract_fit_results.py
-run_fit_results.py
+# mutag_calib/scripts/run_combine_cards.py
+# mutag_calib/scripts/fit_diagnostics.py
+# mutag_calib/scripts/extract_fit_results.py
+# mutag_calib/scripts/run_fit_results.py
+# mutag_calib/scripts/make_combine_plots.py
+# mutag_calib/scripts/run_all_combine_plots.py
+# mutag_calib/scripts/make_SFs_plots.py
