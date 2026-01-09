@@ -32,12 +32,16 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/plotting_style.yaml",
                                                 update=True)
 
+# samples = [
+#     "QCD_MuEnriched",
+#     "QCD_Madgraph",
+#     "VJets",
+#     "TTto4Q",
+#     "SingleTop",
+#     "DATA_BTagMu"
+# ]
 samples = [
-    "QCD_MuEnriched",
-    "VJets",
-    "TTto4Q",
-    "SingleTop",
-    "DATA_BTagMu"
+    "SingleTop"
 ]
 
 subsamples = {}
@@ -94,8 +98,8 @@ taggers = parameters["mutag_calibration"]["taggers"]
 # Note: Here we assume that the pt binning and WPs are the same for all the eras!
 # To be changed in the future if the WP is a function of the data taking year
 pt_binning = parameters["mutag_calibration"]["pt_binning"]["2022_preEE"]
-wp_dict = parameters["mutag_calibration"]["wp"]["2022_preEE"]
 msd_binning = parameters["mutag_calibration"]["msd_binning"]["2022_preEE"]
+wp_dict = parameters["mutag_calibration"]["wp"]["2022_preEE"]
 
 common_cats = {
     "inclusive" : [passthrough],
@@ -145,11 +149,13 @@ multicuts = [
 cfg = Configurator(
     parameters = parameters,
     datasets = {
-        "jsons": ["datasets/MC_QCD_MuEnriched_run3.json",
-                  "datasets/MC_VJets_run3.json",
-                  "datasets/MC_TTto4Q_run3.json",
-                  "datasets/MC_singletop_run3.json",
-                  "datasets/DATA_BTagMu_run3.json"],
+        # "jsons": ["datasets/MC_QCD_MuEnriched_run3_redirector.json",
+        #           "datasets/MC_QCD_Madgraph_run3_redirector.json",
+        #           "datasets/MC_VJets_run3_redirector.json",
+        #           "datasets/MC_TTto4Q_run3_redirector.json",
+        #           "datasets/MC_singletop_run3_redirector.json",
+        #           "datasets/DATA_BTagMu_run3_redirector.json"],
+        "jsons": ["datasets/MC_singletop_run3_missing_redirector.json"],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
@@ -186,6 +192,26 @@ cfg = Configurator(
             }
         },
         "bysample": {
+            "QCD_Madgraph": {
+                "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                "bycategory" : {
+                }
+            },
+            "VJets": {
+                "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                "bycategory" : {
+                }
+            },
+            "TTto4Q": {
+                "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                "bycategory" : {
+                }
+            },
+            "SingleTop": {
+                "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                "bycategory" : {
+                }
+            }
         }
     },
 
@@ -198,12 +224,32 @@ cfg = Configurator(
                 }
             },
             "bysample": {
-            }    
+                "QCD_Madgraph": {
+                    "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                    "bycategory": {
+                    }
+                },
+                "VJets": {
+                    "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                    "bycategory": {
+                    }
+                },
+                "TTto4Q": {
+                    "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                    "bycategory": {
+                    }
+                },
+                "SingleTop": {
+                    "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                    "bycategory": {
+                    }
+                }
+            }   
         },
         "shape": {
             "common": {
                 # "inclusive" : ["JES_Total_AK8PFPuppi", "JER_AK8PFPuppi"]
-                "inclusive" : []
+                "inclusive" : ["jet_calibration"]
             }
         }
     },
