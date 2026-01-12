@@ -275,13 +275,3 @@ def flavor_mask(events, params, **kwargs):
         return mask[params["flavor"]] & ~mask["bb"] & ~mask["cc"] & ~mask["b"] & ~mask["c"]
     else:
         raise NotImplementedError
-
-def get_fatjets_with_matched_genjet(events, params, processor_params, year, isMC, **kwargs):
-    if isMC:
-        # If the nBHadrons and nCHadrons branches are already present, no need to check genJetAK8Idx
-        if ('nBHadrons' in events.FatJet.fields) and ('nCHadrons' in events.FatJet.fields):
-            return ak.ones_like(events.FatJet.pt, dtype=bool)
-        else:
-            return events.FatJet.genJetAK8Idx >= 0 # return mask where FatJets have a matched GenJetAK8 (-1 means no match)
-    else:
-        return ak.ones_like(events.FatJet.pt, dtype=bool)

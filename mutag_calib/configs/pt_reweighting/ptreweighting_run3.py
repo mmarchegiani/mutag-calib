@@ -7,7 +7,7 @@ from pocket_coffea.lib.calibrators.common.common import JetsCalibrator, JetsSoft
 from pocket_coffea.lib.weights.common.common import common_weights
 from pocket_coffea.parameters.histograms import *
 import mutag_calib
-from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_ptmsd_window, get_nObj_minmsd, get_flavor, hasMatchedGenJet
+from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_ptmsd_window, get_nObj_minmsd, get_flavor
 from mutag_calib.configs.fatjet_base.custom.functions import get_inclusive_wp
 from mutag_calib.configs.fatjet_base.custom.weights import SF_trigger_prescale
 import mutag_calib.workflows.pt_reweighting as workflow
@@ -121,7 +121,6 @@ cfg = Configurator(
     skim = [get_nPVgood(1),
             eventFlags,
             goldenJson,
-            hasMatchedGenJet,
             get_nObj_min(1, 200., "FatJet"),
             get_nObj_minmsd(1, 30., "FatJet"),
             get_nObj_min(1, 3., "Muon"),
