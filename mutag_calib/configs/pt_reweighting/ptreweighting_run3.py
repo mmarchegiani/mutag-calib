@@ -99,24 +99,20 @@ for coll in collections:
 cfg = Configurator(
     parameters = parameters,
     datasets = {
-        # "jsons": ["datasets/MC_VJets_run3_redirector.json",
-        #           "datasets/MC_TTto4Q_run3_redirector.json",
-        #           "datasets/MC_singletop_run3_redirector.json",
-        #           "datasets/DATA_BTagMu_run3_redirector.json",
-        #           "datasets/MC_QCD_MuEnriched_run3_redirector.json"
-        #           ],
-        "jsons": ["datasets/MC_singletop_run3_2024_redirector.json"
-                  ],
+         "jsons": ["datasets/MC_VJets_run3_redirector.json",
+                   "datasets/MC_TTto4Q_run3_redirector.json",
+                   "datasets/MC_singletop_run3_redirector.json",
+                   "datasets/DATA_BTagMu_run3_redirector.json",
+                   "datasets/MC_QCD_MuEnriched_run3_redirector.json"
+                   ],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
-            # "year": [
-            #     '2022_preEE',
-            #     '2022_postEE',
-            #     '2023_preBPix',
-            #     '2023_postBPix'
-            # ]
             "year": [
+                '2022_preEE',
+                '2022_postEE',
+                '2023_preBPix',
+                '2023_postBPix',
                 '2024'
             ]
         },
@@ -167,7 +163,6 @@ cfg = Configurator(
         },
         "shape": {
             "common": {
-                # "inclusive" : ["JES_Total_AK8PFPuppi", "JER_AK8PFPuppi"]
                 "inclusive" : ["jet_calibration"]
             }
         }

@@ -85,10 +85,6 @@ def categorize_samples(cutflow):
         for sample_name in samples_dict.keys():
             if sample_name.startswith("QCD_Madgraph_"):  # we don't want QCD Madgraph samples in the datacards, we use it for systematics
                 continue
-            # elif sample_name.startswith("VJets_"):  # only for debugging
-            #     continue
-            # elif sample_name.startswith("SingleTop_"):  # only for debugging
-            #     continue
             elif sample_name.startswith("DATA_"):
                 data_samples.add(sample_name)
             elif sample_name.endswith("_l"):
@@ -124,7 +120,6 @@ def define_systematics(years, mc_process_names):
             name="pileup",
             typ="shape",
             processes={name : 1.0 for name in mc_process_names},
-            #value=1.01,  # 1% pileup uncertainty
             years=years,
         ),
         SystematicUncertainty(
