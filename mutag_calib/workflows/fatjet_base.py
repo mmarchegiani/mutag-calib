@@ -42,22 +42,22 @@ class fatjetBaseProcessor(BaseProcessorABC):
                 mask_matched_genjet = self.events.FatJet.genJetAK8Idx >= 0
                 self.events["FatJet"] = self.events.FatJet[mask_matched_genjet]
 
-        # Since NanoAODv15 the nBHadrons and nCHadrons variables are stored in the GenJetAK8 collection
-        # so we need to match the FatJet to the GenJetAK8 and copy them if not already present
-        if (not 'nBHadrons' in self.events.FatJet.fields) or (not 'nCHadrons' in self.events.FatJet.fields):
-            matched_genjets = self.events.GenJetAK8[self.events.FatJet.genJetAK8Idx]
-        if not 'nBHadrons' in self.events.FatJet.fields:
-            self.events["FatJet"] = ak.with_field(
-                self.events.FatJet,
-                matched_genjets.nBHadrons,
-                "nBHadrons"
-            )
-        if not 'nCHadrons' in self.events.FatJet.fields:
-            self.events["FatJet"] = ak.with_field(
-                self.events.FatJet,
-                matched_genjets.nCHadrons,
-                "nCHadrons"
-            )
+            # Since NanoAODv15 the nBHadrons and nCHadrons variables are stored in the GenJetAK8 collection
+            # so we need to match the FatJet to the GenJetAK8 and copy them if not already present
+            if (not 'nBHadrons' in self.events.FatJet.fields) or (not 'nCHadrons' in self.events.FatJet.fields):
+                matched_genjets = self.events.GenJetAK8[self.events.FatJet.genJetAK8Idx]
+            if not 'nBHadrons' in self.events.FatJet.fields:
+                self.events["FatJet"] = ak.with_field(
+                    self.events.FatJet,
+                    matched_genjets.nBHadrons,
+                    "nBHadrons"
+                )
+            if not 'nCHadrons' in self.events.FatJet.fields:
+                self.events["FatJet"] = ak.with_field(
+                    self.events.FatJet,
+                    matched_genjets.nCHadrons,
+                    "nCHadrons"
+                )
 
     def apply_object_preselection(self, variation):
         '''
