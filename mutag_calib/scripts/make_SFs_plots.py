@@ -17,13 +17,16 @@ TAU21_CENTRAL = 0.30
 
 
 # read r from fitResults.json
-def read_r(path):
+def read_r(path, sf_type="b"):
     with open(path) as f:
         d = json.load(f)
-    return d["r"], d["r_errUp"], d["r_errDown"]
+    if sf_type == "b":
+        return d["r"], d["r_errUp"], d["r_errDown"]
+    elif sf_type == "c":
+        return d["SF_c"], d["SF_c_errUp"], d["SF_c_errDown"]
 
 # extract r from fit results
-def collect_results(base_dir):
+def collect_results(base_dir, sf_type="b"):
     data = {}
     for year in sorted(os.listdir(base_dir)):
         for cat in ALLOWED_CATEGORIES:
@@ -39,7 +42,7 @@ def collect_results(base_dir):
                 if not os.path.exists(fjson):
                     continue
 
-                r, eup, edown = read_r(fjson)
+                r, eup, edown = read_r(fjson, sf_type=sf_type)
                 data[year][cat][t] = (r, eup, edown)
     return data
 
@@ -61,6 +64,7 @@ def pt_label_from_category(cat):
         return r"p_{T} \geq %s" % lo
     else:
         return r"p_{T} = [%s, %s]" % (lo, hi)
+    # return r"p_{T} = [%s, %s]" % (lo, hi)
 
 # helper function to set dynamic y range
 def set_dynamic_y_range(graph, y, err_up, err_dn, n_sigma=1.5):
@@ -77,12 +81,13 @@ def set_dynamic_y_range(graph, y, err_up, err_dn, n_sigma=1.5):
     return (ymin - margin)
 
 # plot SFs vs tau21 cut
-def plot_r_vs_tau21(year, cat, results, outdir):
+def plot_r_vs_tau21(year, cat, results, outdir, sf_type):
     tau = sorted(results.keys())
     r   = [results[t][0] for t in tau]
     eup = [results[t][1] for t in tau]
     edn = [results[t][2] for t in tau]
     outname = outdir
+    sf = sf_type
 
     plot_r_vs_tau21_ROOT(
         year     = year,
@@ -91,10 +96,11 @@ def plot_r_vs_tau21(year, cat, results, outdir):
         r        = r,
         err_up   = eup,
         err_dn   = edn,
-        outname  = outname
+        outname  = outname,
+        sf_type  = sf
     )
 
-def plot_r_vs_tau21_ROOT(year, category, tau, r, err_up, err_dn, outname):
+def plot_r_vs_tau21_ROOT(year, category, tau, r, err_up, err_dn, outname, sf_type):
     os.makedirs(os.path.dirname(outname), exist_ok=True)
 
     ROOT.gStyle.SetOptStat(0)
@@ -125,7 +131,7 @@ def plot_r_vs_tau21_ROOT(year, category, tau, r, err_up, err_dn, outname):
     g.GetXaxis().SetNdivisions(5, 0, 0)
     g.GetXaxis().SetLabelSize(0.03)
     g.GetXaxis().SetLabelOffset(999)
-    g.GetYaxis().SetTitle("SF")
+    g.GetYaxis().SetTitle(f"SF_{{{sf_type}}}")
     g.GetYaxis().SetTitleSize(0.05)
     g.GetYaxis().SetTitleOffset(0.9)
     y_margin = set_dynamic_y_range(g, r, err_up, err_dn, n_sigma=1.5)
@@ -138,8 +144,12 @@ def plot_r_vs_tau21_ROOT(year, category, tau, r, err_up, err_dn, outname):
     latex = ROOT.TLatex()
     latex.SetTextAlign(22)
     latex.SetTextSize(0.04)
-    for i, label in enumerate(labels):
-        latex.DrawLatex(i+1, y_margin - 0.008, label)
+    if sf_type == "b":
+        for i, label in enumerate(labels):
+            latex.DrawLatex(i+1, y_margin - 0.008, label)
+    else:
+        for i, label in enumerate(labels):
+            latex.DrawLatex(i+1, y_margin - 0.05, label)
 
     # CMS Preliminary
     latex.SetNDC()
@@ -162,7 +172,7 @@ def plot_r_vs_tau21_ROOT(year, category, tau, r, err_up, err_dn, outname):
     c.Close()
 
 # plot SFs for tau21 = 0.30 per each year
-def plot_r_vs_category(year, data, outdir):
+def plot_r_vs_category(year, data, outdir, sf_type):
     cats = ALLOWED_CATEGORIES
     x = np.arange(len(cats))
     r, eup, edn, eup_tot, edn_tot, tau_err = [], [], [], [], [], []
@@ -175,6 +185,7 @@ def plot_r_vs_category(year, data, outdir):
         edn.append(ed)
         tau_err.append(d_tau)
     outname = outdir
+    sf = sf_type
 
     plot_r_vs_category_ROOT(
         year    = year,
@@ -183,12 +194,13 @@ def plot_r_vs_category(year, data, outdir):
         err_fit_up  = eup,
         err_fit_dn  = edn,
         tau21_err   = tau_err,
-        outname = outname
+        outname = outname,
+        sf_type  = sf
     )
 
     return dict(zip(cats, tau_err))
 
-def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, outname):
+def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, outname, sf_type):
     os.makedirs(os.path.dirname(outname), exist_ok=True)
 
     ROOT.gStyle.SetOptStat(0)
@@ -201,16 +213,8 @@ def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, ou
     g_tot = ROOT.TGraphAsymmErrors(n)
 
     for i in range(n):
-        # g_tau.SetPoint(i, x[i], r[i])
-        # g_tau.SetPointError(i, ex[i], ex[i], tau21_err[i], tau21_err[i])
-
         g_tot.SetPoint(i, x[i], r[i])
         g_tot.SetPointError(i, ex[i], ex[i], err_dn_tot[i], err_up_tot[i])
-
-    # g_tau.SetFillColor(ROOT.kRed+1)
-    # g_tau.SetFillStyle(3004)
-    # g_tau.SetLineColor(ROOT.kRed+1)
-    # g_tau.SetLineWidth(1)  
 
     g_tot.SetMarkerStyle(20)
     g_tot.SetMarkerSize(1.3)
@@ -229,7 +233,7 @@ def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, ou
     g_tot.GetXaxis().SetNdivisions(3, 0, 0)
     g_tot.GetXaxis().SetLabelSize(0.03)
     g_tot.GetXaxis().SetLabelOffset(999)
-    g_tot.GetYaxis().SetTitle("SF")
+    g_tot.GetYaxis().SetTitle(f"SF_{{{sf_type}}}")
     g_tot.GetYaxis().SetTitleSize(0.05)
     g_tot.GetYaxis().SetTitleOffset(0.9)
     y_margin = set_dynamic_y_range(g_tot, r, err_up_tot, err_dn_tot, n_sigma=1.5)
@@ -260,8 +264,12 @@ def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, ou
     latex = ROOT.TLatex()
     latex.SetTextAlign(22)
     latex.SetTextSize(0.04)
-    for i, label in enumerate(labels):
-        latex.DrawLatex(i+1, y_margin - 0.01, label)
+    if sf_type == "b":
+        for i, label in enumerate(labels):
+            latex.DrawLatex(i+1, y_margin - 0.01, label)
+    else:
+        for i, label in enumerate(labels):
+            latex.DrawLatex(i+1, y_margin - 0.05, label)
 
     # CMS Preliminary
     latex.SetNDC()
@@ -288,25 +296,27 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("base_dir", help="Base directory containing fit results")
     parser.add_argument("--output-dir", "-o", required=True, help="Output directory for SFs_plots")
+    parser.add_argument("--SF-type", "-sf", default="b", help="Type of scale factor: b for SF_b, c for SF_c (default: b)")
     args = parser.parse_args()
 
     base_dir = args.base_dir
-    data = collect_results(base_dir)
+    sf_type = args.SF_type
+    data = collect_results(base_dir, sf_type=sf_type)
 
     for year in data:
         year_out = f"{args.output_dir}/{year}"
 
         for cat, res in data[year].items():
-            plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF_vs_tau21_{cat}.pdf"))
-            plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF_vs_tau21_{cat}.png"))
+            plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF{sf_type}_vs_tau21_{cat}.pdf"), sf_type)
+            plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF{sf_type}_vs_tau21_{cat}.png"), sf_type)
             print(f"[OK] Plotted SF vs tau21 for {year} {cat}")
 
-        tau21_errors = plot_r_vs_category(year, data[year], os.path.join(year_out, "SF_vs_category_tau21_0p30.pdf"))
-        tau21_errors = plot_r_vs_category(year, data[year], os.path.join(year_out, "SF_vs_category_tau21_0p30.png"))
+        tau21_errors = plot_r_vs_category(year, data[year], os.path.join(year_out, f"SF{sf_type}_vs_category_tau21_0p30.pdf"), sf_type)
+        tau21_errors = plot_r_vs_category(year, data[year], os.path.join(year_out, f"SF{sf_type}_vs_category_tau21_0p30.png"), sf_type)
         print(f"[OK] Plotted SF vs category for {year}")
 
         # salva errore tau21
-        with open(os.path.join(year_out, "tau21_sys.json"), "w") as f:
+        with open(os.path.join(year_out, f"SF{sf_type}_tau21_sys.json"), "w") as f:
             json.dump(tau21_errors, f, indent=2)
         print(f"[OK] Saved tau21 uncertainties for {year}")
 
