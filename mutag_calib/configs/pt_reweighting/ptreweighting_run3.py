@@ -30,15 +30,12 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/plotting_style.yaml",
                                                 update=True)
 
-# samples = [
-#     "QCD_MuEnriched",
-#     "VJets",
-#     "TTto4Q",
-#     "SingleTop",
-#     "DATA_BTagMu"
-# ]
 samples = [
-    "SingleTop"
+    "QCD_MuEnriched",
+    "VJets",
+    "TTto4Q",
+    "SingleTop",
+    "DATA_BTagMu"
 ]
 subsamples = {}
 for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
