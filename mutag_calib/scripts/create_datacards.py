@@ -291,6 +291,133 @@ def get_1d_histogram(h2d_dict, tau21_cut):
     # print(f"{h1d_dict.keys()}\n")
     return h1d_dict
 
+
+def get_1d_histogram_reweighed(h2d_dict, tau21_cut, samples, year, parent_category):
+    """Return 1D histograms with MC (b+c+light) reweighted to data.
+
+    The input 2D histograms are first integrated over the tau21 axis as in
+    get_1d_histogram, using the cut ``tau21 < tau21_cut``. Then, for the
+    specified year and a given parent category, a bin-by-bin weight is
+    computed such that, in the *inclusive pass+fail region* for that parent
+    category, the sum of all MC histograms (b + c + light) equals the data
+    histogram. Those weights are applied to the MC templates in both the
+    corresponding pass and fail categories, leaving data unchanged.
+    """
+
+    # Start from the standard 1D histograms
+    h1d_dict = get_1d_histogram(h2d_dict, tau21_cut)
+
+    # Find a reference histogram to infer axes
+    example_hist = None
+    for ds_dict in h1d_dict.values():
+        if ds_dict:
+            example_hist = next(iter(ds_dict.values()))
+            break
+
+    if example_hist is None:
+        return h1d_dict
+
+    # Axes: ["cat", "variation", fit_variable]
+    cat_axis = example_hist.axes["cat"]
+    var_axis = example_hist.axes["variation"]
+    fit_axes = [ax for ax in example_hist.axes if ax.name not in ("cat", "variation")]
+    if len(fit_axes) != 1:
+        raise RuntimeError("Expected exactly one fit variable axis after tau21 integration")
+    fit_axis = fit_axes[0]
+
+    # Identify pass and fail categories for this parent category
+    pass_cat_label = f"{parent_category}-pass"
+    fail_cat_label = f"{parent_category}-fail"
+    cat_indices = []
+    for label in (pass_cat_label, fail_cat_label):
+        try:
+            idx = cat_axis.index(label)
+            cat_indices.append(idx)
+        except KeyError:
+            continue
+
+    if not cat_indices:
+        # Nothing to reweight for this parent category
+        return h1d_dict
+
+    n_fit_bins = len(fit_axis.edges) - 1
+    nom_index = var_axis.index("nominal")
+
+    # Define MC and data sample sets
+    mc_sample_names = set(samples["light"] + samples["c"] + samples["b"])
+    data_sample_names = set(samples["data_obs"])
+
+    mc_sum = np.zeros(n_fit_bins, dtype=float)
+    data_sum = np.zeros(n_fit_bins, dtype=float)
+
+    # Build inclusive (pass+fail) distributions for the requested year and parent category
+    for proc_name, ds_dict in h1d_dict.items():
+        for ds, h in ds_dict.items():
+            # Restrict to the datasets of the current year
+            if year not in ds:
+                continue
+
+            # For weight-storage histograms, ``h.view`` returns a structured
+            # array with (value, variance). We only want the values here.
+            view = h.view(flow=False)
+            values_view = view["value"]
+
+            # Handle both cases:
+            #  - 3D: (n_cat, n_var, n_fit)
+            #  - 2D: (n_cat, n_fit)  (no explicit variation axis)
+            if values_view.ndim == 3:
+                # Sum over the pass and fail categories of this parent,
+                # keeping only the nominal variation
+                proj = values_view[cat_indices, nom_index, :].sum(axis=0)
+            elif values_view.ndim == 2:
+                # No variation axis: treat the existing values as nominal
+                proj = values_view[cat_indices, :].sum(axis=0)
+            else:
+                raise RuntimeError(
+                    f"Unsupported histogram dimensionality {values_view.ndim} in reweighting (expected 2 or 3)"
+                )
+
+            if proc_name in mc_sample_names:
+                mc_sum += proj
+            elif proc_name in data_sample_names:
+                data_sum += proj
+
+    # Compute bin-by-bin weights; default to 1 when MC is zero
+    with np.errstate(divide="ignore", invalid="ignore"):
+        weights = np.where(mc_sum > 0.0, data_sum / mc_sum, 1.0)
+        weights = np.nan_to_num(weights, nan=1.0, posinf=1.0, neginf=1.0)
+
+    # Apply weights to all MC templates (all variations) in the pass+fail
+    # categories of this parent
+    for proc_name, ds_dict in h1d_dict.items():
+        if proc_name not in mc_sample_names:
+            continue
+        for ds, h in ds_dict.items():
+            if year not in ds:
+                continue
+            view = h.view(flow=False)
+
+            # For weight-storage histograms, scale values and variances
+            # separately: v -> w*v, var -> w^2*var.
+            values_view = view["value"]
+
+            if values_view.ndim == 3:
+                # Axes: (cat, variation, fit)
+                scale = weights[np.newaxis, np.newaxis, :]
+                view["value"][cat_indices, :, :] *= scale
+                view["variance"][cat_indices, :, :] *= scale ** 2
+            elif values_view.ndim == 2:
+                # Axes: (cat, fit) – no explicit variation axis
+                scale = weights[np.newaxis, :]
+                view["value"][cat_indices, :] *= scale
+                view["variance"][cat_indices, :] *= scale ** 2
+            else:
+                raise RuntimeError(
+                    f"Unsupported histogram dimensionality {values_view.ndim} in reweighting (expected 2 or 3)"
+                )
+
+    return h1d_dict
+
 def print_report(successful_categories, failed_categories):
     for d_cat in successful_categories:
         print(f"✅ Year: {d_cat['year']}, Category: {d_cat['category']}, Folder: {d_cat['folder']}")
@@ -362,6 +489,8 @@ def main():
         
         # Dictionary to store all datacards for combination
         all_datacards = defaultdict(dict)
+        # Additional datacards using MC reweighted to data for tau21 < 0.30
+        all_datacards_reweight = defaultdict(dict)
         
         # Create datacards for each combination
         for cat in categories:
@@ -386,6 +515,28 @@ def main():
                 
                 # Store for combination between pass and fail regions
                 all_datacards[cat][tau21] = datacard
+
+                # For tau21 < 0.30, also create a datacard where MC
+                # templates are reweighted to data in the inclusive
+                # (pass+fail) region for the corresponding parent
+                # category, to define an external systematic.
+                if abs(tau21 - 0.3) < 1e-6:
+                    parent_category = "-".join(cat.split("-")[:-1])
+                    histo_1d_rew = get_1d_histogram_reweighed(
+                        histograms[args.variable], tau21, samples, year, parent_category
+                    )
+                    datacard_rew = DatacardMutag(
+                        histograms=histo_1d_rew,
+                        datasets_metadata=datasets_metadata,
+                        cutflow=cutflow,
+                        years=[year],
+                        mc_processes=mc_processes,
+                        data_processes=data_processes,
+                        systematics=systematics,
+                        category=cat,
+                        verbose=args.verbose,
+                    )
+                    all_datacards_reweight[cat][tau21] = datacard_rew
                 
         passfail_ratio = get_passfail_ratio(all_datacards)
 
@@ -417,6 +568,29 @@ def main():
                     print(str(e))
                     failed_categories.append({"year": year, "category": cat, "error": str(e)})
 
+                # For tau21 < 0.30, also dump the reweighted datacards
+                if abs(tau21 - 0.3) < 1e-6 and cat in all_datacards_reweight and tau21 in all_datacards_reweight[cat]:
+                    reweight_tau21_str = f"{tau21_str}_reweight"
+                    reweight_category_dir = output_dir / year / parent_category / reweight_tau21_str / region
+                    reweight_category_dir.mkdir(parents=True, exist_ok=True)
+                    datacard_rew = all_datacards_reweight[cat][tau21]
+
+                    if cat.endswith("-pass"):
+                        kwargs_rew = {"directory": str(reweight_category_dir)}
+                    elif cat.endswith("-fail"):
+                        parent_cat = '-'.join(cat.split("-")[:-1])
+                        kwargs_rew = {"directory": str(reweight_category_dir), "passfail_ratio": passfail_ratio[parent_cat][tau21]}
+                    else:
+                        kwargs_rew = {"directory": str(reweight_category_dir)}
+
+                    try:
+                        datacard_rew.dump(**kwargs_rew)
+                        successful_categories.append({"year": year, "category": f"{cat}_reweight", "folder": str(reweight_category_dir)})
+                    except Exception as e:
+                        print(f"Failed to create reweighted datacard for Year: {year}, Category: {cat}")
+                        print(str(e))
+                        failed_categories.append({"year": year, "category": f"{cat}_reweight", "error": str(e)})
+
         # Create combined datacard for pass+fail regions, for each parent category
         for parent_cat in parent_categories:
             for tau21 in [0.2, 0.25, 0.3, 0.35, 0.4]:
@@ -434,6 +608,21 @@ def main():
                     yaml.dump({"passfail_ratio" : passfail_ratio[parent_cat][tau21]}, f, indent=4)
 
                 print(f"Combined datacard saved in {directory}")
+
+                # For tau21 < 0.30, also create the combined reweighted datacard
+                if abs(tau21 - 0.3) < 1e-6:
+                    reweight_tau21_str = f"{tau21_str}_reweight"
+                    directory_rew = output_dir / year / parent_cat / reweight_tau21_str
+                    print(f"\nCreating combined reweighted datacard for category: {parent_cat} with tau21 < {tau21} (pass + fail)")
+                    combine_datacards(
+                        datacards={f"{region}/datacard.txt": all_datacards_reweight[f"{parent_cat}-{region}"][tau21] for region in ["pass", "fail"]},
+                        directory=directory_rew,
+                    )
+                    filename_rew = directory_rew / "passfail_ratio.yaml"
+                    print(f"Saving pass/fail ratio to {filename_rew}")
+                    with open(filename_rew, "w") as f:
+                        yaml.dump({"passfail_ratio": passfail_ratio[parent_cat][tau21]}, f, indent=4)
+                    print(f"Combined reweighted datacard saved in {directory_rew}")
 
     # Print summary report
     print_report(successful_categories, failed_categories)
