@@ -101,17 +101,18 @@ cfg = Configurator(
                    # "datasets/MC_singletop_run3.json",
                    # "datasets/DATA_BTagMu_run3.json",
                    # "datasets/MC_QCD_MuEnriched_run3.json"
-                   "datasets/skimmed_dataset_definition.json"
+                   "datasets/skimmed_dataset_definition.json",
+                   "datasets/skimmed_dataset_definition_2024.json"
                    ],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
             "year": [
-                '2022_preEE',
-                '2022_postEE',
-                '2023_preBPix',
-                '2023_postBPix',
-                # '2024'
+                # '2022_preEE',
+                # '2022_postEE',
+                # '2023_preBPix',
+                # '2023_postBPix',
+                '2024'
             ]
         },
         "subsamples": subsamples
@@ -130,11 +131,13 @@ cfg = Configurator(
 
     preselections = [get_nObj_min(1, parameters.object_preselection["FatJet"]["pt"], "FatJetGood")],
     categories = {
-        "pt300msd30" : [get_ptmsd(300., 30.)],
-        "pt300msd80" : [get_ptmsd(300., 80.)],
-        "pt300msd30to210" : [get_ptmsd_window(300., 30., 210.)],
-        "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
+        # "pt300msd30" : [get_ptmsd(300., 30.)],
+        # "pt300msd80" : [get_ptmsd(300., 80.)],
+        # "pt300msd30to210" : [get_ptmsd_window(300., 30., 210.)],
+        # "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
         "pt250msd50mreg50to200bbtag05": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_tagger_pass(["btag"], 0.05)],
+        "pt250msd50mreg50to200bbtag65": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_tagger_pass(["btag"], 0.65)],
+        "pt250msd50mreg50to200": [get_ptmsd(250., 50.), get_mregbin(50., 200.)],
     },
 
     weights_classes = common_weights + [SF_trigger_prescale],
