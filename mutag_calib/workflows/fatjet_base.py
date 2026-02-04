@@ -57,6 +57,30 @@ class fatjetBaseProcessor(BaseProcessorABC):
             self.events, "Muon", self.params
         )
 
+        if self._isMC and "nBHadrons" not in self.events.FatJet.fields:
+            # This is a nanoAODv12
+            subjet = ak.zip(
+                {
+                    "sj1": self.events["SubJet"][self.events.FatJet.subJetIdx1],
+                    "sj2": self.events["SubJet"][self.events.FatJet.subJetIdx2],
+                },
+                depth_limit=1
+            )
+            fatjet_nbHadrons = (
+                ak.fill_none(subjet.sj1.nBHadrons, 0)
+                + ak.fill_none(subjet.sj2.nBHadrons, 0)
+                )
+            self.events["FatJet"] = ak.with_field(
+                    self.events["FatJet"], fatjet_nbHadrons, "nBHadrons"
+                    )
+            fatjet_ncHadrons = (
+                ak.fill_none(subjet.sj1.nCHadrons, 0)
+                + ak.fill_none(subjet.sj2.nCHadrons, 0)
+                )
+            self.events["FatJet"] = ak.with_field(
+                    self.events["FatJet"], fatjet_ncHadrons, "nCHadrons"
+                    )
+
         self.events["FatJetGood"], self.fatjetGoodMask = jet_selection(
             self.events, "FatJet", self.params, self._year
         )
