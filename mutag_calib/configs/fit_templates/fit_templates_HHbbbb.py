@@ -9,7 +9,7 @@ from pocket_coffea.lib.weights.common.common import common_weights
 from pocket_coffea.parameters.histograms import *
 import mutag_calib
 from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_ptmsd_window, get_two_jet_ptmsd, get_mregbin, get_nObj_minmsd, get_flavor, get_ptbin, get_msdbin
-from mutag_calib.configs.fatjet_base.custom.functions import get_inclusive_wp
+from mutag_calib.configs.fatjet_base.custom.functions import get_inclusive_wp, get_tagger_pass
 from mutag_calib.configs.fatjet_base.custom.weights import SF_trigger_prescale
 import mutag_calib.workflows.mutag_oneMuAK8_processor as workflow
 from mutag_calib.workflows.mutag_oneMuAK8_processor import mutagAnalysisOneMuonInAK8Processor
@@ -33,12 +33,12 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 update=True)
 
 samples = [
-    "QCD_MuEnriched",
     "QCD_Madgraph",
+    "QCD_MuEnriched",
+    "DATA_BTagMu",
     "VJets",
     "TTto4Q",
     "SingleTop",
-    "DATA_BTagMu"
 ]
 
 subsamples = {}
@@ -59,7 +59,7 @@ collections = ["FatJetGood"]
 for coll in collections:
     variables.update(**fatjet_hists(coll=coll))
     variables[f"{coll}_pt"] = HistConf([Axis(name=f"{coll}_pt", coll=coll, field="pt",
-                                                    label=r"FatJet $p_{T}$ [GeV]", bins=list(range(300, 1010, 10)))]
+                                                    label=r"FatJet $p_{T}$ [GeV]", bins=list(range(250, 1010, 10)))]
     )
     variables[f"{coll}_msoftdrop"] = HistConf([Axis(name=f"{coll}_msoftdrop", coll=coll, field="msoftdrop",
                                                            label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(0, 410, 10)))]
@@ -100,12 +100,13 @@ wp_dict = parameters["mutag_calibration"]["wp"]["2022_preEE"]
 
 common_cats = {
     "inclusive" : [passthrough],
-    "pt300msd40" : [get_ptmsd(300., 40.)],
-    "pt300msd60" : [get_ptmsd(300., 60.)],
-    "pt300msd80" : [get_ptmsd(300., 80.)],
-    "pt300msd100" : [get_ptmsd(300., 100.)],
-    "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
-    "leadpt300msd50subleadpt250msd50mreg50to200": [get_two_jet_ptmsd(300., 50., 250., 50.), get_mregbin(50., 200.)],
+    # "pt300msd40" : [get_ptmsd(300., 40.)],
+    # "pt300msd60" : [get_ptmsd(300., 60.)],
+    # "pt300msd80" : [get_ptmsd(300., 80.)],
+    # "pt300msd100" : [get_ptmsd(300., 100.)],
+    # "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
+    "pt250msd50mreg50to200bbtag05": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_tagger_pass(["btag"], 0.05)],
+    "pt250msd50mreg50to200": [get_ptmsd(250., 50.), get_mregbin(50., 200.)],
 }
 
 # Define cuts to select bins in pt
@@ -147,20 +148,23 @@ multicuts = [
 cfg = Configurator(
     parameters = parameters,
     datasets = {
-        "jsons": ["datasets/MC_QCD_MuEnriched_run3_redirector.json",
-                  "datasets/MC_QCD_Madgraph_run3_redirector.json",
-                  "datasets/MC_VJets_run3_redirector.json",
-                  "datasets/MC_TTto4Q_run3_redirector.json",
-                  "datasets/MC_singletop_run3_redirector.json",
-                  "datasets/DATA_BTagMu_run3_redirector.json"],
+        "jsons": [# "datasets/MC_QCD_MuEnriched_run3_redirector.json",
+                  # "datasets/MC_QCD_Madgraph_run3_redirector.json",
+                  # "datasets/MC_VJets_run3_redirector.json",
+                  # "datasets/MC_TTto4Q_run3_redirector.json",
+                  # "datasets/MC_singletop_run3_redirector.json",
+                  # "datasets/DATA_BTagMu_run3_redirector.json"],
+                   "datasets/skimmed_dataset_definition_madgraph.json",
+                   "datasets/skimmed_dataset_definition_2024.json",
+                   "datasets/skimmed_dataset_definition.json"],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
             "year": [
-                '2022_preEE',
-                '2022_postEE',
-                '2023_preBPix',
-                '2023_postBPix',
+                # '2022_preEE',
+                # '2022_postEE',
+                # '2023_preBPix',
+                # '2023_postBPix',
                 '2024'
             ]
         },

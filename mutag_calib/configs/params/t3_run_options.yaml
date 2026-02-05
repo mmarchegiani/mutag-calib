@@ -2,8 +2,8 @@ scaleout: 80
 cores-per-worker: 1
 mem-per-worker: "5GB"
 disk-per-worker: "1GB"
-queue: "long"
-walltime: "3-12:00:00"
+queue: "standard"
+walltime: "12:00:00"
 chunksize: 50000
 retries: 0
   #tree-reduction: 5
