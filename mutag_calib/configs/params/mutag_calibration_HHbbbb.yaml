@@ -56,3 +56,6 @@ mutag_calibration:
     2023_postBPix:
       particleNet_XbbVsQCD:
         HHbbbb: 0.95
+    2024:
+      globalParT3_Xbb:
+        HHbbbb: 0.95

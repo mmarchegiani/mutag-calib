@@ -6,11 +6,16 @@ import ROOT
 import argparse
 import re
 
-ALLOWED_CATEGORIES = [
-    "msd-80to170_Pt-300to350_particleNet_XbbVsQCD-HHbbtt",
-    "msd-80to170_Pt-350to425_particleNet_XbbVsQCD-HHbbtt",
-    "msd-80to170_Pt-425toInf_particleNet_XbbVsQCD-HHbbtt",
-]
+ALLOWED_CATEGORIES = {
+    "msd-100to150_Pt-250to300_particleNet_XbbVsQCD-HHbbbb",
+    "msd-100to150_Pt-300to350_particleNet_XbbVsQCD-HHbbbb",
+    "msd-100to150_Pt-350to425_particleNet_XbbVsQCD-HHbbbb",
+    "msd-100to150_Pt-425toInf_particleNet_XbbVsQCD-HHbbbb",
+    # "msd-100to150_Pt-250to300_globalParT3_Xbb-HHbbbb",
+    "msd-100to150_Pt-300to350_globalParT3_Xbb-HHbbbb",
+    "msd-100to150_Pt-350to425_globalParT3_Xbb-HHbbbb",
+    "msd-100to150_Pt-425toInf_globalParT3_Xbb-HHbbbb",
+}
 
 TAU21_VALUES = [0.20, 0.25, 0.30, 0.35, 0.40]
 TAU21_CENTRAL = 0.30
@@ -29,7 +34,7 @@ def read_r(path, sf_type="b"):
 def collect_results(base_dir, sf_type="b"):
     data = {}
     for year in sorted(os.listdir(base_dir)):
-        for cat in ALLOWED_CATEGORIES:
+        for cat in sorted(ALLOWED_CATEGORIES):
             base = os.path.join(base_dir, year, cat)
             if not os.path.isdir(base):
                 continue
@@ -173,7 +178,7 @@ def plot_r_vs_tau21_ROOT(year, category, tau, r, err_up, err_dn, outname, sf_typ
 
 # plot SFs for tau21 = 0.30 per each year
 def plot_r_vs_category(year, data, outdir, sf_type):
-    cats = ALLOWED_CATEGORIES
+    cats = sorted(ALLOWED_CATEGORIES)
     x = np.arange(len(cats))
     r, eup, edn, eup_tot, edn_tot, tau_err = [], [], [], [], [], []
     for cat in cats:

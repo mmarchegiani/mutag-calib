@@ -6,9 +6,14 @@ import argparse
 import pandas as pd
 
 ALLOWED_CATEGORIES = {
-    "msd-80to170_Pt-300to350_particleNet_XbbVsQCD-HHbbtt",
-    "msd-80to170_Pt-350to425_particleNet_XbbVsQCD-HHbbtt",
-    "msd-80to170_Pt-425toInf_particleNet_XbbVsQCD-HHbbtt",
+    "msd-100to150_Pt-250to300_particleNet_XbbVsQCD-HHbbbb",
+    "msd-100to150_Pt-300to350_particleNet_XbbVsQCD-HHbbbb",
+    "msd-100to150_Pt-350to425_particleNet_XbbVsQCD-HHbbbb",
+    "msd-100to150_Pt-425toInf_particleNet_XbbVsQCD-HHbbbb",
+    # "msd-100to150_Pt-250to300_globalParT3_Xbb-HHbbbb",
+    "msd-100to150_Pt-300to350_globalParT3_Xbb-HHbbbb",
+    "msd-100to150_Pt-350to425_globalParT3_Xbb-HHbbbb",
+    "msd-100to150_Pt-425toInf_globalParT3_Xbb-HHbbbb",
 }
 
 
