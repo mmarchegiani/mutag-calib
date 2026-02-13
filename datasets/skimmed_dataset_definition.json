@@ -2366,24 +2366,6 @@
       "root://t3dcachedb03.psi.ch:1094//pnfs/psi.ch/cms/trivcat/store/user/tharte/mutag_samples//TbarWplusto4Q_2023_preBPix/TbarWplusto4Q_2023_preBPix_1.root"
     ]
   },
-  "TbarWplusto4Q_2024": {
-    "metadata": {
-      "das_names": "['/TbarWplusto4Q_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM']",
-      "sample": "SingleTop",
-      "year": "2024",
-      "isMC": "True",
-      "xsec": "19.971",
-      "nevents": "305200",
-      "size": "857345922",
-      "skim_efficiency": "0.012716666666666666",
-      "skim_rescale_genweights": "78.70838",
-      "isSkim": "True"
-    },
-    "files": [
-      "root://t3dcachedb03.psi.ch:1094//pnfs/psi.ch/cms/trivcat/store/user/tharte/mutag_samples//TbarWplusto4Q_2024/TbarWplusto4Q_2024_1.root",
-      "root://t3dcachedb03.psi.ch:1094//pnfs/psi.ch/cms/trivcat/store/user/tharte/mutag_samples//TbarWplusto4Q_2024/TbarWplusto4Q_2024_2.root"
-    ]
-  },
   "TbarWplustoLNu2Q_2022_postEE": {
     "metadata": {
       "das_names": "['/TbarWplustoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM']",
@@ -2737,23 +2719,6 @@
     },
     "files": [
       "root://t3dcachedb03.psi.ch:1094//pnfs/psi.ch/cms/trivcat/store/user/tharte/mutag_samples//TWminusto4Q_2023_preBPix/TWminusto4Q_2023_preBPix_1.root"
-    ]
-  },
-  "TWminusto4Q_2024": {
-    "metadata": {
-      "das_names": "['/TWminusto4Q_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM']",
-      "sample": "SingleTop",
-      "year": "2024",
-      "isMC": "True",
-      "xsec": "19.971",
-      "nevents": "305773",
-      "size": "856774525",
-      "skim_efficiency": "0.012741072544689362",
-      "skim_rescale_genweights": "78.55634",
-      "isSkim": "True"
-    },
-    "files": [
-      "root://t3dcachedb03.psi.ch:1094//pnfs/psi.ch/cms/trivcat/store/user/tharte/mutag_samples//TWminusto4Q_2024/TWminusto4Q_2024_1.root"
     ]
   },
   "TWminustoLNu2Q_2022_postEE": {
