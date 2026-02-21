@@ -10,6 +10,12 @@ ALLOWED_CATEGORIES = [
     "msd-80to170_Pt-300to350_particleNet_XbbVsQCD-HHbbtt",
     "msd-80to170_Pt-350to425_particleNet_XbbVsQCD-HHbbtt",
     "msd-80to170_Pt-425toInf_particleNet_XbbVsQCD-HHbbtt",
+    "msd-30toInf_Pt-300to350_particleNet_XbbVsQCD-HHbbgg",
+    "msd-30toInf_Pt-350to425_particleNet_XbbVsQCD-HHbbgg",
+    "msd-30toInf_Pt-425toInf_particleNet_XbbVsQCD-HHbbgg",
+    "msd-30toInf_Pt-300to350_globalParT3_XbbVsQCD-HHbbgg",
+    "msd-30toInf_Pt-350to425_globalParT3_XbbVsQCD-HHbbgg",
+    "msd-30toInf_Pt-425toInf_globalParT3_XbbVsQCD-HHbbgg",
 ]
 
 TAU21_VALUES = [0.20, 0.25, 0.30, 0.35, 0.40]
@@ -187,7 +193,7 @@ def plot_r_vs_tau21_ROOT(year, category, tau, r, err_up, err_dn, outname, sf_typ
 
 # plot SFs for tau21 = 0.30 per each year
 def plot_r_vs_category(year, data, outdir, sf_type):
-    cats = ALLOWED_CATEGORIES
+    cats = [c for c in ALLOWED_CATEGORIES if c in data]
     x = np.arange(len(cats))
     r, eup, edn, eup_tot, edn_tot, tau_err, rw_err = [], [], [], [], [], [], []
     for cat in cats:

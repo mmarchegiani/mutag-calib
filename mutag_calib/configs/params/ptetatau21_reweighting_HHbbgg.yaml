@@ -11,3 +11,6 @@ ptetatau21_reweighting:
   2023_postBPix:
     file: ${config_dir:}/ptetatau21_reweighting/FatJetGood_pt_eta_tau21_2023_postBPix_reweighting.json
     category: pt300msd30to210
+  "2024":
+    file: ${config_dir:}/ptetatau21_reweighting/FatJetGood_pt_eta_tau21_2024_reweighting.json
+    category: pt300msd30to210

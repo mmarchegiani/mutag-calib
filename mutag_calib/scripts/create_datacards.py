@@ -307,11 +307,15 @@ def get_1d_histogram_reweighed(h2d_dict, tau21_cut, samples, year, parent_catego
     # Start from the standard 1D histograms
     h1d_dict = get_1d_histogram(h2d_dict, tau21_cut)
 
-    # Find a reference histogram to infer axes
+    # Find a reference MC histogram to infer axes (data histograms lack a
+    # "variation" axis, so we must pick an MC one for the axis template).
     example_hist = None
     for ds_dict in h1d_dict.values():
-        if ds_dict:
-            example_hist = next(iter(ds_dict.values()))
+        for h in ds_dict.values():
+            if "variation" in [ax.name for ax in h.axes]:
+                example_hist = h
+                break
+        if example_hist is not None:
             break
 
     if example_hist is None:

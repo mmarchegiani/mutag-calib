@@ -44,15 +44,8 @@ subsamples = {}
 for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
     subsamples[s] = {f"{s}_{f}" : [get_flavor(f)] for f in ['l', 'c', 'b', 'cc', 'bb']}
 
-variables = {
-    #**count_hist(name="nFatJetGood", coll="FatJetGood",bins=10, start=0, stop=10),
-    #**count_hist(coll="FatJetGoodNMuon1",bins=10, start=0, stop=10),
-    #**count_hist(coll="FatJetGoodNMuon2",bins=10, start=0, stop=10),
-    #**count_hist(coll="FatJetGoodNMuonSJ1",bins=10, start=0, stop=10),
-    #**count_hist(coll="FatJetGoodNMuonSJUnique1",bins=10, start=0, stop=10),
-}
+variables = {}
 
-#collections = ["FatJetGoodNMuon1", "FatJetGoodNMuon2", "FatJetGoodNMuonSJ1", "FatJetGoodNMuonSJUnique1"]
 collections = ["FatJetGood"]
 
 for coll in collections:
@@ -67,7 +60,7 @@ for coll in collections:
                                                            label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(0, 410, 10)))]
     )
     variables[f"{coll}_tau21"] = HistConf([Axis(name=f"{coll}_tau21", coll=coll, field="tau21",
-                                                           label=r"FatJet $\tau_{21}$", bins=[0, 0.20, 0.25, 0.30, 0.35, 
+                                                           label=r"FatJet $\tau_{21}$", bins=[0, 0.20, 0.25, 0.30, 0.35,
                                                            0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 1])]
     )
     variables[f"{coll}_logsumcorrSVmass"] = HistConf(
@@ -79,8 +72,6 @@ for coll in collections:
     )
 
 # Build dictionary of workflow options
-# We reweigh histograms differently depending whether:
-# - The histogram contains the whole jet collection ("all")
 workflow_options = {
     "histograms_to_reweigh" : {
         "by_pos" : {
@@ -89,13 +80,13 @@ workflow_options = {
     }
 }
 
-taggers = parameters["mutag_calibration"]["taggers"]
+# Use only GloParT tagger for 2024
+taggers = ["globalParT3_XbbVsQCD"]
 
-# Note: Here we assume that the pt binning and WPs are the same for all the eras!
-# To be changed in the future if the WP is a function of the data taking year
-pt_binning = parameters["mutag_calibration"]["pt_binning"]["2022_preEE"]
-wp_dict = parameters["mutag_calibration"]["wp"]["2022_preEE"]
-msd_binning = parameters["mutag_calibration"]["msd_binning"]["2022_preEE"]
+# 2024-specific binning and WPs
+pt_binning = parameters["mutag_calibration"]["pt_binning"]["2024"]
+wp_dict = parameters["mutag_calibration"]["wp"]["2024"]
+msd_binning = parameters["mutag_calibration"]["msd_binning"]["2024"]
 
 common_cats = {
     "inclusive" : [passthrough],
@@ -155,12 +146,7 @@ cfg = Configurator(
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
-            "year": [
-                '2022_preEE',
-                '2022_postEE',
-                '2023_preBPix',
-                '2023_postBPix'
-            ]
+            "year": ['2024']
         },
         "subsamples": subsamples
     },
