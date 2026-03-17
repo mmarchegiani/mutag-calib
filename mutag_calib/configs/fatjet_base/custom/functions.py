@@ -49,7 +49,7 @@ def tagger_mask_inclusive_wp(events, params, **kwargs):
     # assert (len(params["wp"]) == 2), "The 'wp' parameter has to be a 2D tuple"
     # cut_low, cut_high = params["wp"]
     assert (cut_low < cut_high), "The lower bound of the WP has to be smaller than the higher bound"
-    mask = (events.FatJetGood[params["tagger"]] > cut_low)
+    mask = (events.FatJetGood[params["tagger"]] > cut_low) & (events.FatJetGood[params["tagger"]] < cut_high)
 
     assert (params["category"] in ["pass", "fail"]), "The allowed categories for the tagger selection are 'pass' and 'fail'"
     if params["category"] == "fail":
@@ -87,10 +87,10 @@ def get_exclusive_wp(tagger, wp, category):
         function=tagger_mask_exclusive_wp
     )
 
-def get_inclusive_wp(tagger, wp, category):
+def get_inclusive_wp(tagger, wp, category, wp_upper=1.0):
     return Cut(
         name=f"{tagger}_{category}",
-        params={"tagger": tagger, "wp" : wp, "category": category},
+        params={"tagger": tagger, "wp" : wp, "category": category, "wp_upper": wp_upper},
         function=tagger_mask_inclusive_wp,
         collection="FatJetGood"
     )

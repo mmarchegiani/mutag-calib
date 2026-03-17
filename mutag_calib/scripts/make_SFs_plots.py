@@ -6,16 +6,7 @@ import ROOT
 import argparse
 import re
 
-ALLOWED_CATEGORIES = {
-    "msd-100to150_Pt-250to300_particleNet_XbbVsQCD-HHbbbb",
-    "msd-100to150_Pt-300to350_particleNet_XbbVsQCD-HHbbbb",
-    "msd-100to150_Pt-350to425_particleNet_XbbVsQCD-HHbbbb",
-    "msd-100to150_Pt-425toInf_particleNet_XbbVsQCD-HHbbbb",
-    # "msd-100to150_Pt-250to300_globalParT3_Xbb-HHbbbb",
-    "msd-100to150_Pt-300to350_globalParT3_Xbb-HHbbbb",
-    "msd-100to150_Pt-350to425_globalParT3_Xbb-HHbbbb",
-    "msd-100to150_Pt-425toInf_globalParT3_Xbb-HHbbbb",
-}
+from allowed_categories import ALLOWED_CATEGORIES_SF_PLOT
 
 TAU21_VALUES = [0.20, 0.25, 0.30, 0.35, 0.40]
 TAU21_CENTRAL = 0.30
@@ -31,8 +22,9 @@ def read_r(path, sf_type="b"):
         return d["SF_c"], d["SF_c_errUp"], d["SF_c_errDown"]
 
 # extract r from fit results
-def collect_results(base_dir, sf_type="b"):
+def collect_results(base_dir, ALLOWED_CATEGORIES, sf_type="b"):
     data = {}
+    prefit_rew_data = {}
     for year in sorted(os.listdir(base_dir)):
         for cat in sorted(ALLOWED_CATEGORIES):
             base = os.path.join(base_dir, year, cat)
@@ -40,6 +32,7 @@ def collect_results(base_dir, sf_type="b"):
                 continue
 
             data.setdefault(year, {})[cat] = {}
+            prefit_rew_data.setdefault(year, {})[cat] = {}
 
             for t in TAU21_VALUES:
                 tdir = f"tau21_{t:.2f}".replace(".", "p")
@@ -49,13 +42,25 @@ def collect_results(base_dir, sf_type="b"):
 
                 r, eup, edown = read_r(fjson, sf_type=sf_type)
                 data[year][cat][t] = (r, eup, edown)
-    return data
+
+            tdir = f"tau21_{TAU21_CENTRAL:.2f}_reweight".replace(".", "p")
+            fjson = os.path.join(base, tdir, "fitResults.json")
+
+            r, eup, edown = read_r(fjson, sf_type=sf_type)
+            prefit_rew_data[year][cat] = (r, eup, edown)
+    return data, prefit_rew_data
 
 # compute tau21 uncertainty
 def compute_tau21_unc(results):
     r0, _, _ = results[TAU21_CENTRAL]
     diffs = [abs(results[t][0] - r0) for t in results if t != TAU21_CENTRAL]
     return max(diffs)
+
+def compute_prefit_reweight_unc(results, prefit_rew, sf_type="b"):
+    r0, _, _ = results[TAU21_CENTRAL]
+    r1, _, _ = prefit_rew
+    return abs(r1 - r0)
+
 
 # helper function to get pT label from category
 def pt_label_from_category(cat):
@@ -177,18 +182,20 @@ def plot_r_vs_tau21_ROOT(year, category, tau, r, err_up, err_dn, outname, sf_typ
     c.Close()
 
 # plot SFs for tau21 = 0.30 per each year
-def plot_r_vs_category(year, data, outdir, sf_type):
+def plot_r_vs_category(year, data, prefit_rew_data, outdir, ALLOWED_CATEGORIES, sf_type):
     cats = sorted(ALLOWED_CATEGORIES)
     x = np.arange(len(cats))
-    r, eup, edn, eup_tot, edn_tot, tau_err = [], [], [], [], [], []
+    r, eup, edn, eup_tot, edn_tot, tau_err, prefit_rew_err = [], [], [], [], [], [], []
     for cat in cats:
         res = data[cat]
         r0, eu, ed = res[TAU21_CENTRAL]
         d_tau = compute_tau21_unc(res)
+        d_prefit_rew = compute_prefit_reweight_unc(res, prefit_rew_data[cat])
         r.append(r0)
         eup.append(eu)
         edn.append(ed)
         tau_err.append(d_tau)
+        prefit_rew_err.append(d_prefit_rew)
     outname = outdir
     sf = sf_type
 
@@ -199,21 +206,26 @@ def plot_r_vs_category(year, data, outdir, sf_type):
         err_fit_up  = eup,
         err_fit_dn  = edn,
         tau21_err   = tau_err,
+        prefit_rew_err = prefit_rew_err,
         outname = outname,
         sf_type  = sf
     )
 
-    return dict(zip(cats, tau_err))
+    return dict(zip(cats, zip(tau_err, prefit_rew_err)))
 
-def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, outname, sf_type):
+def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, prefit_rew_err, outname, sf_type):
     os.makedirs(os.path.dirname(outname), exist_ok=True)
 
     ROOT.gStyle.SetOptStat(0)
     n = len(cats)
     x = list(range(1, n+1))
     ex = [0]*n
-    err_up_tot = [math.sqrt(err_fit_up[i]**2 + tau21_err[i]**2) for i in range(n)]
-    err_dn_tot = [math.sqrt(err_fit_dn[i]**2 + tau21_err[i]**2) for i in range(n)]
+    err_up_tot = [math.sqrt(err_fit_up[i]**2 + tau21_err[i]**2 + prefit_rew_err[i]**2) for i in range(n)]
+    err_dn_tot = [math.sqrt(err_fit_dn[i]**2 + tau21_err[i]**2 + prefit_rew_err[i]**2) for i in range(n)]
+    print(f"Following errors are found in bin:")
+    print(f"up: {[math.sqrt(err_fit_up[i]**2 + tau21_err[i]**2 + prefit_rew_err[i]**2) for i in range(n)]}")
+    print(f"down: {[math.sqrt(err_fit_dn[i]**2 + tau21_err[i]**2 + prefit_rew_err[i]**2) for i in range(n)]}")
+    print(f"Tau21 errors: {tau21_err}, {prefit_rew_err}")
     # g_tau = ROOT.TGraphAsymmErrors(n)
     g_tot = ROOT.TGraphAsymmErrors(n)
 
@@ -252,8 +264,8 @@ def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, ou
     for i in range(n):
         x1 = x[i] - 0.02
         x2 = x[i] + 0.02
-        y1 = r[i] - tau21_err[i]
-        y2 = r[i] + tau21_err[i]
+        y1 = r[i] - math.sqrt(tau21_err[i]**2 + prefit_rew_err[i]**2)
+        y2 = r[i] + math.sqrt(tau21_err[i]**2 + prefit_rew_err[i]**2)
         box = ROOT.TBox(x1, y1, x2, y2)
         box.SetFillColor(ROOT.kRed+1)
         box.SetFillStyle(3004)
@@ -306,24 +318,25 @@ def main():
 
     base_dir = args.base_dir
     sf_type = args.SF_type
-    data = collect_results(base_dir, sf_type=sf_type)
 
-    for year in data:
-        year_out = f"{args.output_dir}/{year}"
+    for category_collection, ALLOWED_CATEGORIES in ALLOWED_CATEGORIES_SF_PLOT.items():
+        data, tau_rew_data = collect_results(base_dir, ALLOWED_CATEGORIES=ALLOWED_CATEGORIES, sf_type=sf_type)
+        for year in data:
+            year_out = f"{args.output_dir}/{year}"
 
-        for cat, res in data[year].items():
-            plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF{sf_type}_vs_tau21_{cat}.pdf"), sf_type)
-            plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF{sf_type}_vs_tau21_{cat}.png"), sf_type)
-            print(f"[OK] Plotted SF vs tau21 for {year} {cat}")
+            for cat, res in data[year].items():
+                plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF{sf_type}_vs_tau21_{cat}_{category_collection}.pdf"), sf_type)
+                plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF{sf_type}_vs_tau21_{cat}_{category_collection}.png"), sf_type)
+                print(f"[OK] Plotted SF vs tau21 for {year} {cat}")
 
-        tau21_errors = plot_r_vs_category(year, data[year], os.path.join(year_out, f"SF{sf_type}_vs_category_tau21_0p30.pdf"), sf_type)
-        tau21_errors = plot_r_vs_category(year, data[year], os.path.join(year_out, f"SF{sf_type}_vs_category_tau21_0p30.png"), sf_type)
-        print(f"[OK] Plotted SF vs category for {year}")
+            tau21_errors = plot_r_vs_category(year, data[year], tau_rew_data[year], os.path.join(year_out, f"SF{sf_type}_vs_category_tau21_0p30.pdf"), ALLOWED_CATEGORIES, sf_type)
+            tau21_errors = plot_r_vs_category(year, data[year], tau_rew_data[year], os.path.join(year_out, f"SF{sf_type}_vs_category_tau21_0p30.png"), ALLOWED_CATEGORIES, sf_type)
+            print(f"[OK] Plotted SF vs category for {year}")
 
-        # salva errore tau21
-        with open(os.path.join(year_out, f"SF{sf_type}_tau21_sys.json"), "w") as f:
-            json.dump(tau21_errors, f, indent=2)
-        print(f"[OK] Saved tau21 uncertainties for {year}")
+            # salva errore tau21
+            with open(os.path.join(year_out, f"SF{sf_type}_tau21_sys_{category_collection}.json"), "w") as f:
+                json.dump(tau21_errors, f, indent=2)
+            print(f"[OK] Saved tau21 uncertainties for {year}")
 
 
 if __name__ == "__main__":

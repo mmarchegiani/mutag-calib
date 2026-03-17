@@ -4,16 +4,7 @@ import subprocess
 import argparse
 import re
 
-ALLOWED_CATEGORIES = {
-    "msd-100to150_Pt-250to300_particleNet_XbbVsQCD-HHbbbb",
-    "msd-100to150_Pt-300to350_particleNet_XbbVsQCD-HHbbbb",
-    "msd-100to150_Pt-350to425_particleNet_XbbVsQCD-HHbbbb",
-    "msd-100to150_Pt-425toInf_particleNet_XbbVsQCD-HHbbbb",
-    # "msd-100to150_Pt-250to300_globalParT3_Xbb-HHbbbb",
-    "msd-100to150_Pt-300to350_globalParT3_Xbb-HHbbbb",
-    "msd-100to150_Pt-350to425_globalParT3_Xbb-HHbbbb",
-    "msd-100to150_Pt-425toInf_globalParT3_Xbb-HHbbbb",
-}
+from allowed_categories import ALLOWED_CATEGORIES
 
 FIT_RE = re.compile(r"fitDiagnostics\.(.+)\.root")
 

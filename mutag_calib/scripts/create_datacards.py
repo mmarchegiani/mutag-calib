@@ -441,6 +441,7 @@ def main():
     parser.add_argument("--variable", default="FatJetGood_logsumcorrSVmass_tau21", help="Variable to use for the fit")
     parser.add_argument("--years", nargs="+", default=["2022_preEE", "2022_postEE", "2023_preBPix", "2023_postBPix"], 
                        help="Years to include in the analysis")
+    parser.add_argument("-f","--filter-category", default="", help="Substring that must be contained in category to produce datacard.")
     parser.add_argument("--verbose", "-v", action="store_true", default=False, help="Enable verbose output")
     args = parser.parse_args()
     
@@ -452,7 +453,11 @@ def main():
     histograms = output["variables"]
     cutflow = output["cutflow"]
     datasets_metadata = output["datasets_metadata"]
-    categories = [cat for cat in cutflow.keys() if cat.startswith('msd')]
+    if not args.filter_category:
+        categories = [cat for cat in cutflow.keys() if cat.startswith('msd')]
+    else:
+        categories = [cat for cat in cutflow.keys() if cat.startswith('msd') and args.filter_category in cat]
+
     
     # Categorize samples
     samples = categorize_samples(cutflow)

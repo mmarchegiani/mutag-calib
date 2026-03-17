@@ -129,6 +129,9 @@ cuts_names_tagger = []
 for tagger in taggers:
     for wp, wp_value in wp_dict[tagger].items():
         for region in ["pass", "fail"]:
+            if "-" in wp_value:
+                wp_low, wp_high = wp_value.split("-")
+                cuts_tagger.append(get_inclusive_wp(tagger, wp_low, region, wp_high))
             cuts_tagger.append(get_inclusive_wp(tagger, wp_value, region))
             cuts_names_tagger.append(f"{tagger}-{wp}-{region}")
 
