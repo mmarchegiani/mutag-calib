@@ -134,4 +134,3 @@ jets_calibration:
       apply: False
       MET_collection: "PuppiMET"
       Jet_collection: "Jet"
-  

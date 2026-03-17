@@ -43,24 +43,26 @@ def collect_results(base_dir, ALLOWED_CATEGORIES, sf_type="b"):
                 r, eup, edown = read_r(fjson, sf_type=sf_type)
                 data[year][cat][t] = (r, eup, edown)
 
-            tdir = f"tau21_{TAU21_CENTRAL:.2f}_reweight".replace(".", "p")
-            fjson = os.path.join(base, tdir, "fitResults.json")
-
-            r, eup, edown = read_r(fjson, sf_type=sf_type)
-            prefit_rew_data[year][cat] = (r, eup, edown)
-    return data, prefit_rew_data
+            # tau21 = 0.30 reweight
+            tdir_rw = "tau21_0p30_reweight"
+            fjson_rw = os.path.join(base, tdir_rw, "fitResults.json")
+            if os.path.exists(fjson_rw):
+                r_rw, eup_rw, edn_rw = read_r(fjson_rw, sf_type=sf_type)
+                data[year][cat]["0.30_reweight"] = (r_rw, eup_rw, edn_rw)
+    return data
 
 # compute tau21 uncertainty
 def compute_tau21_unc(results):
     r0, _, _ = results[TAU21_CENTRAL]
-    diffs = [abs(results[t][0] - r0) for t in results if t != TAU21_CENTRAL]
+    diffs = [abs(results[t][0] - r0) for t in TAU21_VALUES if t != TAU21_CENTRAL]
     return max(diffs)
 
-def compute_prefit_reweight_unc(results, prefit_rew, sf_type="b"):
+def compute_reweight_unc(results):
+    if "0.30_reweight" not in results:
+        return 0.0
     r0, _, _ = results[TAU21_CENTRAL]
-    r1, _, _ = prefit_rew
-    return abs(r1 - r0)
-
+    r_rw, _, _ = results["0.30_reweight"]
+    return abs(r_rw - r0)
 
 # helper function to get pT label from category
 def pt_label_from_category(cat):
@@ -92,7 +94,7 @@ def set_dynamic_y_range(graph, y, err_up, err_dn, n_sigma=1.5):
 
 # plot SFs vs tau21 cut
 def plot_r_vs_tau21(year, cat, results, outdir, sf_type):
-    tau = sorted(results.keys())
+    tau = sorted(t for t in results if t in TAU21_VALUES)
     r   = [results[t][0] for t in tau]
     eup = [results[t][1] for t in tau]
     edn = [results[t][2] for t in tau]
@@ -182,20 +184,21 @@ def plot_r_vs_tau21_ROOT(year, category, tau, r, err_up, err_dn, outname, sf_typ
     c.Close()
 
 # plot SFs for tau21 = 0.30 per each year
-def plot_r_vs_category(year, data, prefit_rew_data, outdir, ALLOWED_CATEGORIES, sf_type):
-    cats = sorted(ALLOWED_CATEGORIES)
+def plot_r_vs_category(year, data, outdir, sf_type):
+    cats = [c for c in ALLOWED_CATEGORIES if c in data]
+    cats = sorted(cats)
     x = np.arange(len(cats))
-    r, eup, edn, eup_tot, edn_tot, tau_err, prefit_rew_err = [], [], [], [], [], [], []
+    r, eup, edn, eup_tot, edn_tot, tau_err, rw_err = [], [], [], [], [], [], []
     for cat in cats:
         res = data[cat]
         r0, eu, ed = res[TAU21_CENTRAL]
         d_tau = compute_tau21_unc(res)
-        d_prefit_rew = compute_prefit_reweight_unc(res, prefit_rew_data[cat])
+        d_rw  = compute_reweight_unc(res)
         r.append(r0)
         eup.append(eu)
         edn.append(ed)
         tau_err.append(d_tau)
-        prefit_rew_err.append(d_prefit_rew)
+        rw_err.append(d_rw)
     outname = outdir
     sf = sf_type
 
@@ -206,26 +209,22 @@ def plot_r_vs_category(year, data, prefit_rew_data, outdir, ALLOWED_CATEGORIES, 
         err_fit_up  = eup,
         err_fit_dn  = edn,
         tau21_err   = tau_err,
-        prefit_rew_err = prefit_rew_err,
+        rw_err      = rw_err,
         outname = outname,
         sf_type  = sf
     )
 
     return dict(zip(cats, zip(tau_err, prefit_rew_err)))
 
-def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, prefit_rew_err, outname, sf_type):
+def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, rw_err, outname, sf_type):
     os.makedirs(os.path.dirname(outname), exist_ok=True)
 
     ROOT.gStyle.SetOptStat(0)
     n = len(cats)
     x = list(range(1, n+1))
     ex = [0]*n
-    err_up_tot = [math.sqrt(err_fit_up[i]**2 + tau21_err[i]**2 + prefit_rew_err[i]**2) for i in range(n)]
-    err_dn_tot = [math.sqrt(err_fit_dn[i]**2 + tau21_err[i]**2 + prefit_rew_err[i]**2) for i in range(n)]
-    print(f"Following errors are found in bin:")
-    print(f"up: {[math.sqrt(err_fit_up[i]**2 + tau21_err[i]**2 + prefit_rew_err[i]**2) for i in range(n)]}")
-    print(f"down: {[math.sqrt(err_fit_dn[i]**2 + tau21_err[i]**2 + prefit_rew_err[i]**2) for i in range(n)]}")
-    print(f"Tau21 errors: {tau21_err}, {prefit_rew_err}")
+    err_up_tot = [math.sqrt(err_fit_up[i]**2 + tau21_err[i]**2 + rw_err[i]**2) for i in range(n)]
+    err_dn_tot = [math.sqrt(err_fit_dn[i]**2 + tau21_err[i]**2 + rw_err[i]**2) for i in range(n)]
     # g_tau = ROOT.TGraphAsymmErrors(n)
     g_tot = ROOT.TGraphAsymmErrors(n)
 
@@ -260,12 +259,13 @@ def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, pr
     # g_tau.Draw("AE2")
     g_tot.Draw("AP")
 
+    err_box = [math.sqrt(tau21_err[i]**2 + rw_err[i]**2) for i in range(n)]
     boxes = []
     for i in range(n):
         x1 = x[i] - 0.02
         x2 = x[i] + 0.02
-        y1 = r[i] - math.sqrt(tau21_err[i]**2 + prefit_rew_err[i]**2)
-        y2 = r[i] + math.sqrt(tau21_err[i]**2 + prefit_rew_err[i]**2)
+        y1 = r[i] - err_box[i]
+        y2 = r[i] + err_box[i]
         box = ROOT.TBox(x1, y1, x2, y2)
         box.SetFillColor(ROOT.kRed+1)
         box.SetFillStyle(3004)
@@ -302,12 +302,62 @@ def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, pr
     leg.SetTextSize(0.035)
     # leg.AddEntry(g_tau, "#tau_{21} syst.", "f")
     leg.AddEntry(g_tot, "fit #oplus #tau_{21}", "lp")
-    leg.AddEntry(boxes[0], "#tau_{21} syst.", "f")
+    leg.AddEntry(boxes[0], "#tau_{21}^{cut} #oplus #tau_{21}^{reweight}", "f")
     leg.Draw()
 
     c.Update()
     c.SaveAs(outname)
     c.Close()
+
+def save_latex_table(data, output_dir, sf_type="b"):
+    os.makedirs(output_dir, exist_ok=True)
+    filename = os.path.join(output_dir, f"SF{sf_type}_table.tex")
+
+    with open(filename, "w") as f:
+        f.write("\\begin{table}[htbp]\n")
+        f.write("\\centering\n")
+        f.write("\\begin{tabular}{|c|c|c|c|c|c|c|}\n")
+        f.write("\\hline\n")
+        f.write("year & category $p_\\mathrm{T}$ [GeV] & $\\mathrm{SF_{nominal}}$ & $\\mathrm{err_{fit}}$ & $\\tau_{21}^\\mathrm{{cut}}$ & $\\tau_{21}^\\mathrm{reweight}$ & $\\sigma_\\mathrm{tot}$ \\\\\n")
+        f.write("\\hline\n")
+
+        for year in sorted(data.keys()):
+            f.write("\\hline\n")
+            for cat in ALLOWED_CATEGORIES:
+                if cat not in data[year]:
+                    continue
+                res = data[year][cat]
+                r0, err_up, err_dn = res[TAU21_CENTRAL]
+                tau21_unc = compute_tau21_unc(res)
+                reweight_unc = compute_reweight_unc(res)
+                total_unc = math.sqrt(max(err_up, err_dn)**2 + tau21_unc**2 + reweight_unc**2)
+
+                # scrittura riga tabella
+                year_label = year.replace("_", " ")
+                m = re.search(r"Pt-(\d+)to(\d+|Inf)", cat)
+                if m:
+                    lo, hi = m.group(1), m.group(2)
+                    if hi == "Inf":
+                        cat_label = f"[{lo}, $\\infty$]"
+                    else:
+                        cat_label = f"[{lo}, {hi}]"
+                else:
+                    cat_label = cat
+                f.write(f"{year_label} & {cat_label} & {r0:.3f} & {max(err_up, err_dn):.3f} & {tau21_unc:.3f} & {reweight_unc:.3f} & {total_unc:.3f} \\\\\n")
+                f.write("\\hline\n")
+
+        f.write("\\end{tabular}\n")
+        f.write(f"""
+        \\caption{{Scale factors $\\mathrm{{SF}}_\\mathrm{{{sf_type}}}$ for $\\mathrm{{m}}_\\mathrm{{SD}}$ $\\in$ [80, 170] GeV for ParticleNet XbbVsQCD tagger WP = 0.75.
+        $\\mathrm{{err_{{fit}}}}$ is the error coming from Combine fit, so statistics and systematics (pileup, lumi, isr, fsr, JER, JES, syst on light and c jets, Madgraph/Pythia QCD),
+        $\\tau_{{21}}^\\mathrm{{cut}}$ is the systematic uncertainty related to the choice of the $\\tau_{{21}}$ cut used in the event selection (max difference between nominal 
+        $\\tau_{{21}}$ cut at 0.30 and variations at 0.20, 0.25, 0.35, 0.40), $\\tau_{{21}}^\\mathrm{{reweight}}$ is the systematic uncertainty related to the SF obtained after reweight 
+        of MC to data (difference between the SF at nominal $\\tau_{{21}}$ cut at 0.30 with and without the reweight).}}\n
+        """)
+        f.write("\\end{table}\n")
+
+    print(f"[OK] LaTeX table saved to {filename}")
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -337,6 +387,8 @@ def main():
             with open(os.path.join(year_out, f"SF{sf_type}_tau21_sys_{category_collection}.json"), "w") as f:
                 json.dump(tau21_errors, f, indent=2)
             print(f"[OK] Saved tau21 uncertainties for {year}")
+
+    save_latex_table(data, args.output_dir, sf_type=sf_type)
 
 
 if __name__ == "__main__":
