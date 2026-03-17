@@ -82,7 +82,7 @@ class fatjetBaseProcessor(BaseProcessorABC):
         )
 
         if self._isMC and "nBHadrons" not in self.events.FatJet.fields:
-            # This is a nanoAODv12
+            # This is a nanoAODv15
             subjet = ak.zip(
                 {
                     "sj1": self.events["SubJet"][self.events.FatJet.subJetIdx1],
