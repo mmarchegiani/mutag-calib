@@ -24,7 +24,6 @@ def read_r(path, sf_type="b"):
 # extract r from fit results
 def collect_results(base_dir, ALLOWED_CATEGORIES, sf_type="b"):
     data = {}
-    prefit_rew_data = {}
     for year in sorted(os.listdir(base_dir)):
         for cat in sorted(ALLOWED_CATEGORIES):
             base = os.path.join(base_dir, year, cat)
@@ -32,7 +31,6 @@ def collect_results(base_dir, ALLOWED_CATEGORIES, sf_type="b"):
                 continue
 
             data.setdefault(year, {})[cat] = {}
-            prefit_rew_data.setdefault(year, {})[cat] = {}
 
             for t in TAU21_VALUES:
                 tdir = f"tau21_{t:.2f}".replace(".", "p")
@@ -214,7 +212,7 @@ def plot_r_vs_category(year, data, outdir, sf_type):
         sf_type  = sf
     )
 
-    return dict(zip(cats, zip(tau_err, prefit_rew_err)))
+    return dict(zip(cats, zip(tau_err, rw_err)))
 
 def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, rw_err, outname, sf_type):
     os.makedirs(os.path.dirname(outname), exist_ok=True)
