@@ -8,6 +8,19 @@ try:
 except ImportError:
     BTA_HLT = None
 
+# Resolve default lumimask from PocketCoffea's bundled datacert files
+_POCKETCOFFEA_DATACERT = None
+try:
+    from pocket_coffea.parameters import defaults as _pcf_defaults
+    _POCKETCOFFEA_DATACERT = os.path.join(os.path.dirname(_pcf_defaults.__file__), "datacert")
+except ImportError:
+    pass
+
+_DEFAULT_LUMIMASK = (
+    os.path.join(_POCKETCOFFEA_DATACERT, "Cert_Collisions2022_355100_362760_Golden.json")
+    if _POCKETCOFFEA_DATACERT else None
+)
+
 ### NOTICE The scripts only works on lxplus...
 
 parser = argparse.ArgumentParser(description="Create prescale weights(lxplus)")
@@ -15,8 +28,9 @@ parser = argparse.ArgumentParser(description="Create prescale weights(lxplus)")
 parser.add_argument(
     "-l",
     "--lumimask",
-    default="src/BTVNanoCommissioning/data/DC/Cert_Collisions2022_355100_362760_Golden.json",
-    help="lumimask to generate prescale weights",
+    default=_DEFAULT_LUMIMASK,
+    required=_DEFAULT_LUMIMASK is None,
+    help="lumimask to generate prescale weights (default: PocketCoffea's 2022 golden JSON)",
 )
 parser.add_argument("-H", "--HLT", default=None, type=str, help="Which HLT is used")
 parser.add_argument("-v", "--verbose", action="store_true", help="debugging")

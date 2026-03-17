@@ -13,14 +13,15 @@ The trigger prescale system in CMS reduces the rate of certain triggers by only 
 Queries brilcalc for each run in a golden JSON to produce per-run correctionlib JSON files. Must be run **on lxplus outside any container** (uses the brilws Singularity container on CVMFS).
 
 ```bash
+# Golden JSONs are provided by PocketCoffea's defaults (pocket_coffea/parameters/datacert/)
+# Find the path with: python3 -c "import pocket_coffea, os; print(os.path.join(os.path.dirname(pocket_coffea.__file__), 'parameters', 'datacert'))"
+
 python3 mutag_calib/scripts/dump_prescale.py \
-  --lumimask mutag_calib/data/golden_jsons/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt \
+  --lumimask "$(python3 -c "import pocket_coffea, os; print(os.path.join(os.path.dirname(pocket_coffea.__file__), 'parameters', 'datacert', 'Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt'))")" \
   --HLT "BTagMu_AK8Jet300_Mu5,BTagMu_AK4Jet300_Mu5" \
   --output-dir mutag_calib/configs/params/prescales/run2/ \
   --force
 ```
-
-Golden JSONs are stored in `mutag_calib/data/golden_jsons/` (sourced from BTVNanoCommissioning `data/DC/`).
 
 ### 2. `generate_prescale_yaml.py` - Generate average prescale YAML
 
