@@ -8,9 +8,9 @@ from pocket_coffea.lib.calibrators.common.common import JetsCalibrator, JetsSoft
 from pocket_coffea.lib.weights.common.common import common_weights
 from pocket_coffea.parameters.histograms import *
 import mutag_calib
-from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_ptmsd_window, get_nObj_minmsd, get_flavor, get_ptbin, get_msdbin, hasMatchedGenJet
+from mutag_calib.configs.fatjet_base.custom.cuts import get_ptmsd, get_ptmsd_window, get_nObj_minmsd, get_flavor, get_ptbin, get_msdbin
 from mutag_calib.configs.fatjet_base.custom.functions import get_inclusive_wp
-from mutag_calib.configs.fatjet_base.custom.weights import SF_trigger_prescale, SF_ptetatau21_reweighting
+from mutag_calib.configs.fatjet_base.custom.weights import SF_trigger_prescale
 import mutag_calib.workflows.mutag_oneMuAK8_processor as workflow
 from mutag_calib.workflows.mutag_oneMuAK8_processor import mutagAnalysisOneMuonInAK8Processor
 import os
@@ -34,6 +34,7 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
 
 samples = [
     "QCD_MuEnriched",
+    "QCD_Madgraph",
     "VJets",
     "TTto4Q",
     "SingleTop",
@@ -98,6 +99,7 @@ msd_binning = parameters["mutag_calibration"]["msd_binning"]["2022_preEE"]
 
 common_cats = {
     "inclusive" : [passthrough],
+    "pt300msd30" : [get_ptmsd(300., 30.)],
     "pt300msd40" : [get_ptmsd(300., 40.)],
     "pt300msd60" : [get_ptmsd(300., 60.)],
     "pt300msd80" : [get_ptmsd(300., 80.)],
@@ -144,12 +146,12 @@ multicuts = [
 cfg = Configurator(
     parameters = parameters,
     datasets = {
-        "jsons": ["datasets/MC_QCD_MuEnriched_run3.json",
-                  "datasets/MC_VJets_run3.json",
-                  "datasets/MC_TTto4Q_run3.json",
-                  "datasets/MC_singletop_run3.json",
-                  "datasets/DATA_BTagMu_run3.json"
-                  ],
+        "jsons": ["datasets/MC_QCD_MuEnriched_run3_redirector.json",
+                  "datasets/MC_QCD_Madgraph_run3_redirector.json",
+                  "datasets/MC_VJets_run3_redirector.json",
+                  "datasets/MC_TTto4Q_run3_redirector.json",
+                  "datasets/MC_singletop_run3_redirector.json",
+                  "datasets/DATA_BTagMu_run3_redirector.json"],
         "filter" : {
             "samples": samples,
             "samples_exclude" : [],
@@ -169,7 +171,6 @@ cfg = Configurator(
     skim = [get_nPVgood(1),
             eventFlags,
             goldenJson,
-            hasMatchedGenJet,
             get_nObj_min(1, 200., "FatJet"),
             get_nObj_minmsd(1, 30., "FatJet"),
             get_nObj_min(1, 3., "Muon"),
@@ -187,6 +188,26 @@ cfg = Configurator(
             }
         },
         "bysample": {
+            "QCD_Madgraph": {
+                "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                "bycategory" : {
+                }
+            },
+            "VJets": {
+                "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                "bycategory" : {
+                }
+            },
+            "TTto4Q": {
+                "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                "bycategory" : {
+                }
+            },
+            "SingleTop": {
+                "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                "bycategory" : {
+                }
+            }
         }
     },
 
@@ -199,12 +220,31 @@ cfg = Configurator(
                 }
             },
             "bysample": {
-            }    
+                "QCD_Madgraph": {
+                    "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                    "bycategory": {
+                    }
+                },
+                "VJets": {
+                    "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                    "bycategory": {
+                    }
+                },
+                "TTto4Q": {
+                    "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                    "bycategory": {
+                    }
+                },
+                "SingleTop": {
+                    "inclusive": ["sf_partonshower_isr", "sf_partonshower_fsr"],
+                    "bycategory": {
+                    }
+                }
+            }
         },
         "shape": {
             "common": {
-                # "inclusive" : ["JES_Total_AK8PFPuppi", "JER_AK8PFPuppi"]
-                "inclusive" : []
+                "inclusive" : ["jet_calibration"]
             }
         }
     },

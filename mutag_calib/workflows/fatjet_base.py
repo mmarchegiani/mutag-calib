@@ -111,6 +111,15 @@ class fatjetBaseProcessor(BaseProcessorABC):
             #"nMuonGoodMatchedToSubJet" : ak.count(self.events["MuonGoodMatchedToSubJet"].pt, axis=2),
             #"nMuonGoodMatchedUniquelyToSubJet" : ak.count(self.events["MuonGoodMatchedUniquelyToSubJet"].pt, axis=2)
         }
+        # Compute GloParT XbbVsQCD discriminator (only available in NanoAODv15, i.e. 2024)
+        if "globalParT3_Xbb" in self.events.FatJetGood.fields:
+            Xbb = self.events.FatJetGood.globalParT3_Xbb
+            QCD = self.events.FatJetGood.globalParT3_QCD
+            fatjet_fields["globalParT3_XbbVsQCD"] = ak.where(
+                (Xbb + QCD) > 0,
+                Xbb / (Xbb + QCD),
+                -999.0,
+            )
         for field, value in fatjet_fields.items():
             self.events["FatJetGood"] = ak.with_field(self.events.FatJetGood, value, field)
 
