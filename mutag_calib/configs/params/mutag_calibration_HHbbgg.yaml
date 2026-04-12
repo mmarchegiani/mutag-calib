@@ -27,17 +27,17 @@ mutag_calibration:
       - [300, 350]
       - [350, 425]
       - [425, 'Inf']
-    # Run 2 years - same pT binning as Run 3
+    # Run 2 years - 2017/2018 use wider bins to equalize stats across pT bins
     "2018":
       - [300, 'Inf']
-      - [300, 350]
-      - [350, 425]
-      - [425, 'Inf']
+      - [300, 400]
+      - [400, 450]
+      - [450, 'Inf']
     "2017":
       - [300, 'Inf']
-      - [300, 350]
-      - [350, 425]
-      - [425, 'Inf']
+      - [300, 400]
+      - [400, 450]
+      - [450, 'Inf']
     "2016_PostVFP":
       - [300, 'Inf']
       - [300, 350]

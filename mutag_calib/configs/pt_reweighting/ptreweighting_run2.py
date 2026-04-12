@@ -49,6 +49,83 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/plotting_style.yaml",
                                                 update=True)
 
+# Override Run 2 AK8 JECs with preliminary v15 PUPPI corrections
+from omegaconf import OmegaConf
+_jec_base = "/afs/cern.ch/user/i/izisopou/public/jme/json_files_ULRun2_PUPPI"
+_ak8_jec_v15 = {
+    "2018": {
+        "json_path": f"{_jec_base}/Run2Summer20UL18/fatJet_jerc.json.gz",
+        "jec_mc": "Summer20UL18_V1_MC",
+        "jec_data": {"A": "Summer20UL18_RunA_V1_DATA", "B": "Summer20UL18_RunB_V1_DATA",
+                      "C": "Summer20UL18_RunC_V1_DATA", "D": "Summer20UL18_RunD_V1_DATA"},
+        "jer": "Summer19UL18_JRV2_MC", "level": "L1L2L3Res",
+    },
+    "2017": {
+        "json_path": f"{_jec_base}/Run2Summer20UL17/fatJet_jerc.json.gz",
+        "jec_mc": "Summer20UL17_V1_MC",
+        "jec_data": {"B": "Summer20UL17_RunB_V1_DATA", "C": "Summer20UL17_RunC_V1_DATA",
+                      "D": "Summer20UL17_RunD_V1_DATA", "E": "Summer20UL17_RunE_V1_DATA",
+                      "F": "Summer20UL17_RunF_V1_DATA"},
+        "jer": "Summer19UL17_JRV3_MC", "level": "L1L2L3Res",
+    },
+    "2016_PostVFP": {
+        "json_path": f"{_jec_base}/Run2Summer20UL16/fatJet_jerc.json.gz",
+        "jec_mc": "Summer20UL16_V1_MC",
+        "jec_data": "Summer20UL16_RunFGH_V1_DATA",
+        "jer": "Summer20UL16_JRV3_MC", "level": "L1L2L3Res",
+    },
+    "2016_PreVFP": {
+        "json_path": f"{_jec_base}/Run2Summer20UL16APV/fatJet_jerc.json.gz",
+        "jec_mc": "Summer20UL16APV_V1_MC",
+        "jec_data": {"B": "Summer20UL16APV_RunBCD_V1_DATA", "C": "Summer20UL16APV_RunBCD_V1_DATA",
+                      "D": "Summer20UL16APV_RunBCD_V1_DATA", "E": "Summer20UL16APV_RunEF_V1_DATA",
+                      "F": "Summer20UL16APV_RunEF_V1_DATA"},
+        "jer": "Summer20UL16APV_JRV3_MC", "level": "L1L2L3Res",
+    },
+}
+for _year, _cfg in _ak8_jec_v15.items():
+    OmegaConf.update(parameters, f"jets_calibration.jet_types.AK8PFPuppi.{_year}", OmegaConf.create(_cfg), merge=False)
+
+# Also override AK4PFPuppi for softdrop mass subjet corrections (NanoAODv15 uses PUPPI subjets)
+_ak4_jec_v15 = {
+    "2018": {
+        "json_path": f"{_jec_base}/Run2Summer20UL18/jet_jerc.json.gz",
+        "jec_mc": "Summer20UL18_V1_MC",
+        "jec_data": {"A": "Summer20UL18_RunA_V1_DATA", "B": "Summer20UL18_RunB_V1_DATA",
+                      "C": "Summer20UL18_RunC_V1_DATA", "D": "Summer20UL18_RunD_V1_DATA"},
+        "jer": "Summer19UL18_JRV2_MC", "level": "L1L2L3Res",
+    },
+    "2017": {
+        "json_path": f"{_jec_base}/Run2Summer20UL17/jet_jerc.json.gz",
+        "jec_mc": "Summer20UL17_V1_MC",
+        "jec_data": {"B": "Summer20UL17_RunB_V1_DATA", "C": "Summer20UL17_RunC_V1_DATA",
+                      "D": "Summer20UL17_RunD_V1_DATA", "E": "Summer20UL17_RunE_V1_DATA",
+                      "F": "Summer20UL17_RunF_V1_DATA"},
+        "jer": "Summer19UL17_JRV3_MC", "level": "L1L2L3Res",
+    },
+    "2016_PostVFP": {
+        "json_path": f"{_jec_base}/Run2Summer20UL16/jet_jerc.json.gz",
+        "jec_mc": "Summer20UL16_V1_MC",
+        "jec_data": "Summer20UL16_RunFGH_V1_DATA",
+        "jer": "Summer20UL16_JRV3_MC", "level": "L1L2L3Res",
+    },
+    "2016_PreVFP": {
+        "json_path": f"{_jec_base}/Run2Summer20UL16APV/jet_jerc.json.gz",
+        "jec_mc": "Summer20UL16APV_V1_MC",
+        "jec_data": {"B": "Summer20UL16APV_RunBCD_V1_DATA", "C": "Summer20UL16APV_RunBCD_V1_DATA",
+                      "D": "Summer20UL16APV_RunBCD_V1_DATA", "E": "Summer20UL16APV_RunEF_V1_DATA",
+                      "F": "Summer20UL16APV_RunEF_V1_DATA"},
+        "jer": "Summer20UL16APV_JRV3_MC", "level": "L1L2L3Res",
+    },
+}
+for _year, _cfg in _ak4_jec_v15.items():
+    OmegaConf.update(parameters, f"jets_calibration.jet_types.AK4PFPuppi.{_year}", OmegaConf.create(_cfg), merge=False)
+
+# Add AK4PFPuppi variations for Run 2 (PocketCoffea defaults only have Run 3)
+_run2_ak4puppi_variations = ["JES_Total", "JER"]
+for _year in ["2016_PreVFP", "2016_PostVFP", "2017", "2018"]:
+    OmegaConf.update(parameters, f"jets_calibration.variations.AK4PFPuppi.{_year}", _run2_ak4puppi_variations, merge=False)
+
 samples = [
     "QCD_MuEnriched",
     "VJets",
