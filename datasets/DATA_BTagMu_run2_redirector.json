@@ -338,10 +338,10 @@
             "root://xrootd-cms.infn.it///store/data/Run2017B/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/100000/d912e1a6-2669-4f2e-b17c-b67e48d98eea.root",
             "root://xrootd-cms.infn.it///store/data/Run2017B/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/100000/0ec31e54-db94-40c5-89fd-e2f59317384e.root",
             "root://xrootd-cms.infn.it///store/data/Run2017B/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/110000/399ebf3c-bba5-43a8-8e22-2e045c004e57.root",
+            "root://xrootd-cms.infn.it///store/data/Run2017B/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/2520000/87cc17ab-56fb-4cd9-83ed-490840dd6ae4.root",
             "root://xrootd-cms.infn.it///store/data/Run2017B/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/2520000/4d2e9c69-2524-497b-b683-23d81bae4d5d.root",
             "root://xrootd-cms.infn.it///store/data/Run2017B/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/2520000/7d9103b1-cc13-43fe-9cc7-190a6440f894.root",
             "root://xrootd-cms.infn.it///store/data/Run2017B/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/2520000/d167ee57-d5ef-4893-8c81-b010df3259fd.root",
-            "root://xrootd-cms.infn.it///store/data/Run2017B/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/2520000/87cc17ab-56fb-4cd9-83ed-490840dd6ae4.root",
             "root://xrootd-cms.infn.it///store/data/Run2017B/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/2820000/29cd03ca-79f4-4785-8240-470ac40bbbdd.root"
         ]
     },
@@ -536,8 +536,8 @@
             "root://xrootd-cms.infn.it///store/data/Run2017F/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/140000/d4d64709-6fbd-40a6-aea5-c2e8a5256232.root",
             "root://xrootd-cms.infn.it///store/data/Run2017F/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/140000/91859ba3-87c9-4907-982a-534ebc4e1793.root",
             "root://xrootd-cms.infn.it///store/data/Run2017F/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/140000/1504833c-571b-4921-803e-7e6e568463cd.root",
-            "root://xrootd-cms.infn.it///store/data/Run2017F/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/140000/2d3d7f66-4bc3-4bd0-b947-cf80812e6325.root",
-            "root://xrootd-cms.infn.it///store/data/Run2017F/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/140000/01caeb4b-853e-49d3-aaf0-985602b4e368.root"
+            "root://xrootd-cms.infn.it///store/data/Run2017F/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/140000/01caeb4b-853e-49d3-aaf0-985602b4e368.root",
+            "root://xrootd-cms.infn.it///store/data/Run2017F/BTagMu/NANOAOD/UL2017_NanoAODv15-v1/140000/2d3d7f66-4bc3-4bd0-b947-cf80812e6325.root"
         ]
     },
     "DATA_BTagMu_2016_PostVFP_EraF": {
@@ -661,20 +661,61 @@
     },
     "DATA_BTagMu_2016_PreVFP_EraB": {
         "metadata": {
-            "das_names": "['/BTagMu/Run2016B-HIPM_UL2016_NanoAODv15-v1/NANOAOD']",
+            "das_names": "['/BTagMu/Run2016B-HIPM_UL2016_NanoAODv15-v1/NANOAOD', '/BTagMu/Run2016B-HIPM_UL2016_NanoAODv15_v2-v1/NANOAOD']",
             "sample": "DATA_BTagMu",
             "year": "2016_PreVFP",
             "isMC": "False",
             "primaryDataset": "BTagMu",
             "era": "B",
-            "nevents": "1613107",
-            "size": "2519101567"
+            "nevents": "36889745",
+            "size": "53709728572"
         },
         "files": [
             "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/100000/f38c83d4-c98c-4a5e-9f71-430f9e3f3137.root",
             "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/2520000/5a7adcbb-540c-452b-acc1-458974d91441.root",
             "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/110000/eec0ab30-b4fa-4636-aebe-8dd04a05598b.root",
-            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/2820000/15588da6-d48b-4aea-b8c6-e0e5f0ac237e.root"
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/2820000/15588da6-d48b-4aea-b8c6-e0e5f0ac237e.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/2820000/777a4434-4ed6-4a2b-80bb-67de62eafaab.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/2820000/541ee8be-cf11-496d-b36c-4c3a71d52dbd.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/2820000/c014db4e-2b5e-410a-b6e5-cf1975454b5a.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/2820000/7fa12918-3d04-4189-91f0-376ee3c5bcc8.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/2820000/6576c36d-befe-48a2-b249-58784494c860.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/2820000/20400b51-1c75-4043-b676-cbc1d73b6fcb.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/2820000/b242c769-cc37-4a36-b650-2140a1d4b653.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/110000/103caad6-489f-474e-ba29-8c0f635b0dba.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/110000/9dc1e67a-266b-420a-8602-f05edd2dbe7c.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/110000/8748cea5-43c9-4741-9117-698dd3df2b2f.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/110000/7b8756d3-b447-475a-81d8-31ac83d2ca1c.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/110000/8c9d3360-a5db-4a42-bf7d-e77b0397aaad.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/110000/82dfd732-d8dd-4535-9a5d-38ccd38cb9fe.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/110000/a4c229d0-7f2b-4360-bd56-d061a09b9a6e.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/110000/e2118f78-a346-451f-8d69-0dee348d87b4.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/77be74da-1753-4f7d-a717-eac108f132d2.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/36730edd-3537-41cc-a395-d0c2692e440d.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/9092bf65-53c4-4854-9509-a4871ab523bc.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/c5f8c3ef-85fb-48e9-8f0d-273c81144168.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/872b4689-55fd-415d-a3b7-b4658542dfc9.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/bca600c5-de86-48dd-b3c4-50cbc8b8dd81.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/d5a87c29-34fa-43e6-9e85-7ca602fe9747.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/bc2426d7-5038-458b-8c54-fab66156b223.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/c6b14f73-1864-4951-99a3-b1f4a38aa90b.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/253caf8a-8c39-472b-980b-089cff032372.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/f4c1eb21-56dc-4c78-b307-f90b0fbba8c8.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/ca10866c-a00c-482c-9871-aa97f7b529df.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/6f031973-fef7-41e9-8116-a59adb7e1c75.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/09328d84-a51d-47f3-bc79-bab4d419cf82.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/100000/640ed86f-6e8b-471e-87e7-e3305413695c.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/5b3a40bf-115a-4230-9491-d604077ba47c.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/5aedd332-66d3-4546-aae8-814c818e1139.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/0e02f9e1-3286-4dc3-b816-c83ba2eb6668.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/f512050f-39db-406c-b728-e7c54527fd63.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/9c4bb3be-9eda-4ec0-b495-9944f85bbde7.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/caecb1b8-dd06-4b7e-9155-be346f90fdf9.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/dc3fcdb8-89f5-4179-a411-43b1936772da.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/b1ef43da-83d2-44d9-8ce7-810a8ee817e8.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/2170cdc5-51e3-47f3-b61a-8fec8b1cf8fa.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/b447e4c7-59aa-42b2-ad48-4f0be1adf698.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016B/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15_v2-v1/140000/254be83c-3e6d-47da-930d-c59cc2a758df.root"
         ]
     },
     "DATA_BTagMu_2016_PreVFP_EraC": {
@@ -811,9 +852,9 @@
             "root://xrootd-cms.infn.it///store/data/Run2016F/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/110000/7ec34793-cc76-4bc6-b14e-0236bf25cbb1.root",
             "root://xrootd-cms.infn.it///store/data/Run2016F/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/110000/bf5a64c0-5b30-41c1-8a4d-7b59c67e492d.root",
             "root://xrootd-cms.infn.it///store/data/Run2016F/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/110000/f9d59285-fa09-47a8-81c9-14dc7f02b713.root",
+            "root://xrootd-cms.infn.it///store/data/Run2016F/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/2820000/1918418e-4cda-4277-9a4f-21749124ba4a.root",
             "root://xrootd-cms.infn.it///store/data/Run2016F/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/2820000/8e5028a7-c911-407f-b5f3-b0d33c8be713.root",
-            "root://xrootd-cms.infn.it///store/data/Run2016F/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/2820000/bf8ad76a-dd4b-40cb-915f-59d98dce5723.root",
-            "root://xrootd-cms.infn.it///store/data/Run2016F/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/2820000/1918418e-4cda-4277-9a4f-21749124ba4a.root"
+            "root://xrootd-cms.infn.it///store/data/Run2016F/BTagMu/NANOAOD/HIPM_UL2016_NanoAODv15-v1/2820000/bf8ad76a-dd4b-40cb-915f-59d98dce5723.root"
         ]
     }
 }

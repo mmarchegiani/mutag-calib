@@ -138,7 +138,8 @@
       },
       {
         "das_names": [
-          "/BTagMu/Run2016B-HIPM_UL2016_NanoAODv15-v1/NANOAOD"
+          "/BTagMu/Run2016B-HIPM_UL2016_NanoAODv15-v1/NANOAOD",
+          "/BTagMu/Run2016B-HIPM_UL2016_NanoAODv15_v2-v1/NANOAOD"
         ],
         "metadata": {
           "year": "2016_PreVFP",
