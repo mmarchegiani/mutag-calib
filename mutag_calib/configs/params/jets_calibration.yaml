@@ -46,6 +46,12 @@ jets_calibration:
       2023_preBPix: "${default_jets_calibration.factory_config_clib.AK8PFPuppi.2023_preBPix}"
       2023_postBPix: "${default_jets_calibration.factory_config_clib.AK8PFPuppi.2023_postBPix}"
       "2024": "${default_jets_calibration.factory_config_clib.AK8PFPuppi.2024}"
+      "2025":
+        json_path: /cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/latest/fatJet_jerc.json.gz
+        jec_mc: Winter25Prompt25_V3_MC
+        jec_data: Winter25Prompt25_V3_DATA
+        jer: Summer23BPixPrompt23_RunD_JRV1_MC
+        level: L1L2L3Res
 
   collection:
     "2018":
@@ -65,6 +71,8 @@ jets_calibration:
     2023_postBPix:
       AK8PFPuppi: "FatJet"
     "2024":
+      AK8PFPuppi: "FatJet"
+    "2025":
       AK8PFPuppi: "FatJet"
 
   variations:
@@ -93,7 +101,10 @@ jets_calibration:
       2023_postBPix: 
       - JES_Total
       - JER
-      "2024": 
+      "2024":
+      - JES_Total
+      - JER
+      "2025":
       - JES_Total
       - JER
 
@@ -116,7 +127,9 @@ jets_calibration:
       AK8PFPuppi: True
     "2024":
       AK8PFPuppi: True
-  
+    "2025":
+      AK8PFPuppi: True
+
   apply_jec_Data:  # this is needed to know which collection is corrected with which jet factory
     "2018":
       AK8PFPuppi: True
@@ -135,6 +148,8 @@ jets_calibration:
     2023_postBPix:
       AK8PFPuppi: True
     "2024":
+      AK8PFPuppi: True
+    "2025":
       AK8PFPuppi: True
 
   apply_pt_regr_MC:
@@ -156,6 +171,8 @@ jets_calibration:
       AK8PFPuppi: False
     "2024":
       AK8PFPuppi: False
+    "2025":
+      AK8PFPuppi: False
 
   apply_pt_regr_Data:
     "2018":
@@ -175,6 +192,8 @@ jets_calibration:
     2023_postBPix:
       AK8PFPuppi: False
     "2024":
+      AK8PFPuppi: False
+    "2025":
       AK8PFPuppi: False
 
   apply_jec_msoftdrop_MC:
@@ -196,6 +215,8 @@ jets_calibration:
       AK8PFPuppi: True
     "2024":
       AK8PFPuppi: True
+    "2025":
+      AK8PFPuppi: True
 
   apply_jec_msoftdrop_Data:
     "2018":
@@ -215,6 +236,8 @@ jets_calibration:
     2023_postBPix:
       AK8PFPuppi: True
     "2024":
+      AK8PFPuppi: True
+    "2025":
       AK8PFPuppi: True
 
   rescale_MET_config:
@@ -251,6 +274,10 @@ jets_calibration:
       MET_collection: "PuppiMET"
       Jet_collection: "Jet"
     "2024":
+      apply: False
+      MET_collection: "PuppiMET"
+      Jet_collection: "Jet"
+    "2025":
       apply: False
       MET_collection: "PuppiMET"
       Jet_collection: "Jet"

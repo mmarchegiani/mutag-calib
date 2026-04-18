@@ -27,6 +27,11 @@ mutag_calibration:
       - [300, 350]
       - [350, 425]
       - [425, 'Inf']
+    "2025":
+      - [300, 'Inf']
+      - [300, 350]
+      - [350, 425]
+      - [425, 'Inf']
     # Run 2 years - 2017/2018 use wider bins to equalize stats across pT bins
     "2018":
       - [300, 'Inf']
@@ -64,6 +69,9 @@ mutag_calibration:
     "2024":
       - [30, 'Inf']
       - [30, 210]
+    "2025":
+      - [30, 'Inf']
+      - [30, 210]
     # Run 2 years - same msd binning as Run 3
     "2018":
       - [30, 'Inf']
@@ -91,6 +99,9 @@ mutag_calibration:
       particleNet_XbbVsQCD:
         HHbbgg: 0.4
     "2024":
+      globalParT3_XbbVsQCD:
+        HHbbgg: 0.6
+    "2025":
       globalParT3_XbbVsQCD:
         HHbbgg: 0.6
     # Run 2 years - using GloParT with same WP as 2024
