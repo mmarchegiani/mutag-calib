@@ -525,7 +525,6 @@ def get_1d_histogram_reweighed(h2d_dict, tau21_cut, samples, year, parent_catego
 
     # Axes: ["cat", "variation", fit_variable]
     cat_axis = example_hist.axes["cat"]
-    var_axis = example_hist.axes["variation"]
     fit_axes = [ax for ax in example_hist.axes if ax.name not in ("cat", "variation")]
     if len(fit_axes) != 1:
         raise RuntimeError("Expected exactly one fit variable axis after tau21 integration")
@@ -547,7 +546,6 @@ def get_1d_histogram_reweighed(h2d_dict, tau21_cut, samples, year, parent_catego
         return h1d_dict
 
     n_fit_bins = len(fit_axis.edges) - 1
-    nom_index = var_axis.index("nominal")
 
     # Define MC and data sample sets
     mc_sample_names = set(samples["light"] + samples["c"] + samples["b"])
@@ -574,6 +572,8 @@ def get_1d_histogram_reweighed(h2d_dict, tau21_cut, samples, year, parent_catego
             if values_view.ndim == 3:
                 # Sum over the pass and fail categories of this parent,
                 # keeping only the nominal variation
+                var_axis = h.axes["variation"]
+                nom_index = var_axis.index("nominal")
                 proj = values_view[cat_indices, nom_index, :].sum(axis=0)
             elif values_view.ndim == 2:
                 # No variation axis: treat the existing values as nominal
@@ -648,6 +648,7 @@ def main():
     parser.add_argument("--variable", default="FatJetGood_logsumcorrSVmass_tau21", help="Variable to use for the fit")
     parser.add_argument("--years", nargs="+", default=["2022_preEE", "2022_postEE", "2023_preBPix", "2023_postBPix"], 
                        help="Years to include in the analysis")
+    parser.add_argument("-f","--filter-category", default="", help="Substring that must be contained in category to produce datacard.")
     parser.add_argument("--verbose", "-v", action="store_true", default=False, help="Enable verbose output")
     args = parser.parse_args()
     
@@ -661,7 +662,11 @@ def main():
     # plot_tau21_mu_vs_mg(hist_tau21, cat="pt300msd80to170")
     cutflow = output["cutflow"]
     datasets_metadata = output["datasets_metadata"]
-    categories = [cat for cat in cutflow.keys() if cat.startswith('msd')]
+    if not args.filter_category:
+        categories = [cat for cat in cutflow.keys() if cat.startswith('msd')]
+    else:
+        categories = [cat for cat in cutflow.keys() if cat.startswith('msd') and args.filter_category in cat]
+
     
     # Categorize samples
     samples = categorize_samples(cutflow)

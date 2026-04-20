@@ -6,17 +6,7 @@ import ROOT
 import argparse
 import re
 
-ALLOWED_CATEGORIES = [
-    "msd-80to170_Pt-300to350_particleNet_XbbVsQCD-HHbbtt",
-    "msd-80to170_Pt-350to425_particleNet_XbbVsQCD-HHbbtt",
-    "msd-80to170_Pt-425toInf_particleNet_XbbVsQCD-HHbbtt",
-    "msd-30toInf_Pt-300to350_particleNet_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-350to425_particleNet_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-425toInf_particleNet_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-300to350_globalParT3_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-350to425_globalParT3_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-425toInf_globalParT3_XbbVsQCD-HHbbgg",
-]
+from allowed_categories import ALLOWED_CATEGORIES_SF_PLOT
 
 TAU21_VALUES = [0.20, 0.25, 0.30, 0.35, 0.40]
 TAU21_CENTRAL = 0.30
@@ -32,10 +22,10 @@ def read_r(path, sf_type="b"):
         return d["SF_c"], d["SF_c_errUp"], d["SF_c_errDown"]
 
 # extract r from fit results
-def collect_results(base_dir, sf_type="b"):
+def collect_results(base_dir, ALLOWED_CATEGORIES, sf_type="b"):
     data = {}
     for year in sorted(os.listdir(base_dir)):
-        for cat in ALLOWED_CATEGORIES:
+        for cat in sorted(ALLOWED_CATEGORIES):
             base = os.path.join(base_dir, year, cat)
             if not os.path.isdir(base):
                 continue
@@ -194,6 +184,7 @@ def plot_r_vs_tau21_ROOT(year, category, tau, r, err_up, err_dn, outname, sf_typ
 # plot SFs for tau21 = 0.30 per each year
 def plot_r_vs_category(year, data, outdir, sf_type):
     cats = [c for c in ALLOWED_CATEGORIES if c in data]
+    cats = sorted(cats)
     x = np.arange(len(cats))
     r, eup, edn, eup_tot, edn_tot, tau_err, rw_err = [], [], [], [], [], [], []
     for cat in cats:
@@ -221,7 +212,7 @@ def plot_r_vs_category(year, data, outdir, sf_type):
         sf_type  = sf
     )
 
-    return dict(zip(cats, tau_err))
+    return dict(zip(cats, zip(tau_err, rw_err)))
 
 def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, rw_err, outname, sf_type):
     os.makedirs(os.path.dirname(outname), exist_ok=True)
@@ -375,24 +366,25 @@ def main():
 
     base_dir = args.base_dir
     sf_type = args.SF_type
-    data = collect_results(base_dir, sf_type=sf_type)
 
-    for year in data:
-        year_out = f"{args.output_dir}/{year}"
+    for category_collection, ALLOWED_CATEGORIES in ALLOWED_CATEGORIES_SF_PLOT.items():
+        data, tau_rew_data = collect_results(base_dir, ALLOWED_CATEGORIES=ALLOWED_CATEGORIES, sf_type=sf_type)
+        for year in data:
+            year_out = f"{args.output_dir}/{year}"
 
-        for cat, res in data[year].items():
-            plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF{sf_type}_vs_tau21_{cat}.pdf"), sf_type)
-            plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF{sf_type}_vs_tau21_{cat}.png"), sf_type)
-            print(f"[OK] Plotted SF vs tau21 for {year} {cat}")
+            for cat, res in data[year].items():
+                plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF{sf_type}_vs_tau21_{cat}_{category_collection}.pdf"), sf_type)
+                plot_r_vs_tau21(year, cat, res, os.path.join(year_out, f"SF{sf_type}_vs_tau21_{cat}_{category_collection}.png"), sf_type)
+                print(f"[OK] Plotted SF vs tau21 for {year} {cat}")
 
-        tau21_errors = plot_r_vs_category(year, data[year], os.path.join(year_out, f"SF{sf_type}_vs_category_tau21_0p30.pdf"), sf_type)
-        tau21_errors = plot_r_vs_category(year, data[year], os.path.join(year_out, f"SF{sf_type}_vs_category_tau21_0p30.png"), sf_type)
-        print(f"[OK] Plotted SF vs category for {year}")
+            tau21_errors = plot_r_vs_category(year, data[year], tau_rew_data[year], os.path.join(year_out, f"SF{sf_type}_vs_category_tau21_0p30.pdf"), ALLOWED_CATEGORIES, sf_type)
+            tau21_errors = plot_r_vs_category(year, data[year], tau_rew_data[year], os.path.join(year_out, f"SF{sf_type}_vs_category_tau21_0p30.png"), ALLOWED_CATEGORIES, sf_type)
+            print(f"[OK] Plotted SF vs category for {year}")
 
-        # salva errore tau21
-        with open(os.path.join(year_out, f"SF{sf_type}_tau21_sys.json"), "w") as f:
-            json.dump(tau21_errors, f, indent=2)
-        print(f"[OK] Saved tau21 uncertainties for {year}")
+            # salva errore tau21
+            with open(os.path.join(year_out, f"SF{sf_type}_tau21_sys_{category_collection}.json"), "w") as f:
+                json.dump(tau21_errors, f, indent=2)
+            print(f"[OK] Saved tau21 uncertainties for {year}")
 
     save_latex_table(data, args.output_dir, sf_type=sf_type)
 
