@@ -292,17 +292,24 @@ def get_1d_histogram(h2d_dict, tau21_cut):
     return h1d_dict
 
 
-def get_1d_histogram_reweighed(h2d_dict, tau21_cut, samples, year, parent_category):
+def get_1d_histogram_reweighed(h2d_dict, tau21_cut, samples, years, parent_category):
     """Return 1D histograms with MC (b+c+light) reweighted to data.
 
     The input 2D histograms are first integrated over the tau21 axis as in
     get_1d_histogram, using the cut ``tau21 < tau21_cut``. Then, for the
-    specified year and a given parent category, a bin-by-bin weight is
+    specified year(s) and a given parent category, a bin-by-bin weight is
     computed such that, in the *inclusive pass+fail region* for that parent
     category, the sum of all MC histograms (b + c + light) equals the data
     histogram. Those weights are applied to the MC templates in both the
     corresponding pass and fail categories, leaving data unchanged.
+
+    ``years`` may be a single string or a list of strings: a dataset is
+    included if any of the given year tags appears in its name. This
+    supports --combined-years mode (e.g. 2025 data + 2024 MC) where the
+    MC year tag differs from the primary label year.
     """
+    if isinstance(years, str):
+        years = [years]
 
     # Start from the standard 1D histograms
     h1d_dict = get_1d_histogram(h2d_dict, tau21_cut)
@@ -354,11 +361,11 @@ def get_1d_histogram_reweighed(h2d_dict, tau21_cut, samples, year, parent_catego
     mc_sum = np.zeros(n_fit_bins, dtype=float)
     data_sum = np.zeros(n_fit_bins, dtype=float)
 
-    # Build inclusive (pass+fail) distributions for the requested year and parent category
+    # Build inclusive (pass+fail) distributions for the requested year(s) and parent category
     for proc_name, ds_dict in h1d_dict.items():
         for ds, h in ds_dict.items():
-            # Restrict to the datasets of the current year
-            if year not in ds:
+            # Restrict to the datasets whose name matches any of the requested years
+            if not any(y in ds for y in years):
                 continue
 
             # For weight-storage histograms, ``h.view`` returns a structured
@@ -397,7 +404,7 @@ def get_1d_histogram_reweighed(h2d_dict, tau21_cut, samples, year, parent_catego
         if proc_name not in mc_sample_names:
             continue
         for ds, h in ds_dict.items():
-            if year not in ds:
+            if not any(y in ds for y in years):
                 continue
             view = h.view(flow=False)
 
@@ -538,7 +545,7 @@ def main():
                 if abs(tau21 - 0.3) < 1e-6:
                     parent_category = "-".join(cat.split("-")[:-1])
                     histo_1d_rew = get_1d_histogram_reweighed(
-                        histograms[args.variable], tau21, samples, year, parent_category
+                        histograms[args.variable], tau21, samples, years_group, parent_category
                     )
                     datacard_rew = DatacardMutag(
                         histograms=histo_1d_rew,
