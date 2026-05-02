@@ -1,6 +1,6 @@
 from pocket_coffea.utils.configurator import Configurator
 from pocket_coffea.lib.cut_definition import Cut
-from pocket_coffea.lib.cut_functions import get_nObj_eq, get_nObj_min, get_HLTsel, get_nPVgood, goldenJson, eventFlags
+from pocket_coffea.lib.cut_functions import get_nObj_eq, get_nObj_min, get_HLTsel, get_nPVgood, goldenJson, eventFlags, get_HLTsel_custom
 from pocket_coffea.parameters.cuts import passthrough
 
 from pocket_coffea.lib.calibrators.common.common import JetsCalibrator, JetsSoftdropMassCalibrator
@@ -25,7 +25,7 @@ defaults.register_configuration_dir("config_dir", localdir+"/params")
 parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/object_preselection.yaml",
                                                 f"{localdir}/params/jets_calibration.yaml",
-                                                f"{localdir}/params/triggers_run3.yaml",
+                                                f"{localdir}/params/triggers_run3_by_HLT.yaml",
                                                 f"{localdir}/params/triggers_prescales_run3.yaml",
                                                 f"{localdir}/params/plotting_style.yaml",
                                                 update=True)
@@ -67,6 +67,21 @@ for coll in collections:
                                                            label=r"FatJet $\tau_{21}$", bins=[0, 0.20, 0.25, 0.30, 0.35, 
                                                            0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 1])]
     )
+    for pos, mode in zip([0, 1], ["OR", "OR"]):
+        # variables.update(**fatjet_hists(coll=coll, pos=pos, collapse_2D_masks=True, collapse_2D_masks_mode="AND"))
+        variables[f"{coll}_pt_jet{pos}"] = HistConf([Axis(name=f"{coll}_pt", coll=coll, field="pt", pos=pos, label=r"FatJet $p_{T}$ [GeV]", bins=list(range(250, 1010, 10)))], collapse_2D_masks=True, collapse_2D_masks_mode="AND",
+        )
+        variables[f"{coll}_msoftdrop_jet{pos}"] = HistConf([Axis(name=f"{coll}_msoftdrop", coll=coll, field="msoftdrop", pos=pos,
+                                                               label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(0, 410, 10)))], collapse_2D_masks=True, collapse_2D_masks_mode="AND",
+        )
+        variables[f"{coll}_msoftdrop_raw_jet{pos}"] = HistConf([Axis(name=f"{coll}_msoftdrop_raw", coll=coll, field="msoftdrop_raw", pos=pos,
+                                                               label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(0, 410, 10)))], collapse_2D_masks=True, collapse_2D_masks_mode="AND",
+        )
+        variables[f"{coll}_tau21_jet{pos}"] = HistConf([Axis(name=f"{coll}_tau21", coll=coll, field="tau21", pos=pos,
+                                                               label=r"FatJet $\tau_{21}$", bins=[0, 0.20, 0.25, 0.30, 0.35,
+                                                               0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 1])], collapse_2D_masks=True, collapse_2D_masks_mode="AND",
+        )
+
     variables[f"{coll}_pt_eta"] = HistConf(
         [ Axis(name=f"{coll}_pos", coll=coll, field="pos", type="int", label=r"FatJet position", bins=2, start=0, stop=2),
           Axis(name=f"{coll}_pt", coll=coll, field="pt", type="variable", label=r"FatJet $p_{T}$ [GeV]",
@@ -108,10 +123,10 @@ cfg = Configurator(
             "samples": samples,
             "samples_exclude" : [],
             "year": [
-                '2022_preEE',
-                '2022_postEE',
-                '2023_preBPix',
-                '2023_postBPix',
+                # '2022_preEE',
+                # '2022_postEE',
+                # '2023_preBPix',
+                # '2023_postBPix',
                 '2024'
             ]
         },
@@ -127,7 +142,8 @@ cfg = Configurator(
             get_nObj_min(1, 200., "FatJet"),
             get_nObj_minmsd(1, 30., "FatJet"),
             get_nObj_min(1, 3., "Muon"),
-            get_HLTsel()],
+            # get_HLTsel()
+            ],
 
     preselections = [get_nObj_min(1, parameters.object_preselection["FatJet"]["pt"], "FatJetGood")],
     categories = {
@@ -135,9 +151,13 @@ cfg = Configurator(
         # "pt300msd80" : [get_ptmsd(300., 80.)],
         # "pt300msd30to210" : [get_ptmsd_window(300., 30., 210.)],
         # "pt300msd80to170" : [get_ptmsd_window(300., 80., 170.)],
-        "pt250msd50mreg50to200bbtag05": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_tagger_pass(["btag"], 0.05)],
-        "pt250msd50mreg50to200bbtag65": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_tagger_pass(["btag"], 0.65)],
-        "pt250msd50mreg50to200": [get_ptmsd(250., 50.), get_mregbin(50., 200.)],
+        # "pt250msd50mreg50to200bbtag05": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_tagger_pass(["btag"], 0.05)],
+        # "pt250msd50mreg50to200bbtag65": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_tagger_pass(["btag"], 0.65)],
+        "pt250msd50mreg50to200": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_HLTsel(["BTagMu"])],
+        "pt250msd50mreg50to200_BTagMu_AK8DiJet170_Mu5": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_HLTsel(["BTagMu_AK8DiJet170_Mu5"])],
+        "pt250msd50mreg50to200_BTagMu_AK8Jet170_DoubleMu5": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_HLTsel(["BTagMu_AK8Jet170_DoubleMu5"])],
+        "pt250msd50mreg50to200_BTagMu_AK8Jet300_Mu5": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_HLTsel(["BTagMu_AK8Jet300_Mu5"])],
+        "pt250msd50mreg50to200_BTagMu_AK4Jet300_Mu5": [get_ptmsd(250., 50.), get_mregbin(50., 200.), get_HLTsel(["BTagMu_AK4Jet300_Mu5"])],
     },
 
     weights_classes = common_weights + [SF_trigger_prescale],

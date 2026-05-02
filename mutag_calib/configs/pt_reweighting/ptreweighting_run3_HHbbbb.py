@@ -23,7 +23,7 @@ default_parameters = defaults.get_default_parameters()
 defaults.register_configuration_dir("config_dir", localdir+"/params")
 
 parameters = defaults.merge_parameters_from_files(default_parameters,
-                                                f"{localdir}/params/object_preselection.yaml",
+                                                f"{localdir}/params/object_preselection_HHbbbb.yaml",
                                                 f"{localdir}/params/jets_calibration.yaml",
                                                 f"{localdir}/params/triggers_run3.yaml",
                                                 f"{localdir}/params/triggers_prescales_run3.yaml",
