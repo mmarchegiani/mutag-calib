@@ -119,9 +119,12 @@ def pt_reweighting(accumulator, histname, output, test=False, overwrite=False, d
                     h_qcd[slicing_mc],
                     h_vjets_top[slicing_mc]
                 )
-                mod_ratio  = np.nan_to_num(ratio, nan=1.0)
-                mod_unc = np.nan_to_num(unc, nan=0.0)
-                mod_unc_no_diff = np.nan_to_num(unc_no_diff, nan=0.0)
+                # posinf/neginf also default to "no reweighting": without them
+                # nan_to_num turns +-inf into +-1.8e308, which passes np.isfinite()
+                # but overflows once multiplied by any other weight.
+                mod_ratio  = np.nan_to_num(ratio, nan=1.0, posinf=1.0, neginf=1.0)
+                mod_unc = np.nan_to_num(unc, nan=0.0, posinf=0.0, neginf=0.0)
+                mod_unc_no_diff = np.nan_to_num(unc_no_diff, nan=0.0, posinf=0.0, neginf=0.0)
 
                 ratio_dict[cat][var_shape] = {}
                 ratio_dict[cat][var_shape].update({ "nominal" : mod_ratio })

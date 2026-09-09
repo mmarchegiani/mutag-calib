@@ -6,26 +6,36 @@ import ROOT
 import argparse
 import re
 
+# A list, not a set: plot_r_vs_category()/save_latex_table() iterate this
+# directly to order the x-axis categories / table rows, so it has to preserve
+# insertion order (a set's iteration order is arbitrary and unrelated to how
+# it's written here).
 ALLOWED_CATEGORIES = [
-    "msd-80to170_Pt-300to350_particleNet_XbbVsQCD-HHbbtt",
-    "msd-80to170_Pt-350to425_particleNet_XbbVsQCD-HHbbtt",
-    "msd-80to170_Pt-425toInf_particleNet_XbbVsQCD-HHbbtt",
-    "msd-30toInf_Pt-300to350_particleNet_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-350to425_particleNet_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-425toInf_particleNet_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-300to350_globalParT3_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-350to425_globalParT3_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-425toInf_globalParT3_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-300to400_globalParT3_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-400to450_globalParT3_XbbVsQCD-HHbbgg",
-    "msd-30toInf_Pt-450toInf_globalParT3_XbbVsQCD-HHbbgg",
+    # "globalParT3mass-80to170_Pt-300toInf_globalParT3_XbbVsQCDTopW-Loose",
+    # "globalParT3mass-80to170_Pt-300to350_globalParT3_XbbVsQCDTopW-Loose",
+    # "globalParT3mass-80to170_Pt-350to425_globalParT3_XbbVsQCDTopW-Loose",
+    # "globalParT3mass-80to170_Pt-425toInf_globalParT3_XbbVsQCDTopW-Loose",
+    
+    # "globalParT3mass-80to170_Pt-300toInf_globalParT3_XbbVsQCDTopW-Medium",
+    # "globalParT3mass-80to170_Pt-300to350_globalParT3_XbbVsQCDTopW-Medium",
+    # "globalParT3mass-80to170_Pt-350to425_globalParT3_XbbVsQCDTopW-Medium",
+    # "globalParT3mass-80to170_Pt-425toInf_globalParT3_XbbVsQCDTopW-Medium",
+    
+    "globalParT3mass-80to170_Pt-300toInf_globalParT3_XbbVsQCDTopW-Tight",
+    "globalParT3mass-80to170_Pt-300to350_globalParT3_XbbVsQCDTopW-Tight",
+    "globalParT3mass-80to170_Pt-350to425_globalParT3_XbbVsQCDTopW-Tight",
+    "globalParT3mass-80to170_Pt-425toInf_globalParT3_XbbVsQCDTopW-Tight",
 ]
 
 TAU21_VALUES = [0.20, 0.25, 0.30, 0.35, 0.40]
 TAU21_CENTRAL = 0.30
 
 
-# read the scale factor from fitResults.json
+# read the scale factor from fitResults.json. POI is SF_b (create_datacards.py /
+# datacard_mutag.py, via fit_diagnostics.py --redefineSignalPOIs) -- not "r": that
+# name collides with the POI combine's default PhysicsModel always creates and
+# applies to signal-flagged processes, so a datacard rateParam also called "r"
+# ended up squared (yield x r x r) instead of applied once.
 def read_r(path, sf_type="b"):
     with open(path) as f:
         d = json.load(f)
@@ -257,7 +267,7 @@ def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, rw
     g_tot.GetXaxis().SetTitleOffset(1.3)
     g_tot.GetXaxis().SetLimits(0.5, n+0.5)
     g_tot.GetXaxis().SetNdivisions(3, 0, 0)
-    g_tot.GetXaxis().SetLabelSize(0.03)
+    g_tot.GetXaxis().SetLabelSize(0.05)
     g_tot.GetXaxis().SetLabelOffset(999)
     g_tot.GetYaxis().SetTitle(f"SF_{{{sf_type}}}")
     g_tot.GetYaxis().SetTitleSize(0.05)
@@ -290,7 +300,7 @@ def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, rw
         labels.append(f"[{lo}, {hi}]")
     latex = ROOT.TLatex()
     latex.SetTextAlign(22)
-    latex.SetTextSize(0.03)
+    latex.SetTextSize(0.04)  # --> x label size
     if sf_type == "b":
         for i, label in enumerate(labels):
             latex.DrawLatex(i+1, y_margin - 0.01, label)
@@ -301,9 +311,9 @@ def plot_r_vs_category_ROOT(year, cats, r, err_fit_up, err_fit_dn, tau21_err, rw
     # CMS Preliminary
     latex.SetNDC()
     latex.SetTextFont(42)
-    latex.SetTextSize(0.05)
+    latex.SetTextSize(0.04)
     latex.DrawLatex(0.25, 0.94, "#bf{CMS} #it{Preliminary}")
-    latex.SetTextSize(0.03)
+    latex.SetTextSize(0.04)
     latex.DrawLatex(0.90, 0.94, year)
 
     leg = ROOT.TLegend(0.65, 0.80, 0.88, 0.88)
@@ -328,7 +338,7 @@ def save_latex_table(data, output_dir, sf_type="b"):
         f.write("\\centering\n")
         f.write("\\begin{tabular}{|c|c|c|c|c|c|c|c|}\n")
         f.write("\\hline\n")
-        f.write("year & $\\mathrm{m_{SD}}$ [GeV] & category $p_\\mathrm{T}$ [GeV] & $\\mathrm{SF_{nominal}}$ & $\\mathrm{err_{fit}}$ & $\\tau_{21}^\\mathrm{{cut}}$ & $\\tau_{21}^\\mathrm{reweight}$ & $\\sigma_\\mathrm{tot}$ \\\\\n")
+        f.write("year & $m_{\\mathrm{GloParT}}$ [GeV] & category $p_\\mathrm{T}$ [GeV] & $\\mathrm{SF_{nominal}}$ & $\\mathrm{err_{fit}}$ & $\\tau_{21}^\\mathrm{{cut}}$ & $\\tau_{21}^\\mathrm{reweight}$ & $\\sigma_\\mathrm{tot}$ \\\\\n")
         f.write("\\hline\n")
 
         for year in sorted(data.keys()):
@@ -345,12 +355,13 @@ def save_latex_table(data, output_dir, sf_type="b"):
                 # scrittura riga tabella
                 year_label = year.replace("_", " ")
 
-                m_msd = re.search(r"msd-(\d+)to(\d+|Inf)", cat)
-                if m_msd:
-                    msd_lo, msd_hi = m_msd.group(1), m_msd.group(2)
-                    msd_label = f"[{msd_lo}, $\\infty$]" if msd_hi == "Inf" else f"[{msd_lo}, {msd_hi}]"
+                # GloParT regressed-mass window, e.g. "globalParT3mass-80to170_..." -> "[80, 170]"
+                m_mass = re.search(r"globalParT3mass-(\d+)to(\d+|Inf)", cat)
+                if m_mass:
+                    mass_lo, mass_hi = m_mass.group(1), m_mass.group(2)
+                    mass_label = f"[{mass_lo}, $\\infty$]" if mass_hi == "Inf" else f"[{mass_lo}, {mass_hi}]"
                 else:
-                    msd_label = cat
+                    mass_label = cat
 
                 m = re.search(r"Pt-(\d+)to(\d+|Inf)", cat)
                 if m:
@@ -361,12 +372,12 @@ def save_latex_table(data, output_dir, sf_type="b"):
                         cat_label = f"[{lo}, {hi}]"
                 else:
                     cat_label = cat
-                f.write(f"{year_label} & {msd_label} & {cat_label} & {r0:.3f} & {max(err_up, err_dn):.3f} & {tau21_unc:.3f} & {reweight_unc:.3f} & {total_unc:.3f} \\\\\n")
+                f.write(f"{year_label} & {mass_label} & {cat_label} & {r0:.3f} & {max(err_up, err_dn):.3f} & {tau21_unc:.3f} & {reweight_unc:.3f} & {total_unc:.3f} \\\\\n")
                 f.write("\\hline\n")
 
         f.write("\\end{tabular}\n")
         f.write(f"""
-        \\caption{{Scale factors $\\mathrm{{SF}}_\\mathrm{{{sf_type}}}$ for ParticleNet XbbVsQCD tagger WP = 0.75.
+        \\caption{{Scale factors $\\mathrm{{SF}}_\\mathrm{{{sf_type}}}$ for the GloParT XbbVsQCDTopW tagger.
         $\\mathrm{{err_{{fit}}}}$ is the error coming from Combine fit, so statistics and systematics (pileup, lumi, isr, fsr, JER, JES, syst on light and c jets, Madgraph/Pythia QCD),
         $\\tau_{{21}}^\\mathrm{{cut}}$ is the systematic uncertainty related to the choice of the $\\tau_{{21}}$ cut used in the event selection (max difference between nominal
         $\\tau_{{21}}$ cut at 0.30 and variations at 0.20, 0.25, 0.35, 0.40), $\\tau_{{21}}^\\mathrm{{reweight}}$ is the systematic uncertainty related to the SF obtained after reweight

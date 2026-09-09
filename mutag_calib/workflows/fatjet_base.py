@@ -139,7 +139,11 @@ class fatjetBaseProcessor(BaseProcessorABC):
         #self.events["MuonGoodMatchedUniquelyToSubJet"] = ak.concatenate((muon_matched_uniquely_to_leading_subjet, muon_matched_uniquely_to_subleading_subjet), axis=2)
 
         fatjet_fields = {
-            "tau21" : self.events.FatJetGood.tau2 / self.events.FatJetGood.tau1,
+            "tau21" : ak.where(
+                self.events.FatJetGood.tau1 > 0,
+                self.events.FatJetGood.tau2 / self.events.FatJetGood.tau1,
+                float("inf"),
+            ),
             #"nSubJet" : ak.count(events.FatJetGood.subjets.pt, axis=2),
             "nMuonGoodMatchedToFatJetGood" : ak.count(self.events["MuonGoodMatchedToFatJetGood"].pt, axis=2),
             #"nMuonGoodMatchedToSubJet" : ak.count(self.events["MuonGoodMatchedToSubJet"].pt, axis=2),
@@ -153,6 +157,29 @@ class fatjetBaseProcessor(BaseProcessorABC):
                 (Xbb + QCD) > 0,
                 Xbb / (Xbb + QCD),
                 -999.0,
+            )
+            # HHbbtt-run2-specific discriminant: Xbb vs. QCD + top + Xqq + Xcs
+            QCDTopW_denom = (
+                QCD
+                + self.events.FatJetGood.globalParT3_TopbWq
+                + self.events.FatJetGood.globalParT3_TopbWqq
+                + self.events.FatJetGood.globalParT3_TopbWtauhv
+                + self.events.FatJetGood.globalParT3_TopbWev
+                + self.events.FatJetGood.globalParT3_TopbWmv
+                + self.events.FatJetGood.globalParT3_Xqq
+                + self.events.FatJetGood.globalParT3_Xcs
+            )
+            fatjet_fields["globalParT3_XbbVsQCDTopW"] = ak.where(
+                QCDTopW_denom > 0,
+                Xbb / QCDTopW_denom,
+                -999.0,
+            )
+        # GloParT regressed mass: apply the generic mass-correction factor to the raw jet mass
+        if "globalParT3_massCorrGeneric" in self.events.FatJetGood.fields:
+            fatjet_fields["globalParT3_mass"] = (
+                self.events.FatJetGood.mass
+                * self.events.FatJetGood.globalParT3_massCorrGeneric
+                * (1 - self.events.FatJetGood.rawFactor)
             )
         for field, value in fatjet_fields.items():
             self.events["FatJetGood"] = ak.with_field(self.events.FatJetGood, value, field)

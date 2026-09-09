@@ -43,6 +43,7 @@ apptainer shell --bind /afs -B /cvmfs/cms.cern.ch -B /cvmfs/cms-griddata.cern.ch
 source myenv/bin/activate
 
 # Set the PYTHONPATH to make sure the editable mutag-calib installation is picked up
+cd mutag-calib  # enter the mutag-calib to pick up the installation
 export PYTHONPATH=`pwd`
 ```
 
@@ -293,3 +294,109 @@ In addition, the following "external" systematic uncertainties are summed in qua
 | tau21                        | Maximum difference between the nominal SF (tau21 < 0.3) and any of the alternative SF (tau21 < 0.2, 0.25, 0.35, 0.4), to account for the dependence on the tau21 cut.        |
 | Data / MC reweighting                        | Difference between the nominal SF (tau21 < 0.3) and the SF obtained by reweighting the fit variable in the inclusive pass+fail region, to account for the residual mismodelling in the fit variable.        |
 
+
+## Simultaneous fit of the Loose/Medium/Tight working points
+
+Steps 3 and 4 above calibrate **one** working point at a time, with a two-region
+pass/fail fit per WP. The simultaneous fit measures all three GloParT working
+points in a single likelihood instead.
+
+### The four exclusive score slices
+
+The WP tiers are **exclusive** slices of the tagger score, so the six per-WP
+regions contain only **four** distinct event samples:
+
+| slice | score range | per-WP regions it appears in |
+|-------|-------------|------------------------------|
+| A     | `(-Inf, L)` | Loose-fail                   |
+| B     | `[L, M)`    | Loose-pass  = Medium-fail    |
+| C     | `[M, T)`    | Medium-pass = Tight-fail     |
+| D     | `[T, Inf)`  | Tight-pass                   |
+
+One channel is built per slice, with the WP dependence carried by the rate
+parameters, so a single fit over the four channels picks up the correlations
+between the regions.
+
+### The model
+
+With `f_A..f_D` the MC fractions of a flavour in the four slices, `SF_X` scales
+the exclusive slice that WP X opens, and slice A absorbs the compensation that
+keeps the total flavour yield fixed:
+
+```
+A: (1 - SF_L*f_B - SF_M*f_C - SF_T*f_D) / f_A     B: SF_L     C: SF_M     D: SF_T
+```
+
+Three scale factors per flavour float together, which is the point: slice D
+feeds all three WPs, so only a simultaneous fit gives the **SF-to-SF
+covariance**, and every nuisance is automatically correlated across the WPs
+because there is a single card.
+
+These are **not** the cumulative `eff(score >= X)` scale factors usually quoted.
+The two bases are a linear reparametrisation of one another.
+
+> **POI naming.** The b-flavour parameter is `SF_b`, never `r`. Combine's default
+> physics model always creates its own POI named `r` and applies it to every
+> signal process, so a datacard rate parameter also called `r` scales the signal
+> twice. The generated `run_fit.sh` freezes `r` at 1 and redefines the POIs.
+
+### Running it
+
+Build the datacards from the same Step 2 output used by `create_datacards.py`:
+
+```bash
+python mutag_calib/scripts/create_datacards_simultaneousWP.py fit_templates/output_all.coffea \
+    --years 2017 2018 -o fit_templates/datacards_simultaneousWP
+```
+
+Each leaf contains the four slice datacards plus `combine_cards.sh`,
+`run_fit.sh`, `wp_efficiencies.yaml` and `pois.yaml`:
+
+```bash
+2017/globalParT3mass-80to170_Pt-300to400_globalParT3_XbbVsQCDTopW-simultaneousWP/tau21_0p30/
+├── Loose-fail/{datacard.txt,shapes.root}
+├── Loose-pass/{datacard.txt,shapes.root}
+├── Medium-pass/{datacard.txt,shapes.root}
+├── Tight-pass/{datacard.txt,shapes.root}
+├── combine_cards.sh        # combineCards.py + text2workspace.py
+├── run_fit.sh              # combine -M FitDiagnostics with the right POIs
+├── wp_efficiencies.yaml    # MC slice fractions and cumulative efficiencies
+└── pois.yaml               # SF definition and POI names
+```
+
+Then, from a `cmsenv` shell with Combine set up (see Step 4), drive the whole
+tree and collect the results:
+
+```bash
+python mutag_calib/scripts/run_simultaneousWP_fits.py fit_templates/datacards_simultaneousWP
+```
+
+This runs `combine_cards.sh`, `run_fit.sh` and
+`extract_fit_results_simultaneousWP.py` in every leaf, then concatenates the
+per-category `fitResults.csv` into one summary table. Useful flags:
+`--only <pattern>` to re-run a subset, `--missing-only` to resume, `--list` to
+see what would run.
+
+Fitted POIs are `SF_b_Loose`, `SF_b_Medium`, `SF_b_Tight` (and the c
+equivalents); their correlations come from the `fitDiagnostics` covariance.
+
+### Plots and final scale factors
+
+```bash
+# pre/post-fit distributions, four channels per category
+python mutag_calib/scripts/run_all_combine_plots_simultaneousWP.py \
+    fit_templates/datacards_simultaneousWP -o plots_simultaneousWP
+
+# scale factors with the full uncertainty budget (fit + tau21 + reweighting)
+python mutag_calib/scripts/make_SFs_plots_simultaneousWP.py \
+    fit_templates/datacards_simultaneousWP -o plots_SF --SF-type b
+
+# SF vs pT and vs the tau21 cut, from the summary CSV
+python mutag_calib/scripts/plot_SFs_simultaneousWP.py ALL_FIT_RESULTS_simultaneousWP.csv \
+    -o plots_SF --tau21 0.30
+```
+
+The uncertainty budget is the same as for the per-WP workflow (see the table in
+Step 4), with one difference: the fit errors are MINOS profile-likelihood
+intervals and genuinely asymmetric, so the up and down sides are propagated
+separately all the way to the total.

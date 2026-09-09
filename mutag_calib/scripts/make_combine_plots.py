@@ -20,7 +20,15 @@ COL_TOTAL = (0.1, 0.1, 0.1)
 COL_DATA  = (0, 0, 0)
 COL_BAND  = (0.3, 0.3, 0.3)
 
-def fetch_hist(d, key):
+def fetch_hist(d, key, n_bins=None):
+    """Fetch a histogram by key, falling back to zeros of length n_bins.
+
+    FitDiagnostics omits the shape entirely for a flavor with ~0 fitted yield;
+    that is a real "no contribution", not an error.
+    """
+    if key not in d:
+        n = n_bins if n_bins is not None else 0
+        return np.zeros(n, dtype=float), None, np.zeros(n, dtype=float)
     h = d[key]
     vals = h.values(flow=False).astype(float)
     edges = h.axes[0].edges(flow=False).astype(float)
@@ -118,11 +126,24 @@ def label_axes_main(ax):
 def plot_one(f, group, channel, out_png, era, ratio_ylim=(0.4, 1.6)):
     d = f[f"{group}"][channel]
 
-    b, edges, _ = fetch_hist(d, f"b_{era}")
-    c, _, _     = fetch_hist(d, f"c_{era}")
-    l, _, _     = fetch_hist(d, f"light_{era}")
-    tot, _, _   = fetch_hist(d, "total")
+    # "total" always exists, unlike an individual flavor's shape, so take the
+    # canonical bin count and edges from it.
+    tot, edges, _ = fetch_hist(d, "total")
+    n_bins = len(tot)
+    b, _, _ = fetch_hist(d, f"b_{era}", n_bins=n_bins)
+    c, _, _ = fetch_hist(d, f"c_{era}", n_bins=n_bins)
+    l, _, _ = fetch_hist(d, f"light_{era}", n_bins=n_bins)
     sigma       = get_sigma_from_cov(d, len(tot))
+
+    # A fit with an unbuildable covariance gives NaN bin errors but good bin
+    # contents. That NaN reaches set_ylim() and aborts the figure, so drop the
+    # band and label the plot rather than lose the central values.
+    band_ok = bool(np.isfinite(sigma).all())
+    if not band_ok:
+        print(f"[WARN] {channel}: postfit covariance is not finite "
+              f"({(~np.isfinite(sigma)).sum()}/{sigma.size} bins); "
+              "drawing without the uncertainty band")
+        sigma = np.zeros_like(sigma)
 
     x_data, y_data, ylo, yhi = fetch_graph_asymm(d)
 
@@ -145,7 +166,7 @@ def plot_one(f, group, channel, out_png, era, ratio_ylim=(0.4, 1.6)):
     )
     fig.text(
         0.9, 0.88,
-        "(13.6 TeV)",
+        "(13 TeV)",
         ha="right", va="bottom",
         fontsize=18
     )
@@ -160,7 +181,8 @@ def plot_one(f, group, channel, out_png, era, ratio_ylim=(0.4, 1.6)):
     # total + syst
     # ax.step(edges, _pad_to_edges(tot, edges), where="post",
     #        color=COL_TOTAL, lw=1.2, zorder=4, label="total")
-    draw_total_band(ax, tot, edges, sigma, color=COL_BAND, alpha=0.25, zorder=2.5)
+    if band_ok:
+        draw_total_band(ax, tot, edges, sigma, color=COL_BAND, alpha=0.25, zorder=2.5)
 
     # data
     if x_data is not None:
@@ -169,13 +191,21 @@ def plot_one(f, group, channel, out_png, era, ratio_ylim=(0.4, 1.6)):
 
     # legend (upper right). Add headroom so it doesn't collide with stack.
     # Compute a safe ymax using total+syst and data points.
-    ymax_stack = np.max(tot + sigma) if tot.size else 0.0
+    stack_hi = tot + sigma
+    ymax_stack = np.nanmax(stack_hi[np.isfinite(stack_hi)]) if np.isfinite(stack_hi).any() else 0.0
     if x_data is not None and y_data.size:
-        ymax_data = np.nanmax(y_data + (yhi if yhi is not None else 0))
+        dat_hi = y_data + (yhi if yhi is not None else 0)
+        ymax_data = np.nanmax(dat_hi[np.isfinite(dat_hi)]) if np.isfinite(dat_hi).any() else 0.0
         ymax = max(ymax_stack, ymax_data)
     else:
         ymax = ymax_stack
+    if not np.isfinite(ymax) or ymax <= 0:
+        ymax = 1.0
     ax.set_ylim(0, ymax * 1.35)  # extra room for legend
+    if not band_ok:
+        ax.text(0.02, 0.97, "postfit covariance unavailable:\nno uncertainty band",
+                transform=ax.transAxes, ha="left", va="top", fontsize=9,
+                color="#b00020", zorder=10)
 
     ax.legend(
         handles=[
@@ -199,13 +229,15 @@ def plot_one(f, group, channel, out_png, era, ratio_ylim=(0.4, 1.6)):
         rlo[good] = ylo[good] / tot[idx][good]
         rhi[good] = yhi[good] / tot[idx][good]
 
-        ratio_band(rx, tot, edges, sigma, alpha=0.25, zorder=1.5)
+        if band_ok:
+            ratio_band(rx, tot, edges, sigma, alpha=0.25, zorder=1.5)
         rx.axhline(1.0, color=COL_TOTAL, lw=1.0, zorder=1)
         if np.any(good):
             rx.errorbar(x_data[good], r[good], yerr=[rlo[good], rhi[good]],
                         fmt='o', color=COL_DATA, ms=4.0, lw=1.0, capsize=0, zorder=3)
     else:
-        ratio_band(rx, tot, edges, sigma, alpha=0.25, zorder=1.5)
+        if band_ok:
+            ratio_band(rx, tot, edges, sigma, alpha=0.25, zorder=1.5)
         rx.axhline(1.0, color=COL_TOTAL, lw=1.0, zorder=1)
 
     ax.set_xlim(edges[0], edges[-1])
