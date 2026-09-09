@@ -142,7 +142,7 @@ class fatjetBaseProcessor(BaseProcessorABC):
             "tau21" : ak.where(
                 self.events.FatJetGood.tau1 > 0,
                 self.events.FatJetGood.tau2 / self.events.FatJetGood.tau1,
-                -999.0,
+                float("inf"),
             ),
             #"nSubJet" : ak.count(events.FatJetGood.subjets.pt, axis=2),
             "nMuonGoodMatchedToFatJetGood" : ak.count(self.events["MuonGoodMatchedToFatJetGood"].pt, axis=2),
