@@ -32,6 +32,10 @@ with open(LUMI_YAML) as f:
     lumi_cfg = yaml.safe_load(f)
 lumi_sys_values = lumi_cfg["lumi_systematics"]
 
+# Floor for shape-systematic templates with a zero integral: combine's
+# getExtraNorm() requires a strictly positive one.
+EPS_FLOOR = 1e-6
+
 
 def define_processes(samples, years):
     """Define MC and data processes for the analysis."""
@@ -237,7 +241,7 @@ def add_Madgraph_systematic(histogram_logsumSVmass_tau21):
         mg_vals = mg_total.values(flow=True)
         mu_int = mu_vals.sum()
         mg_int = mg_vals.sum()
-        scale = mu_int / mg_int
+        scale = mu_int / mg_int if mg_int > 0 else 1.0
         mg_vals_scaled = mg_vals * scale
         mask = mu_vals > 1e-9
         ratio = np.ones_like(mu_vals)
@@ -326,7 +330,10 @@ def add_Madgraph_systematic_1d(histo_1d, cat):
             mg_total = h_nom if mg_total is None else mg_total + h_nom
         mu_vals = mu_total.values(flow=True)
         mg_vals = mg_total.values(flow=True)
-        scale = mu_vals.sum() / mg_vals.sum()
+        # QCD_Madgraph can be empty for this flavor while QCD_MuEnriched is not;
+        # a 0-division here reaches the stored shape as nan ("Bogus norm nan").
+        mg_sum = mg_vals.sum()
+        scale = mu_vals.sum() / mg_sum if mg_sum > 0 else 1.0
         mg_vals_scaled = mg_vals * scale
         mask = mu_vals > 1e-9
         ratio = np.ones_like(mu_vals)
@@ -369,12 +376,18 @@ def add_Madgraph_systematic_1d(histo_1d, cat):
                 up_factor = nominal_integral / up_integral
                 new_hist.view(flow=True)[cat_idx, up_idx, :] *= up_factor
             else:
-                print(f"Warning: up_integral = 0, skipping renormalization")
+                # Genuinely empty, not corrupted: this flavor has ~0 yield here and
+                # its rate is frozen, so the floored shape affects no fit result.
+                print(f"Warning: up_integral <= 0 for cat={cat}, flooring Up shape to epsilon")
+                new_hist.view(flow=True)[cat_idx, up_idx, :]["value"] = EPS_FLOOR
+                new_hist.view(flow=True)[cat_idx, up_idx, :]["variance"] = EPS_FLOOR
             if down_integral > 0:
                 down_factor = nominal_integral / down_integral
                 new_hist.view(flow=True)[cat_idx, down_idx, :] *= down_factor
             else:
-                print(f"Warning: down_integral = 0, skipping renormalization")
+                print(f"Warning: down_integral <= 0 for cat={cat}, flooring Down shape to epsilon")
+                new_hist.view(flow=True)[cat_idx, down_idx, :]["value"] = EPS_FLOOR
+                new_hist.view(flow=True)[cat_idx, down_idx, :]["variance"] = EPS_FLOOR
             histo_1d[mu_name][dataset] = new_hist
 
 def plot_tau21_mu_vs_mg(histogram_tau21, cat="pt300msd80to170"):
@@ -670,7 +683,7 @@ def main():
     # plot_tau21_mu_vs_mg(hist_tau21, cat="pt300msd80to170")
     cutflow = output["cutflow"]
     datasets_metadata = output["datasets_metadata"]
-    categories = [cat for cat in cutflow.keys() if cat.startswith('msd')]
+    categories = [cat for cat in cutflow.keys() if cat.startswith('globalParT3mass-80to170')]
     
     # Categorize samples
     samples = categorize_samples(cutflow)
