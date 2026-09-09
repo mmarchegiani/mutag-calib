@@ -1,0 +1,209 @@
+"""
+Run 2 UL pT reweighting configuration, GloParT variant.
+
+Same as ptreweighting_run2.py but categorised on the GloParT regressed mass
+(globalParT3_mass) instead of the softdrop mass, with a finer pT binning.
+Produces the maps consumed by fit_templates_HHbbtt_run2_glopart.py via
+params/ptetatau21_reweighting_HHbbtt_run2.yaml.
+
+Produces 3D reweighting maps (pT, eta, tau21) for Run 2 UL NanoAODv15 samples.
+Does NOT include QCD_Madgraph (same as Run 3 ptreweighting).
+
+Prescale values in triggers_prescales_run2.yaml computed via brilcalc.
+
+Usage:
+  pocket-coffea run --cfg mutag_calib/configs/pt_reweighting/ptreweighting_run2_glopart.py \\
+    -o pt_reweighting_run2 -e dask@lxplus \\
+    --custom-run-options mutag_calib/configs/params/run_options.yaml --process-separately
+  python merge_no_postprocess.py pt_reweighting_run2/output_all.coffea pt_reweighting_run2/*.coffea
+  python mutag_calib/scripts/compute_3d_reweighting.py -i pt_reweighting_run2/output_all.coffea \\
+    -o pt_reweighting_run2/3d_reweighting --overwrite --test
+  cp pt_reweighting_run2/3d_reweighting/FatJetGood_pt_eta_* mutag_calib/configs/params/ptetatau21_reweighting/HHbbtt_run2_globalParT3mass/
+"""
+
+from pocket_coffea.utils.configurator import Configurator
+from pocket_coffea.lib.cut_definition import Cut
+from pocket_coffea.lib.cut_functions import get_nObj_eq, get_nObj_min, get_HLTsel, get_nPVgood, goldenJson, eventFlags
+from pocket_coffea.parameters.cuts import passthrough
+
+from pocket_coffea.lib.calibrators.common.common import JetsCalibrator
+from mutag_calib.lib.calibrators import FixedJetsSoftdropMassCalibrator as JetsSoftdropMassCalibrator
+from pocket_coffea.lib.weights.common.common import common_weights
+from pocket_coffea.parameters.histograms import *
+import mutag_calib
+from mutag_calib.configs.fatjet_base.custom.cuts import get_ptglopartmass, get_ptglopartmass_window, get_nObj_minmsd, get_flavor
+from mutag_calib.configs.fatjet_base.custom.functions import get_inclusive_wp
+from mutag_calib.configs.fatjet_base.custom.weights import SF_trigger_prescale
+import mutag_calib.workflows.pt_reweighting as workflow
+from mutag_calib.workflows.pt_reweighting import ptReweightProcessor
+import numpy as np
+import os
+
+localdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Loading default parameters
+from pocket_coffea.parameters import defaults
+default_parameters = defaults.get_default_parameters()
+defaults.register_configuration_dir("config_dir", localdir+"/params")
+
+parameters = defaults.merge_parameters_from_files(default_parameters,
+                                                f"{localdir}/params/object_preselection.yaml",
+                                                f"{localdir}/params/jets_calibration.yaml",
+                                                f"{localdir}/params/triggers_run2.yaml",
+                                                f"{localdir}/params/triggers_prescales_run2.yaml",
+                                                f"{localdir}/params/plotting_style.yaml",
+                                                update=True)
+
+# AK8PFPuppi JEC/JER for Run 2 NanoAODv15 is set in params/jets_calibration.yaml
+# (official cms-griddata.cern.ch Run2-<year>-UL-NanoAODv15 catalog).
+# Run 2 AK4 corrections come from PocketCoffea's AK4PFchs defaults; there is no
+# Run 2 AK4PFPuppi in the defaults and nothing binds it to a collection here.
+
+samples = [
+    "QCD_MuEnriched",
+    "VJets",
+    "TTto4Q",
+    "SingleTop",
+    "DATA_BTagMu"
+]
+subsamples = {}
+for s in filter(lambda x: 'DATA_BTagMu' not in x, samples):
+    subsamples[s] = {f"{s}_{f}" : [get_flavor(f)] for f in ['l', 'c', 'b', 'cc', 'bb']}
+
+variables = {}
+
+collections = ["FatJetGood"]
+
+for coll in collections:
+    variables.update(**fatjet_hists(coll=coll))
+    variables[f"{coll}_pt"] = HistConf([Axis(name=f"{coll}_pt", coll=coll, field="pt",
+                                                    label=r"FatJet $p_{T}$ [GeV]", bins=list(range(300, 1010, 10)))]
+    )
+    variables[f"{coll}_msoftdrop"] = HistConf([Axis(name=f"{coll}_msoftdrop", coll=coll, field="msoftdrop",
+                                                           label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(0, 410, 10)))]
+    )
+    variables[f"{coll}_msoftdrop_raw"] = HistConf([Axis(name=f"{coll}_msoftdrop_raw", coll=coll, field="msoftdrop_raw",
+                                                           label=r"FatJet $m_{SD}$ [GeV]", bins=list(range(0, 410, 10)))]
+    )
+    variables[f"{coll}_tau21"] = HistConf([Axis(name=f"{coll}_tau21", coll=coll, field="tau21",
+                                                           label=r"FatJet $\tau_{21}$", bins=[0, 0.20, 0.25, 0.30, 0.35,
+                                                           0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 1])]
+    )
+    variables[f"{coll}_globalParT3_XbbVsQCDTopW"] = HistConf(
+        [ Axis(name=f"{coll}_globalParT3_XbbVsQCDTopW", coll=coll, field="globalParT3_XbbVsQCDTopW",
+               label=r"GloParT $X_{bb}$ vs QCD+top+Xqq+Xcs", bins=100, start=0, stop=1) ]
+    )
+    variables[f"{coll}_globalParT3_mass"] = HistConf(
+        [ Axis(name=f"{coll}_globalParT3_mass", coll=coll, field="globalParT3_mass",
+               label=r"FatJet GloParT regressed mass [GeV]", bins=list(range(0, 410, 10))) ]
+    )
+    variables[f"{coll}_pt_eta"] = HistConf(
+        [ Axis(name=f"{coll}_pos", coll=coll, field="pos", type="int", label=r"FatJet position", bins=2, start=0, stop=2),
+          Axis(name=f"{coll}_pt", coll=coll, field="pt", type="variable", label=r"FatJet $p_{T}$ [GeV]",
+               bins=[300., 310., 320., 330., 340., 350., 360., 370., 380., 390., 400.,
+                     410., 420., 430., 440., 450., 500., 550., 600., 700., 800., 900., 2500.]),
+          Axis(name=f"{coll}_eta", coll=coll, field="eta", type="variable", label=r"FatJet $\eta$",
+               bins=[-5, -2, -1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 5]) ]
+    )
+    variables[f"{coll}_pt_eta_tau21"] = HistConf(
+        [ Axis(name=f"{coll}_pos", coll=coll, field="pos", type="int", label=r"FatJet position", bins=2, start=0, stop=2),
+          Axis(name=f"{coll}_pt", coll=coll, field="pt", type="variable", label=r"FatJet $p_{T}$ [GeV]",
+               bins=[300., 310., 320., 330., 340., 350., 360., 370., 380., 390., 400.,
+                     410., 420., 430., 440., 450., 500., 550., 600., 700., 800., 900., 2500.]),
+          Axis(name=f"{coll}_eta", coll=coll, field="eta", type="variable", label=r"FatJet $\eta$",
+               bins=[-5, -2, -1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 5]),
+          Axis(name=f"{coll}_tau21", coll=coll, field="tau21", type="variable", label=r"FatJet $\tau_{21}$",
+               bins=[0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1]) ]
+    )
+    variables[f"{coll}_pt_eta_tau21_bintau05"] = HistConf(
+        [ Axis(name=f"{coll}_pos", coll=coll, field="pos", type="int", label=r"FatJet position", bins=2, start=0, stop=2),
+          Axis(name=f"{coll}_pt", coll=coll, field="pt", type="variable", label=r"FatJet $p_{T}$ [GeV]",
+               bins=[300., 310., 320., 330., 340., 350., 360., 370., 380., 390., 400.,
+                     410., 420., 430., 440., 450., 500., 550., 600., 700., 800., 900., 2500.]),
+          Axis(name=f"{coll}_eta", coll=coll, field="eta", type="variable", label=r"FatJet $\eta$",
+               bins=[-5, -2, -1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 5]),
+          Axis(name=f"{coll}_tau21", coll=coll, field="tau21", type="variable", label=r"FatJet $\tau_{21}$",
+               bins=[0, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 1]) ]
+    )
+
+cfg = Configurator(
+    parameters = parameters,
+    datasets = {
+         "jsons": ["datasets/MC_VJets_run2_redirector.json",
+                   "datasets/MC_TTto4Q_run2_redirector.json",
+                   "datasets/MC_singletop_run2_redirector.json",
+                   "datasets/DATA_BTagMu_run2_redirector.json",
+                   "datasets/MC_QCD_MuEnriched_run2_redirector.json"
+                   ],
+        "filter" : {
+            "samples": samples,
+            "samples_exclude" : [],
+            "year": [
+                '2018',
+                '2017',
+                '2016_PostVFP',
+                '2016_PreVFP'
+            ]
+        },
+        "subsamples": subsamples
+    },
+
+    workflow = ptReweightProcessor,
+    workflow_options = {},
+
+    skim = [get_nPVgood(1),
+            eventFlags,
+            goldenJson,
+            get_nObj_min(1, 200., "FatJet"),
+            get_nObj_minmsd(1, 30., "FatJet"),
+            get_nObj_min(1, 3., "Muon"),
+            get_HLTsel()],
+
+    preselections = [get_nObj_min(1, parameters.object_preselection["FatJet"]["pt"], "FatJetGood")],
+    categories = {
+        "pt300globalParT3mass50" : [get_ptglopartmass(300., 50.)],
+        # "pt300globalParT3mass80" : [get_ptglopartmass(300., 80.)],
+        # "pt300globalParT3mass50to200" : [get_ptglopartmass_window(300., 50., 200.)],
+        "pt300globalParT3mass80to170" : [get_ptglopartmass_window(300., 80., 170.)],
+    },
+
+    weights_classes = common_weights + [SF_trigger_prescale],
+    weights = {
+        "common": {
+            "inclusive": ["genWeight","lumi","XS","sf_trigger_prescale",
+                          "pileup"],
+            "bycategory" : {
+            }
+        },
+        "bysample": {
+        }
+    },
+
+    # Rho field alias injected in fatjet_base.py process_extra_after_skim for Run 2 NanoAODv15
+    calibrators = [JetsCalibrator, JetsSoftdropMassCalibrator],
+    variations = {
+        "weights": {
+            "common": {
+                "inclusive": [],
+                "bycategory" : {
+                }
+            },
+            "bysample": {
+            }
+        },
+        "shape": {
+            "common": {
+                "inclusive" : ["jet_calibration"]
+            }
+        }
+    },
+
+    variables = variables,
+
+    columns = {}
+)
+
+# Registering custom functions
+import cloudpickle
+cloudpickle.register_pickle_by_value(workflow)
+cloudpickle.register_pickle_by_value(mutag_calib)

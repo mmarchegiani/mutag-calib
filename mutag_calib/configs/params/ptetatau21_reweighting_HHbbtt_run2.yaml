@@ -1,0 +1,14 @@
+# Run 2 UL pT-eta-tau21 reweighting maps for Run-2 HHbbtt
+ptetatau21_reweighting:
+  "2018":
+    file: ${config_dir:}/ptetatau21_reweighting/HHbbtt_run2_globalParT3mass/FatJetGood_pt_eta_tau21_2018_reweighting.json
+    category: pt300globalParT3mass80to170
+  "2017":
+    file: ${config_dir:}/ptetatau21_reweighting/HHbbtt_run2_globalParT3mass/FatJetGood_pt_eta_tau21_2017_reweighting.json
+    category: pt300globalParT3mass80to170
+  "2016_PostVFP":
+    file: ${config_dir:}/ptetatau21_reweighting/HHbbtt_run2_globalParT3mass/FatJetGood_pt_eta_tau21_2016_PostVFP_reweighting.json
+    category: pt300globalParT3mass80to170
+  "2016_PreVFP":
+    file: ${config_dir:}/ptetatau21_reweighting/HHbbtt_run2_globalParT3mass/FatJetGood_pt_eta_tau21_2016_PreVFP_reweighting.json
+    category: pt300globalParT3mass80to170
