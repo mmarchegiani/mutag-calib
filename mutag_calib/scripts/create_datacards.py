@@ -670,6 +670,10 @@ def main():
                        help="Years to include in the analysis")
     parser.add_argument("--combined-years", action="store_true", default=False,
                        help="Treat all years as a single combined measurement (e.g. 2025 data + 2024 MC)")
+    parser.add_argument("--category-prefix", default="msd",
+                       help="Only build categories whose name starts with this prefix. "
+                            "Default 'msd' selects the softdrop-mass categories; use "
+                            "'globalParT3mass' for the GloParT workflow.")
     parser.add_argument("--verbose", "-v", action="store_true", default=False, help="Enable verbose output")
     args = parser.parse_args()
     
@@ -683,7 +687,12 @@ def main():
     # plot_tau21_mu_vs_mg(hist_tau21, cat="pt300msd80to170")
     cutflow = output["cutflow"]
     datasets_metadata = output["datasets_metadata"]
-    categories = [cat for cat in cutflow.keys() if cat.startswith('globalParT3mass-80to170')]
+    categories = [cat for cat in cutflow.keys() if cat.startswith(args.category_prefix)]
+    if not categories:
+        raise SystemExit(
+            f"No categories start with '{args.category_prefix}'. Available: "
+            f"{sorted({c.split('_')[0] for c in cutflow.keys()})}"
+        )
     
     # Categorize samples
     samples = categorize_samples(cutflow)
