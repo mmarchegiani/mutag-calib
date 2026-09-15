@@ -1,0 +1,53 @@
+# Run 2 AK4PFPuppi calibration, for the HH->bbtautau Run 2 configs.
+#
+# The AK8 softdrop mass is corrected through the jet's SUBJETS, so the
+# calibrator reads jet_types.AK4PFPuppi[year] and variations.AK4PFPuppi[year].
+# The CVMFS JME catalogue used to supply those Run 2 entries by default and now
+# offers Run 3 only, so the run dies with "ConfigKeyError: Missing key 2018".
+# The correction files are untouched; only the mapping went away.
+#
+# Kept out of jets_calibration.yaml, which is shared with other configs:
+# Merge this AFTER jets_calibration.yaml in the configs that want it.
+
+jets_calibration:
+  jet_types:
+    AK4PFPuppi:
+      "2018":
+        json_path: /cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/latest/jet_jerc.json.gz
+        jec_mc: Summer20UL18NanoV15_V1_MC
+        jec_data: Summer20UL18NanoV15_V1_DATA
+        jer: Summer19UL18_JRV3_MC
+        level: L1L2L3Res
+      "2017":
+        json_path: /cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/latest/jet_jerc.json.gz
+        jec_mc: Summer20UL17NanoV15_V1_MC
+        jec_data: Summer20UL17NanoV15_V1_DATA
+        jer: Summer19UL17_JRV4_MC
+        level: L1L2L3Res
+      2016_PostVFP:
+        json_path: /cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/latest/jet_jerc.json.gz
+        jec_mc: Summer20UL16NanoV15_V1_MC
+        jec_data: Summer20UL16NanoV15_V1_DATA
+        jer: Summer20UL16_JRV5_MC
+        level: L1L2L3Res
+      2016_PreVFP:
+        json_path: /cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016preVFP-UL-NanoAODv15/latest/jet_jerc.json.gz
+        jec_mc: Summer20UL16APVNanoV15_V1_MC
+        jec_data: Summer20UL16APVNanoV15_V1_DATA
+        jer: Summer20UL16APV_JRV5_MC
+        level: L1L2L3Res
+
+  variations:
+    AK4PFPuppi:
+      2016_PreVFP:
+      - JES_Total
+      - JER
+      2016_PostVFP:
+      - JES_Total
+      - JER
+      "2017":
+      - JES_Total
+      - JER
+      "2018":
+      - JES_Total
+      - JER

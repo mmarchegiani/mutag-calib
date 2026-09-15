@@ -43,6 +43,8 @@ defaults.register_configuration_dir("config_dir", localdir+"/params")
 parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/object_preselection.yaml",
                                                 f"{localdir}/params/jets_calibration.yaml",
+                                                # Must come after jets_calibration.yaml.
+                                                f"{localdir}/params/jets_calibration_AK4PFPuppi_run2.yaml",
                                                 f"{localdir}/params/triggers_run2.yaml",
                                                 f"{localdir}/params/triggers_prescales_run2.yaml",
                                                 f"{localdir}/params/ptetatau21_reweighting_HHbbtt_run2.yaml",
