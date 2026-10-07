@@ -88,6 +88,30 @@ class fatjetBaseProcessor(BaseProcessorABC):
             self.events, "Muon", self.params
         )
 
+        if self._isMC and "nBHadrons" not in self.events.FatJet.fields:
+            # This is a nanoAODv15
+            subjet = ak.zip(
+                {
+                    "sj1": self.events["SubJet"][self.events.FatJet.subJetIdx1],
+                    "sj2": self.events["SubJet"][self.events.FatJet.subJetIdx2],
+                },
+                depth_limit=1
+            )
+            fatjet_nbHadrons = (
+                ak.fill_none(subjet.sj1.nBHadrons, 0)
+                + ak.fill_none(subjet.sj2.nBHadrons, 0)
+                )
+            self.events["FatJet"] = ak.with_field(
+                    self.events["FatJet"], fatjet_nbHadrons, "nBHadrons"
+                    )
+            fatjet_ncHadrons = (
+                ak.fill_none(subjet.sj1.nCHadrons, 0)
+                + ak.fill_none(subjet.sj2.nCHadrons, 0)
+                )
+            self.events["FatJet"] = ak.with_field(
+                    self.events["FatJet"], fatjet_ncHadrons, "nCHadrons"
+                    )
+
         # HACK: Bypass PocketCoffea's jet_selection for Run 2 to avoid NanoAODv15 bugs:
         # get_nano_version() auto-detects v15 from filename → compute_jetId tries to load
         # correction JSONs that don't exist for Run 2 years. Recompute tight jet ID from raw
@@ -150,6 +174,14 @@ class fatjetBaseProcessor(BaseProcessorABC):
             Xbb = self.events.FatJetGood.globalParT3_Xbb
             QCD = self.events.FatJetGood.globalParT3_QCD
             fatjet_fields["globalParT3_XbbVsQCD"] = ak.where(
+                (Xbb + QCD) > 0,
+                Xbb / (Xbb + QCD),
+                -999.0,
+            )
+        if "particleNetLegacy_Xbb" in self.events.FatJetGood.fields:
+            Xbb = self.events.FatJetGood.particleNetLegacy_Xbb
+            QCD = self.events.FatJetGood.particleNetLegacy_QCD
+            fatjet_fields["particleNetLegacy_XbbVsQCD"] = ak.where(
                 (Xbb + QCD) > 0,
                 Xbb / (Xbb + QCD),
                 -999.0,
