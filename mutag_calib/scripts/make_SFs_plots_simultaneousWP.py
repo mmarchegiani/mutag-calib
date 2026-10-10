@@ -86,6 +86,9 @@ SLICE_DEF = {
 }
 SLICE_ORDER = ["B", "C", "D"]
 SUFFIX = "-simultaneousWP"
+# cannot contain a backslash before Python 3.12.
+INF = r"$\infty$"
+
 
 
 def cut_dirname(t):
@@ -165,7 +168,7 @@ def budget(series):
 def figure_vs_pt(year, per_pt, pts, flavour, out_stem, era, formats):
     fig, ax = plt.subplots(figsize=(9.0, 6.6))
     xs = {p: i for i, p in enumerate(pts)}
-    any_point = False
+    any_point, tops = False, []
     for k, wp in enumerate(WP_TIERS):
         off = (k - 1) * 0.20
         X, Y, FU, FD, TU, TD = [], [], [], [], [], []
@@ -180,6 +183,7 @@ def figure_vs_pt(year, per_pt, pts, flavour, out_stem, era, formats):
             continue
         any_point = True
         X = np.array(X, float)
+        tops.append(float(np.max(np.add(Y, TU))))
         # outer bar: total. inner bar: fit only. Same colour, different weight,
         # so the systematic contribution is the visible difference.
         ax.errorbar(X, Y, yerr=[TD, TU], fmt="none", ecolor=WP_COLOR[wp],
@@ -197,7 +201,7 @@ def figure_vs_pt(year, per_pt, pts, flavour, out_stem, era, formats):
 
     ax.axhline(1.0, color=INK_SOFT, lw=1.1, ls="--", zorder=1)
     ax.set_xticks(range(len(pts)))
-    ax.set_xticklabels([p.replace("to", "–").replace("Inf", "∞") for p in pts])
+    ax.set_xticklabels([p.replace("to", "-").replace("Inf", INF) for p in pts])
     ax.set_xlim(-0.6, len(pts) - 0.4)
     ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
     ax.set_ylabel(f"SF, {flavour} jets")
@@ -208,8 +212,19 @@ def figure_vs_pt(year, per_pt, pts, flavour, out_stem, era, formats):
     order = ([labels.index(w) for w in WP_TIERS if w in labels]
              + [i for i, l in enumerate(labels) if l not in WP_TIERS])
     ax.legend([handles[i] for i in order], [labels[i] for i in order],
-              loc="best", frameon=False, fontsize=12, ncol=2)
+              loc="upper right", frameon=False, fontsize=12, ncol=2)
     fig.tight_layout()
+
+    # Headroom measured, not left to autoscale
+    fig.canvas.draw()
+    rend = fig.canvas.get_renderer()
+    inv = ax.transAxes.inverted()
+    overlays = [ax.get_legend()] + [t for t in ax.texts if t.get_text()]
+    clear_below = min(inv.transform(o.get_window_extent(rend).p0)[1] for o in overlays)
+    y0, y1 = ax.get_ylim()
+    want = clear_below - 0.03
+    if tops and want > 0.2 and (max(tops) - y0) / (y1 - y0) > want:
+        ax.set_ylim(y0, y0 + (max(tops) - y0) / want)
     for ext in formats:
         fig.savefig(f"{out_stem}.{ext}", dpi=200)
     plt.close(fig)
@@ -241,7 +256,10 @@ def figure_vs_tau21(year, per_pt, pts, flavour, out_stem, era, formats):
         ax.axhline(1.0, color=INK_SOFT, lw=1.1, ls="--", zorder=1)
         ax.axvline(TAU21_CENTRAL, color=INK_SOFT, lw=1.0, ls=":", zorder=1)
         ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
-        panel_tag(ax, f"{p.replace('to', '–').replace('Inf', '∞')} GeV", fontsize=13)
+        # Ticks at the cuts actually scanned
+        ax.set_xticks(TAU21_VALUES)
+        ax.set_xticklabels([f"{t:.2f}" for t in TAU21_VALUES])
+        panel_tag(ax, f"{p.replace('to', '-').replace('Inf', INF)} GeV", fontsize=13)
         if col == 0:
             ax.set_ylabel(f"SF, {flavour} jets")
     cms_frame(fig, axes, era)
@@ -257,6 +275,12 @@ def figure_vs_tau21(year, per_pt, pts, flavour, out_stem, era, formats):
     for ext in formats:
         fig.savefig(f"{out_stem}.{ext}", dpi=200)
     plt.close(fig)
+
+
+def variation_list(values):
+    """'0.20, 0.25, 0.35 and 0.40' -- the non-central cuts, for prose."""
+    others = [f"{t:.2f}" for t in values if t != TAU21_CENTRAL]
+    return others[0] if len(others) == 1 else ", ".join(others[:-1]) + " and " + others[-1]
 
 
 def latex_table(rows, path, flavour, pt_order):
@@ -297,14 +321,15 @@ $\\mathrm{{err_{{fit}}}}$ is the MINOS profile-likelihood interval from combine 
 statistics and every nuisance in the datacard (pileup, luminosity, ISR, FSR, JER, JES,
 light- and c-jet systematics, Madgraph/Pythia QCD); it is asymmetric where $\\mathrm{{SF}}_b$
 and $\\mathrm{{SF}}_c$ are nearly degenerate. $\\tau_{{21}}^\\mathrm{{cut}}$ is the largest
-deviation of the central value between the nominal $\\tau_{{21}} < 0.30$ selection and the
-variations at 0.20, 0.25, 0.35 and 0.40. $\\tau_{{21}}^\\mathrm{{rw}}$ is the shift when the MC
+deviation of the central value between the nominal $\\tau_{{21}} < {TAU21_CENTRAL:.2f}$ selection and the
+variations at {variation_list(TAU21_VALUES)}. $\\tau_{{21}}^\\mathrm{{rw}}$ is the shift when the MC
 is reweighted to data at the nominal cut. The two systematics are one-sided shifts and are
 applied to both sides; $\\sigma_\\mathrm{{tot}}$ adds all three in quadrature per side.}}\n""")
         f.write("\\end{table}\n")
 
 
 def main():
+    global TAU21_VALUES
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("base_dir", help="datacards_simultaneousWP directory")
@@ -315,7 +340,19 @@ def main():
                          "default each figure gets its own era and luminosity "
                          "from LUMI_FB, which is what a single-year plot needs.")
     ap.add_argument("--formats", nargs="+", default=["png", "pdf"])
+    ap.add_argument("--tau21-values", type=float, nargs="+", default=TAU21_VALUES,
+                    help="tau21 cuts entering the scan, nominal included. Cuts "
+                         "left out are dropped everywhere -- the systematic, "
+                         "the stability figure and the table caption -- so the "
+                         "outputs stay consistent with each other.")
     args = ap.parse_args()
+
+    # collect(), budget() and the caption all read the module-level list, so
+    # rebinding it here is enough to take a cut out of every output at once.
+    TAU21_VALUES = sorted(set(args.tau21_values))
+    if TAU21_CENTRAL not in TAU21_VALUES:
+        raise SystemExit(f"--tau21-values must include the nominal {TAU21_CENTRAL}")
+    print(f"[INFO] tau21 scan: {TAU21_VALUES}")
 
     style()
     out = Path(args.output_dir); out.mkdir(parents=True, exist_ok=True)
