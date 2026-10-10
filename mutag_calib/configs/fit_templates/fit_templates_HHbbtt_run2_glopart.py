@@ -42,6 +42,8 @@ defaults.register_configuration_dir("config_dir", localdir+"/params")
 
 parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/object_preselection.yaml",
+                                                # Must come after object_preselection.yaml.
+                                                f"{localdir}/params/object_preselection_HHbbtt_run2.yaml",
                                                 f"{localdir}/params/jets_calibration.yaml",
                                                 # Must come after jets_calibration.yaml.
                                                 f"{localdir}/params/jets_calibration_run2_bbtt.yaml",

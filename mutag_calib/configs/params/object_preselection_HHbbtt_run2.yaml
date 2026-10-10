@@ -1,0 +1,13 @@
+# Object preselection for the HH->bbtautau Run 2 configs.
+#
+# Only the AK8 softdrop-mass threshold differs from object_preselection.yaml:
+# FatJetGood is built with msoftdrop > msd, and this calibration works in the
+# GloParT regressed-mass window 80-170 GeV, so a 30 GeV threshold only admits
+# jets that every later selection throws away.
+#
+# Kept out of object_preselection.yaml, which is shared with the HHbbgg and the
+# other bbtautau configs: merge this AFTER it in the configs that want it.
+
+object_preselection:
+  FatJet:
+    msd: 50.0
