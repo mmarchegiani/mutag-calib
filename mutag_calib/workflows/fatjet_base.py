@@ -158,9 +158,11 @@ class fatjetBaseProcessor(BaseProcessorABC):
                 Xbb / (Xbb + QCD),
                 -999.0,
             )
-            # HHbbtt-run2-specific discriminant: Xbb vs. QCD + top + Xqq + Xcs
+            # HHbbtt-run2-specific discriminant: Xbb vs. QCD + top + Xqq + Xcs,
+            # Xbb / (Xbb + QCD + top + Xqq + Xcs), bounded to [0, 1]
             QCDTopW_denom = (
-                QCD
+                Xbb
+                + QCD
                 + self.events.FatJetGood.globalParT3_TopbWq
                 + self.events.FatJetGood.globalParT3_TopbWqq
                 + self.events.FatJetGood.globalParT3_TopbWtauhv
