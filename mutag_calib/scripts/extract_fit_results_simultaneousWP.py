@@ -78,6 +78,17 @@ def main():
     for poi in pois:
         par = final_pars.find(poi)
         if not par:
+            # A POI frozen by run_fit.sh (e.g. SF_c_Tight in the frozen-SF_c
+            # variant) is in constPars, not floatParsFinal. Record it at its
+            # fixed value with zero error so the CSV keeps the same columns as
+            # the floating fit and every downstream plot still works.
+            const = fit_s.constPars().find(poi)
+            if const:
+                row[poi] = const.getVal()
+                row[f"{poi}_errUp"] = 0.0
+                row[f"{poi}_errDown"] = 0.0
+                print(f"[INFO] POI {poi} was frozen at {const.getVal():g}")
+                continue
             print(f"[WARN] POI {poi} not found in the fit result (frozen?)")
             continue
         found.append(poi)
