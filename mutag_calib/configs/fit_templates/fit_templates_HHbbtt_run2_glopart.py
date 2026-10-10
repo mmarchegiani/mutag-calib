@@ -44,7 +44,7 @@ parameters = defaults.merge_parameters_from_files(default_parameters,
                                                 f"{localdir}/params/object_preselection.yaml",
                                                 f"{localdir}/params/jets_calibration.yaml",
                                                 # Must come after jets_calibration.yaml.
-                                                f"{localdir}/params/jets_calibration_AK4PFPuppi_run2.yaml",
+                                                f"{localdir}/params/jets_calibration_run2_bbtt.yaml",
                                                 f"{localdir}/params/triggers_run2.yaml",
                                                 f"{localdir}/params/triggers_prescales_run2.yaml",
                                                 f"{localdir}/params/ptetatau21_reweighting_HHbbtt_run2.yaml",
@@ -126,6 +126,29 @@ year_filter = [
     '2016_PostVFP',
     '2016_PreVFP'
 ]
+
+# Launch-time overrides, so the four campaigns (2016 / 2017+2018 x hadronic /
+# leptonic) can run at the same time without editing this file or the WP yaml
+# between launches -- both are read once, when the driver starts:
+#   MUTAG_YEARS=2017,2018      replaces year_filter
+#   MUTAG_WP_SET=hadronic      0.369 / 0.9   / 0.99
+#   MUTAG_WP_SET=leptonic      0.369 / 0.801 / 0.968
+# The override is written into parameters, so parameters_dump.yaml records the
+# WPs a run actually used. Unset, both fall back to the values above/in the yaml.
+from omegaconf import OmegaConf
+WP_SETS = {
+    "hadronic": {"Loose": 0.369, "Medium": 0.9, "Tight": 0.99},
+    "leptonic": {"Loose": 0.369, "Medium": 0.801, "Tight": 0.968},
+}
+if os.environ.get("MUTAG_YEARS"):
+    year_filter = [y.strip() for y in os.environ["MUTAG_YEARS"].split(",") if y.strip()]
+if os.environ.get("MUTAG_WP_SET"):
+    _wp_set = os.environ["MUTAG_WP_SET"]
+    if _wp_set not in WP_SETS:
+        raise ValueError(f"MUTAG_WP_SET={_wp_set!r}; expected one of {sorted(WP_SETS)}")
+    for _year in year_filter:
+        OmegaConf.update(parameters, f"mutag_calibration.wp.{_year}.{taggers[0]}",
+                         WP_SETS[_wp_set], merge=False)
 
 pt_binning = parameters["mutag_calibration"]["pt_binning"][year_filter[0]]
 wp_dict = parameters["mutag_calibration"]["wp"][year_filter[0]]

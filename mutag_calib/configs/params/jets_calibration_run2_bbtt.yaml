@@ -1,16 +1,30 @@
-# Run 2 AK4PFPuppi calibration, for the HH->bbtautau Run 2 configs.
+# Run 2 jet calibration fixes for the HH->bbtautau configs. Two of them:
 #
-# The AK8 softdrop mass is corrected through the jet's SUBJETS, so the
-# calibrator reads jet_types.AK4PFPuppi[year] and variations.AK4PFPuppi[year].
-# The CVMFS JME catalogue used to supply those Run 2 entries by default and now
-# offers Run 3 only, so the run dies with "ConfigKeyError: Missing key 2018".
-# The correction files are untouched; only the mapping went away.
+# 1. AK4PFPuppi Run 2. The AK8 softdrop mass is corrected through the jet's
+#    SUBJETS, so the calibrator reads jet_types.AK4PFPuppi[year]. The CVMFS JME
+#    catalogue now names its Run 2 entries "<year>_v15", so a bare "2018" key is
+#    missing and the run dies with "ConfigKeyError: Missing key 2018".
 #
-# Kept out of jets_calibration.yaml, which is shared with other configs:
-# Merge this AFTER jets_calibration.yaml in the configs that want it.
+# 2. AK8PFPuppi jec_data. The per-era tags in jets_calibration.yaml
+#    (Summer20UL17NanoV15_RunB_V1_DATA, ...) are not in fatJet_jerc.json.gz --
+#    it ships one DATA tag per year, Summer20UL1XNanoV15_V1_DATA -- so every
+#    data chunk fails with "No JEC correction". Per-era granularity for data is
+#    therefore not available in v15, not a choice made here.
+#
+# Both values match the catalogue's own "<year>_v15" entries. Kept out of
+# jets_calibration.yaml, which is shared with other configs; merge this AFTER it.
 
 jets_calibration:
   jet_types:
+    AK8PFPuppi:
+      "2018":
+        jec_data: Summer20UL18NanoV15_V1_DATA
+      "2017":
+        jec_data: Summer20UL17NanoV15_V1_DATA
+      2016_PostVFP:
+        jec_data: Summer20UL16NanoV15_V1_DATA
+      2016_PreVFP:
+        jec_data: Summer20UL16APVNanoV15_V1_DATA
     AK4PFPuppi:
       "2018":
         json_path: /cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/latest/jet_jerc.json.gz
