@@ -9,6 +9,18 @@ from mutag_calib.lib.leptons import lepton_selection_noniso
 from mutag_calib.lib.sv import get_corrmass, sv_matched_to_fatjet, get_sumcorrmass, get_sv1mass
 from mutag_calib.lib.muon_matching import muons_matched_to_fatjet, muon_matched_to_subjet
 
+# GloParT-3 branches, present from NanoAODv15 on
+GLOPART_XBBVSQCD_BRANCHES = frozenset({"globalParT3_Xbb", "globalParT3_QCD"})
+GLOPART_TOPW_BRANCHES = frozenset({
+    "globalParT3_TopbWq",
+    "globalParT3_TopbWqq",
+    "globalParT3_TopbWtauhv",
+    "globalParT3_TopbWev",
+    "globalParT3_TopbWmv",
+    "globalParT3_Xqq",
+    "globalParT3_Xcs",
+})
+
 class fatjetBaseProcessor(BaseProcessorABC):
     def __init__(self, cfg: Configurator):
         super().__init__(cfg)
@@ -149,8 +161,9 @@ class fatjetBaseProcessor(BaseProcessorABC):
             #"nMuonGoodMatchedToSubJet" : ak.count(self.events["MuonGoodMatchedToSubJet"].pt, axis=2),
             #"nMuonGoodMatchedUniquelyToSubJet" : ak.count(self.events["MuonGoodMatchedUniquelyToSubJet"].pt, axis=2)
         }
-        # Compute GloParT XbbVsQCD discriminator (only available in NanoAODv15, i.e. 2024)
-        if "globalParT3_Xbb" in self.events.FatJetGood.fields:
+        # GloParT discriminators. Only defined where the branches exist
+        fatjet_branches = set(self.events.FatJetGood.fields)
+        if GLOPART_XBBVSQCD_BRANCHES <= fatjet_branches:
             Xbb = self.events.FatJetGood.globalParT3_Xbb
             QCD = self.events.FatJetGood.globalParT3_QCD
             fatjet_fields["globalParT3_XbbVsQCD"] = ak.where(
@@ -160,24 +173,25 @@ class fatjetBaseProcessor(BaseProcessorABC):
             )
             # HHbbtt-run2-specific discriminant: Xbb vs. QCD + top + Xqq + Xcs,
             # Xbb / (Xbb + QCD + top + Xqq + Xcs), bounded to [0, 1]
-            QCDTopW_denom = (
-                Xbb
-                + QCD
-                + self.events.FatJetGood.globalParT3_TopbWq
-                + self.events.FatJetGood.globalParT3_TopbWqq
-                + self.events.FatJetGood.globalParT3_TopbWtauhv
-                + self.events.FatJetGood.globalParT3_TopbWev
-                + self.events.FatJetGood.globalParT3_TopbWmv
-                + self.events.FatJetGood.globalParT3_Xqq
-                + self.events.FatJetGood.globalParT3_Xcs
-            )
-            fatjet_fields["globalParT3_XbbVsQCDTopW"] = ak.where(
-                QCDTopW_denom > 0,
-                Xbb / QCDTopW_denom,
-                -999.0,
-            )
+            if GLOPART_TOPW_BRANCHES <= fatjet_branches:
+                QCDTopW_denom = (
+                    Xbb
+                    + QCD
+                    + self.events.FatJetGood.globalParT3_TopbWq
+                    + self.events.FatJetGood.globalParT3_TopbWqq
+                    + self.events.FatJetGood.globalParT3_TopbWtauhv
+                    + self.events.FatJetGood.globalParT3_TopbWev
+                    + self.events.FatJetGood.globalParT3_TopbWmv
+                    + self.events.FatJetGood.globalParT3_Xqq
+                    + self.events.FatJetGood.globalParT3_Xcs
+                )
+                fatjet_fields["globalParT3_XbbVsQCDTopW"] = ak.where(
+                    QCDTopW_denom > 0,
+                    Xbb / QCDTopW_denom,
+                    -999.0,
+                )
         # GloParT regressed mass: apply the generic mass-correction factor to the raw jet mass
-        if "globalParT3_massCorrGeneric" in self.events.FatJetGood.fields:
+        if "globalParT3_massCorrGeneric" in fatjet_branches:
             fatjet_fields["globalParT3_mass"] = (
                 self.events.FatJetGood.mass
                 * self.events.FatJetGood.globalParT3_massCorrGeneric
