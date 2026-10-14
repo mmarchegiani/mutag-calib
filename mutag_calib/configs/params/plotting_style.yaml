@@ -34,6 +34,12 @@ plotting_style:
     c: CMS_orange
     b: CMS_blue
 
+  opts_ylim:
+    datamc:
+      ylim_log:
+        lo: 100
+        hi: 1e8
+
   # 2025 not yet in PocketCoffea defaults — provide explicit literal (110.19 fb^-1)
   # Format matches PocketCoffea defaults: lumi value as a number (fb^-1)
   plot_upper_label:

@@ -1,6 +1,6 @@
 # Per-event cuts applied to each event
 from pocket_coffea.lib.cut_definition import Cut
-from mutag_calib.configs.fatjet_base.custom.functions import twojets_ptmsd, mutag_fatjet, mutag_subjet, ptbin, ptbin_mutag, msoftdrop, msoftdropbin, ptmsd, ptmsd_window, ptmsdtau, min_nObj_minmsd, flavor_mask
+from mutag_calib.configs.fatjet_base.custom.functions import twojets_ptmsd, mutag_fatjet, mutag_subjet, ptbin, ptbin_mutag, msoftdrop, msoftdropbin, ptmsd, ptmsd_window, ptmsdtau, min_nObj_minmsd, flavor_mask, ptglopartmass, ptglopartmass_window, globalParT3massbin
 
 def twojets_presel(pt, msd, name=None):
     if name == None:
@@ -104,6 +104,36 @@ def get_ptmsd_window(pt, msd_min, msd_max, name=None):
         name=name,
         params= {"pt" : pt, "msd_min" : msd_min, "msd_max": msd_max},
         function=ptmsd_window,
+        collection="FatJetGood"
+    )
+
+def get_globalParT3massbin(mass_min, mass_max, name=None):
+    if name == None:
+        name = f"globalParT3mass{mass_min}to{mass_max}"
+    return Cut(
+        name=name,
+        params= {"mass_min" : mass_min, "mass_max": mass_max},
+        function=globalParT3massbin,
+        collection="FatJetGood"
+    )
+
+def get_ptglopartmass(pt, mass, name=None):
+    if name == None:
+        name = f"pt{pt}globalParT3mass{mass}"
+    return Cut(
+        name=name,
+        params= {"pt" : pt, "mass" : mass},
+        function=ptglopartmass,
+        collection="FatJetGood"
+    )
+
+def get_ptglopartmass_window(pt, mass_min, mass_max, name=None):
+    if name == None:
+        name = f"pt{pt}globalParT3mass{mass_min}to{mass_max}"
+    return Cut(
+        name=name,
+        params= {"pt" : pt, "mass_min" : mass_min, "mass_max": mass_max},
+        function=ptglopartmass_window,
         collection="FatJetGood"
     )
 

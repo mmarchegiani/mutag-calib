@@ -1,0 +1,67 @@
+# Run 2 jet calibration fixes for the HH->bbtautau configs. Two of them:
+#
+# 1. AK4PFPuppi Run 2. The AK8 softdrop mass is corrected through the jet's
+#    SUBJETS, so the calibrator reads jet_types.AK4PFPuppi[year]. The CVMFS JME
+#    catalogue now names its Run 2 entries "<year>_v15", so a bare "2018" key is
+#    missing and the run dies with "ConfigKeyError: Missing key 2018".
+#
+# 2. AK8PFPuppi jec_data. The per-era tags in jets_calibration.yaml
+#    (Summer20UL17NanoV15_RunB_V1_DATA, ...) are not in fatJet_jerc.json.gz --
+#    it ships one DATA tag per year, Summer20UL1XNanoV15_V1_DATA -- so every
+#    data chunk fails with "No JEC correction". Per-era granularity for data is
+#    therefore not available in v15, not a choice made here.
+#
+# Both values match the catalogue's own "<year>_v15" entries. Kept out of
+# jets_calibration.yaml, which is shared with other configs; merge this AFTER it.
+
+jets_calibration:
+  jet_types:
+    AK8PFPuppi:
+      "2018":
+        jec_data: Summer20UL18NanoV15_V1_DATA
+      "2017":
+        jec_data: Summer20UL17NanoV15_V1_DATA
+      2016_PostVFP:
+        jec_data: Summer20UL16NanoV15_V1_DATA
+      2016_PreVFP:
+        jec_data: Summer20UL16APVNanoV15_V1_DATA
+    AK4PFPuppi:
+      "2018":
+        json_path: /cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/latest/jet_jerc.json.gz
+        jec_mc: Summer20UL18NanoV15_V1_MC
+        jec_data: Summer20UL18NanoV15_V1_DATA
+        jer: Summer19UL18_JRV3_MC
+        level: L1L2L3Res
+      "2017":
+        json_path: /cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/latest/jet_jerc.json.gz
+        jec_mc: Summer20UL17NanoV15_V1_MC
+        jec_data: Summer20UL17NanoV15_V1_DATA
+        jer: Summer19UL17_JRV4_MC
+        level: L1L2L3Res
+      2016_PostVFP:
+        json_path: /cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/latest/jet_jerc.json.gz
+        jec_mc: Summer20UL16NanoV15_V1_MC
+        jec_data: Summer20UL16NanoV15_V1_DATA
+        jer: Summer20UL16_JRV5_MC
+        level: L1L2L3Res
+      2016_PreVFP:
+        json_path: /cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016preVFP-UL-NanoAODv15/latest/jet_jerc.json.gz
+        jec_mc: Summer20UL16APVNanoV15_V1_MC
+        jec_data: Summer20UL16APVNanoV15_V1_DATA
+        jer: Summer20UL16APV_JRV5_MC
+        level: L1L2L3Res
+
+  variations:
+    AK4PFPuppi:
+      2016_PreVFP:
+      - JES_Total
+      - JER
+      2016_PostVFP:
+      - JES_Total
+      - JER
+      "2017":
+      - JES_Total
+      - JER
+      "2018":
+      - JES_Total
+      - JER

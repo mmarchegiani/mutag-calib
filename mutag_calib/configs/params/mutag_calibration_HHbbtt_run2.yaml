@@ -1,0 +1,71 @@
+mutag_calibration:
+  taggers:
+    - globalParT3_XbbVsQCDTopW
+  pt_binning:
+    # Run 2 years - 2017/2018 use wider bins to equalize stats across pT bins
+    "2018":
+      - [300, 'Inf']
+      - [300, 400]
+      - [400, 450]
+      - [450, 'Inf']
+    "2017":
+      - [300, 'Inf']
+      - [300, 400]
+      - [400, 450]
+      - [450, 'Inf']
+    "2016_PostVFP":
+      - [300, 'Inf']
+      - [300, 350]
+      - [350, 425]
+      - [425, 'Inf']
+    "2016_PreVFP":
+      - [300, 'Inf']
+      - [300, 350]
+      - [350, 425]
+      - [425, 'Inf']
+  globalParT3mass_binning:
+    # GloParT regressed mass binning, same window as ptreweighting_run2_glopart.py categories
+    # (pt300globalParT3mass50, pt300globalParT3mass80to170)
+    "2018":
+      - [50, 'Inf']
+      - [80, 170]
+    "2017":
+      - [50, 'Inf']
+      - [80, 170]
+    "2016_PostVFP":
+      - [50, 'Inf']
+      - [80, 170]
+    "2016_PreVFP":
+      - [50, 'Inf']
+      - [80, 170]
+  wp:
+    # Exclusive WP tiers: Loose-fail=(-Inf,L), Loose-pass=Medium-fail=[L,M),
+    # Medium-pass=Tight-fail=[M,T), Tight-pass=[T,Inf)
+    "2018":
+      globalParT3_XbbVsQCDTopW:
+        Loose: 0.369
+        Medium: 0.801
+        Tight: 0.968
+        # Medium: 0.9
+        # Tight: 0.99
+    "2017":
+      globalParT3_XbbVsQCDTopW:
+        Loose: 0.369
+        Medium: 0.801
+        Tight: 0.968
+        # Medium: 0.9
+        # Tight: 0.99
+    "2016_PostVFP":
+      globalParT3_XbbVsQCDTopW:
+        Loose: 0.369
+        Medium: 0.801
+        Tight: 0.968
+        # Medium: 0.9
+        # Tight: 0.99
+    "2016_PreVFP":
+      globalParT3_XbbVsQCDTopW:
+        Loose: 0.369
+        Medium: 0.801
+        Tight: 0.968
+        # Medium: 0.9
+        # Tight: 0.99
